@@ -60,8 +60,11 @@ abstract public class GameManager : MonoBehaviour {
 	protected const float 	CorrectTime2 = 0.15f;
 	
 	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
-	protected const float 	WaitInputTime = 0.2f;			// 사용자 입력 대기 추가 시간
+	protected const float 	HeungbuWaitInputTime = 0.2f;	// 흥부전 - 사용자 입력 대기 추가 시간
 	protected const float 	GourdOpenTime = 2.0f;			// 흥부전 - 박이 열리는 시간
+
+	protected const float 	GameSpeedStop 	= 0.0f;
+	protected const float	GameSpeedNormal = 1.0f	
 
 	// 정답 포인트
 	protected const int 	CorrectPoint1 = 500;
@@ -124,7 +127,7 @@ abstract public class GameManager : MonoBehaviour {
 		ChangeProgressBar();
 
 		// 게임 기본 설정
-		Time.timeScale = 1f;
+		Time.timeScale = GameSpeedNormal;
 		stateTime = 0f;
 		stateShow.texture = stateTexture [0];
 	}
@@ -159,7 +162,6 @@ abstract public class GameManager : MonoBehaviour {
 	/// 게임 화면 UI
 	/// </summary>
 	public GUIText 		labelPoint;			// 점수 출력 라벨
-	//public GUITexture 	buttonPause;		// 게임 UI상 일시 정지
 	public GUITexture 	progressTimeBar;	// 게임 남은 시간 출력
 	private float 		progressBarWidth;
 	public GUITexture 	stateShow;			// 게임 시작시 Ready, Start 출력
@@ -168,16 +170,6 @@ abstract public class GameManager : MonoBehaviour {
 
 	public GameObject[] UIGroup;
 	public GUITexture[] UIButton;
-	// 게임 일시 정지
-	//public GameObject 	UIGamePause;		
-	//public GUITexture 	buttonUnPause;
-	//public GUITexture 	buttonReStart;
-
-	// 게임 종료시 
-	//public GameObject 	UIGameEnd;
-	//public GUITexture 	buttonFacebook;
-	//public GUITexture 	buttonRestart;
-	//public GUITexture 	buttonEndMain;
 	public GUIText[] 	labelGameEnd;		// 게임 종료시 출력될 점수들
 
 	public void GameReady () {
@@ -253,7 +245,7 @@ abstract public class GameManager : MonoBehaviour {
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
-		Time.timeScale = 0f;
+		Time.timeScale = GameSpeedStop;
 		audio.Pause ();
 		GS = GameState.Pause;
 		UIGroup[(int)UIGroupList.UIPause].SetActive (true);
@@ -262,7 +254,7 @@ abstract public class GameManager : MonoBehaviour {
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-		Time.timeScale = 1f;
+		Time.timeScale = GameSpeedNormal;
 		audio.Play ();
 		if (readyState)
 			GS = GameState.Play;
@@ -278,7 +270,7 @@ abstract public class GameManager : MonoBehaviour {
 		// GUITexture 출력
 		UIButton[(int)UIButtonList.FacebookEnd].gameObject.SetActive (FB.IsLoggedIn);
 
-		Time.timeScale = 0f;
+		Time.timeScale = GameSpeedStop;
 		audio.Stop ();
 		GS = GameState.End;
 
@@ -380,7 +372,7 @@ abstract public class GameManager : MonoBehaviour {
 			} else if (GS == GameState.Pause) {
 				PauseOff ();
 			} else if (GS == GameState.End) {
-				Time.timeScale = 1f;
+				Time.timeScale = GameSpeedNormal;
 				Application.LoadLevel("GameSelect");
 			}
 		}
@@ -404,11 +396,6 @@ abstract public class GameManager : MonoBehaviour {
 			} else {
 				TouchHandlingGame(touch);
 			}
-		//} else if (GS == GameState.Tutorial && touch.phase == TouchPhase.Ended) {
-			//if (UITutorial.activeInHierarchy) {
-			//	// Next Image
-			//	UITutorial.SendMessage("NextImage");
-			//}
 		} else if (GS == GameState.Pause && touch.phase == TouchPhase.Ended) {
 			if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				PauseOff ();
@@ -428,30 +415,11 @@ abstract public class GameManager : MonoBehaviour {
 				        linkName:"teamSF Game",
 				        linkCaption:"최고 기록 갱신");*/
 			} else if (UIButton[(int)UIButtonList.MainEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				Time.timeScale = 1f;
+				Time.timeScale = GameSpeedNormal;
 				Application.LoadLevel("GameSelect");
 			} 
 		}
 	}
-	// 게임 선택화면에서 튜토리얼을 선택하게 할 경우 해당 코드 불필요
-	/*public void TutoralDone (string gameName) {
-		//UITutorial.SetActive(false);
-
-		string tutorialName = "";
-		if (gameName == "AX") {
-			tutorialName = "TutorialAX";
-		} else if (gameName == "MoonRabbit") {
-			tutorialName = "TutorialMoonRabbit";
-		} else if (gameName == "Heungbu") {
-			tutorialName = "TutorialHeungbu";
-		} else if (gameName == "SunMoon") {
-			tutorialName = "TutorialSunMoon";
-		} else {
-		}
-
-		PlayerPrefs.SetInt (tutorialName, 1);
-		GameStart();
-	}*/
 
 	// CSV 파일 읽기 관련 처리
 	/////////////////////////////////////////////////////

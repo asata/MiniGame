@@ -1,9 +1,7 @@
 fileFormatVersion: 2
-guid: cf6e9b27ef09ba24aa11a04375c3803f
+guid: 9d1abae379fff4870a40bb545829b255
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: rabbit20003
-    21300002: rabbit20013
+  fileIDToRecycleName: {}
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -27,9 +25,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: -1
-    aniso: 1
+    aniso: -1
     mipBias: -1
-    wrapMode: 1
+    wrapMode: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50

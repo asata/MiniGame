@@ -48,6 +48,7 @@ public enum GameEndTextNumber {
 	Grade
 }
 abstract public class GameManager : MonoBehaviour {	
+	private   const string	StageDBName = "/StageInfo.db";
 	private   const int 	GameCount = 2;					// 현재 개발된 게임 갯수
 	private   const int 	NextGameOpenScore = 3000;		// 다음 스테이지를 여는데 필요한 최소 점수
 
@@ -70,9 +71,9 @@ abstract public class GameManager : MonoBehaviour {
 	protected const int 	CorrectPoint1 = 500;
 	protected const int 	CorrectPoint2 = 300;
 	
-	protected const int 	PoundingAllPoint = 50;			// 달토끼 - 해당 턴에서 모두 터치를 한 경우
-	protected const int 	GourdOpenPoint = 200;			// 흥부전 - 박을 연 경우
-	private   const int 	BeatEndPoint = 800;				// 지정된 파일을 모두 연주한 경우
+	protected const int 	PoundingAllPoint 	= 50;		// 달토끼 - 해당 턴에서 모두 터치를 한 경우
+	protected const int 	GourdOpenPoint 		= 200;		// 흥부전 - 박을 연 경우
+	private   const int 	BeatEndPoint 		= 800;		// 지정된 파일을 모두 연주한 경우
 
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
@@ -161,6 +162,7 @@ abstract public class GameManager : MonoBehaviour {
 	/// <summary>
 	/// 게임 화면 UI
 	/// </summary>
+	public GUITexture 	logoImage;
 	public GUIText 		labelPoint;			// 점수 출력 라벨
 	public GUITexture 	progressTimeBar;	// 게임 남은 시간 출력
 	private float 		progressBarWidth;
@@ -207,6 +209,8 @@ abstract public class GameManager : MonoBehaviour {
 		progressBarWidth = progressTimeBar.transform.guiTexture.pixelInset.width * guiRatio;
 		GameObject[] UITextureList = GameObject.FindGameObjectsWithTag (strTexture);
 		foreach (GameObject temp in UITextureList) {
+			//Debug.Log(temp.transform.guiTexture.name +  " : " + temp.transform.guiTexture.enabled.ToString());
+			if (!temp.transform.guiTexture.enabled) continue;
 			temp.transform.guiTexture.pixelInset = new Rect(temp.transform.guiTexture.pixelInset.x * guiRatio,
 			                                                temp.transform.guiTexture.pixelInset.y * guiRatio,
 			                                                temp.transform.guiTexture.pixelInset.width * guiRatio,
@@ -215,6 +219,7 @@ abstract public class GameManager : MonoBehaviour {
 		
 		GameObject[] UITextList = GameObject.FindGameObjectsWithTag (strText);
 		foreach (GameObject temp in UITextList) {
+			if (!temp.transform.guiText.enabled) continue;
 			temp.transform.guiText.pixelOffset = new Vector2 (temp.transform.guiText.pixelOffset.x * guiRatio,
 			                                                  temp.transform.guiText.pixelOffset.y * guiRatio);
 			temp.transform.guiText.fontSize = (int)(temp.transform.guiText.fontSize * guiRatio);
@@ -310,7 +315,7 @@ abstract public class GameManager : MonoBehaviour {
 	}
 
 	private void UpdateHighScore (int gameNo, int highScore, string grade) {		
-		string strOut = Application.persistentDataPath + "/StageInfo.db";
+		string strOut = Application.persistentDataPath + StageDBName;
 		SqliteDatabase sql = new SqliteDatabase();
 		sql.Open(strOut);
 		sql.ExecuteQuery("update StageInfo set score=" + highScore + ", grade='" + grade + "' where id=" + gameNo);
@@ -318,7 +323,7 @@ abstract public class GameManager : MonoBehaviour {
 	}
 
 	private bool NextGameOpen(int gameNo) {
-		string strOut = Application.persistentDataPath + "/StageInfo.db";
+		string strOut = Application.persistentDataPath + StageDBName;
 		SqliteDatabase sql = new SqliteDatabase();
 		sql.Open(strOut);
 

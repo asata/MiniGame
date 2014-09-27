@@ -216,11 +216,6 @@ public class GameManagerHeungbu : GameManager {
 					CorrectCheck();
 				}
 			} else if (waitTime >= HeungbuWaitInputTime) {
-				// 방향 변경시 애니메이션 재생 속도를 지정
-				// 파일 길이보다 긴시간 플레이 할 경우 게임 종료(Clear)
-				if (beatIndex >= GourdBeatList.Count)
-					GameEnd (true);
-
 				if (!gourdOpen && !waitSaw && beatIndex > -1) {
 					SawTypeSelect();
 				}

@@ -66,7 +66,7 @@ abstract public class GameManager : MonoBehaviour {
 	protected const float 	CorrectTime1 = 0.05f;
 	protected const float 	CorrectTime2 = 0.15f;
 
-	private   const float	LogoShowTime = 1.0f;
+	private   const float	LogoShowTime = 1.5f;
 	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
 	protected const float 	HeungbuWaitInputTime = 0.2f;	// 흥부전 - 사용자 입력 대기 추가 시간
 	protected const float 	GourdOpenTime = 2.0f;			// 흥부전 - 박이 열리는 시간
@@ -121,15 +121,16 @@ abstract public class GameManager : MonoBehaviour {
 	}
 	public IEnumerator LogoDelayTime () {
 		showLogo = false;
+		UIButton [(int)UIButtonList.Pause].enabled = false;
 		yield return new WaitForSeconds (LogoShowTime);
-		
-		logoAnimator.SetTrigger ("SetDefault");
+
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
+		logoAnimator.SetTrigger ("SetDefault");
 
 		gameLogo.SetActive (false);
-
 		GameStart();
+		UIButton [(int)UIButtonList.Pause].enabled = true;
 	}
 
 	public void Init() {
@@ -227,18 +228,6 @@ abstract public class GameManager : MonoBehaviour {
 			                                                  temp.transform.guiText.pixelOffset.y * guiRatio);
 			temp.transform.guiText.fontSize = (int)(temp.transform.guiText.fontSize * guiRatio);
 		}
-	}
-
-	// 남은 시간 표시
-	public void ChangeProgressBar() {
-	/*	gameTime -= Time.deltaTime;
-		playTime += Time.deltaTime;
-
-		//if (gameTime < 0) GameEnd ();
-		progressTimeBar.transform.guiTexture.pixelInset = new Rect(progressTimeBar.transform.guiTexture.pixelInset.x,
-		                                                           progressTimeBar.transform.guiTexture.pixelInset.y,
-		                                                           gameTime / MaxGameTime * progressBarWidth,
-		                                                           progressTimeBar.transform.guiTexture.pixelInset.height);*/
 	}
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
@@ -366,7 +355,7 @@ abstract public class GameManager : MonoBehaviour {
 
 		
 	void OnApplicationPause(bool pause) {
-		if (!pause && GS != GameState.End) {
+		if (!pause && (GS != GameState.Logo && GS != GameState.End)) {
 			PauseOn();
 		}
 	}

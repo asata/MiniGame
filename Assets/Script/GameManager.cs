@@ -43,8 +43,7 @@ public enum UIButtonList {
 	RestartPause,
 	MainPause,
 	RestartEnd,
-	MainEnd,
-	FacebookEnd
+	MainEnd
 }
 // 게임 종료시 나타날 GUIText Array
 public enum GameEndTextNumber {
@@ -66,7 +65,8 @@ abstract public class GameManager : MonoBehaviour {
 	// 정답 체크 시간 
 	protected const float 	CorrectTime1 = 0.05f;
 	protected const float 	CorrectTime2 = 0.15f;
-	
+
+	private   const float	LogoShowTime = 1.0f;
 	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
 	protected const float 	HeungbuWaitInputTime = 0.2f;	// 흥부전 - 사용자 입력 대기 추가 시간
 	protected const float 	GourdOpenTime = 2.0f;			// 흥부전 - 박이 열리는 시간
@@ -119,14 +119,16 @@ abstract public class GameManager : MonoBehaviour {
 
 		GS = GameState.Logo;
 	}
-	public IEnumerator LogoShowTime () {
+	public IEnumerator LogoDelayTime () {
 		showLogo = false;
-		yield return new WaitForSeconds (2.0f);
+		yield return new WaitForSeconds (LogoShowTime);
 		
 		logoAnimator.SetTrigger ("SetDefault");
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
+
 		gameLogo.SetActive (false);
+
 		GameStart();
 	}
 
@@ -273,7 +275,6 @@ abstract public class GameManager : MonoBehaviour {
 			Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
 		UIGroup[(int)UIGroupList.UIEnd].SetActive (true);
-		UIButton[(int)UIButtonList.FacebookEnd].gameObject.SetActive (FB.IsLoggedIn);
 
 		Time.timeScale = GameSpeedStop;
 		audio.Stop ();
@@ -414,10 +415,6 @@ abstract public class GameManager : MonoBehaviour {
 			if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				UIGroup[(int)UIGroupList.UIEnd].SetActive (false);
 				GameStart();
-				/*} else if (UIButtonList[(int)UIButtonList.FacebookEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				FB.Feed(link:"http://asata.pe.kr",
-				        linkName:"teamSF Game",
-				        linkCaption:"최고 기록 갱신");*/
 			} else if (UIButton[(int)UIButtonList.MainEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				Time.timeScale = GameSpeedNormal;
 				Application.LoadLevel("GameSelect");

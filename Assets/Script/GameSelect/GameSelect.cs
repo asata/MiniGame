@@ -81,9 +81,6 @@ public class GameSelect : MonoBehaviour {
 		UIOption.SetActive (false);
 		UIShop.SetActive (false);
 		UIGameInfo.SetActive (false);
-
-		//FB.Init (OnInitComplete);
-		//buttonFacebook.gameObject.SetActive (false);
 	}
 
 	private void ReadSQL () {
@@ -236,12 +233,6 @@ public class GameSelect : MonoBehaviour {
 				}
 				/*} else if (buttonShop.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					UIShop.SetActive(true);
-				} else if (buttonFacebook.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					if (!FB.IsLoggedIn) {
-						CallFBLogin();
-					} else {
-						FB.Logout();
-					}
 				} else if (buttonEnd.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					Application.Quit(); 
 				}*/
@@ -316,22 +307,4 @@ public class GameSelect : MonoBehaviour {
 			temp.transform.guiText.fontSize = (int)(temp.transform.guiText.fontSize * guiRatio);
 		}
 	}
-	
-	// 페이스북 관련 처리 함수들
-	/*private void OnInitComplete() {
-		buttonFacebook.gameObject.SetActive (true);
-	}*/
-	/*private void CallFBLogin() {
-		FB.Login("email,publish_actions");//, LoginCallback);
-	}*/	
-	/*void LoginCallback(FBResult result) {
-		if (result.Error != null) {
-			//test.text = "Error Response:\n" + result.Error;
-		} else if (!FB.IsLoggedIn) {
-			// 취소 후 다시 로그인을 할려고 하면 에러 발생... 왜???
-			//test.text = "Login cancelled by Player";
-		} else {
-			//test.text = "Login was successful!";
-		}
-	}*/
 }

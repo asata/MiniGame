@@ -83,7 +83,7 @@ public class GameManagerRabbit : GameManager {
 		
 		// 달토끼 이벤트 처리
 		if (GetGameState () == GameState.Logo) {
-			if(showLogo) StartCoroutine("LogoShowTime");
+			if(showLogo) StartCoroutine("LogoDelayTime");
 		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 		} else if (GetGameState() == GameState.Play) {

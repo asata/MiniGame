@@ -35,7 +35,7 @@ public class GameManagerHeungbu : GameManager {
 	void Start () {	
 		ChangeUI ();		
 		LogoShow("Heungbu");
-		GameStart ();
+		if (!showLogo) GameStart ();
 	}
 
 	public override void GameStart() {
@@ -86,7 +86,7 @@ public class GameManagerHeungbu : GameManager {
 		BackKeyTouch ();
 		
 		if (GetGameState () == GameState.Logo) {
-			if(showLogo) StartCoroutine("LogoShowTime");
+			if(showLogo) StartCoroutine("LogoDelayTime");
 		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 

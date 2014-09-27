@@ -64,7 +64,7 @@ abstract public class GameManager : MonoBehaviour {
 	protected const float 	GourdOpenTime = 2.0f;			// 흥부전 - 박이 열리는 시간
 
 	protected const float 	GameSpeedStop 	= 0.0f;
-	protected const float	GameSpeedNormal = 1.0f	
+	protected const float	GameSpeedNormal = 1.0f;	
 
 	// 정답 포인트
 	protected const int 	CorrectPoint1 = 500;

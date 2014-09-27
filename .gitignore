@@ -5,6 +5,11 @@
 /Obj/
 /UnityGenerated/
 /Library/
+/Build/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -19,6 +24,9 @@ ExportedObj/
 /*.user
 /*.unityproj
 /*.booproj
+
+#Unity3D Generated File On Crash Reports
+sysinfo.txt
 
 # ============ #
 # OS generated #

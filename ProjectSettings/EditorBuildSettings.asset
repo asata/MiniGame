@@ -4,21 +4,4 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-<<<<<<< HEAD
-  - enabled: 1
-    path: Assets/Scene/GameSelect.unity
-=======
-  - enabled: 0
-    path: Assets/Scene/ax.unity
->>>>>>> 230a5d880cc2d1dfc5bf4980d5ca2f799fe1ef0c
-  - enabled: 1
-    path: Assets/Scene/GameSelect.unity
-  - enabled: 1
-    path: Assets/Scene/MoonRabbit.unity
-  - enabled: 1
-    path: Assets/Scene/Heungbu.unity
-  - enabled: 0
-    path: Assets/Scene/SunMoon.unity
-  - enabled: 0
-    path: Assets/Scene/ax.unity
+  m_Scenes: []

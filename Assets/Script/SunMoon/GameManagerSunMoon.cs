@@ -118,14 +118,11 @@ public class GameManagerSunMoon : GameManager {
 		if (PlayerPrefs.GetInt("EffectSound") == 0) {
 			AnotherSpaker.SendMessage("SoundPlay");
 		}
-		
-		GameTimeCorrect ();
 	}
 	public void MissCake() {
 		Debug.Log ("Miss Cake");
 		resultMessage.SendMessage("SetImage", 3);
 		gameComboCount = 0;
-		GameTimeIncorrect ();
 	}
 	public void CatchItem(string itemName) {
 		if (itemName == "Stone") {

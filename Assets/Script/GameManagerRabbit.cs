@@ -12,9 +12,7 @@ public class GameManagerRabbit : GameManager {
 	private const int 	MaxGameLife 			= 20;
 	
 	// UI start
-	public GUIText labelTime;
 	public GUITexture resultMessage;
-	//public GUIText labelPlayer;		// 토끼 애니메이션 적용시 제거
 	
 	public RabbitState RS;				// 토끼의 현재 상태
 	public Animator RabbitAnimator;		// 토끼 애니메이터
@@ -34,6 +32,7 @@ public class GameManagerRabbit : GameManager {
 	
 	void Start () {
 		ChangeUI ();
+		StartCoroutine ("LogoShow");
 		GameStart();
 	}
 	
@@ -42,25 +41,19 @@ public class GameManagerRabbit : GameManager {
 		
 		// 필요 정보 초기화
 		RS = RabbitState.Standby;
-		
-		SetMaxGameTime (170);	// 기본 60.0f 변경시 수정
-		
+
 		poundingTimeRabbit = 0;
 		poundingTimePlayer = 0;
 		RabbitHitBeat = new ArrayList ();
-		
-		
+
 		beatIndex = 0;
 		// 비트 파일로부터 정보를 읽어들임
 		if (RabbitBeatList != null)
 			RabbitBeatList.Clear ();
 		RabbitBeatList = LoadBeatFileTime ("Beat/MoonRabbit01");
-		
-		
+
 		audio.clip = backgroundMusic;
-		//audio.loop = true;
 		audio.volume = 1.0f;
-		//console.log( audio.time ());
 
 		if (PlayerPrefs.GetInt("BackgroundSound") != 0) 
 			audio.volume = 0.0f;
@@ -84,18 +77,16 @@ public class GameManagerRabbit : GameManager {
 		if (count == 1) {	
 			TouchHandling (Input.touches[0]);
 		}
+
 		// Back Key Touch
 		BackKeyTouch ();
-		//Debug.Log(audio.time ());
+		
 		// 달토끼 이벤트 처리
 		if (GetGameState () == GameState.Ready) {
 			GameReady();
 		} else if (GetGameState() == GameState.Play) {
 			MoonRabbitEvent();
-			ChangeProgressBar();
-			
-			labelPoint.text = gameScore.ToString();
-			
+
 			if (audio.clip.samples <= audio.timeSamples && beatIndex == -1) {
 				GameEnd(true);
 			}
@@ -149,13 +140,10 @@ public class GameManagerRabbit : GameManager {
 		if (PlayerPrefs.GetInt("EffectSound") == 0) {
 			AnotherSpaker.SendMessage("SoundPlay");
 		}
-		
-		GameTimeCorrect ();
 	}
 	
 	private void Incorrect(int missCount = 1) {
 		gameComboCount = 0;
-		GameTimeIncorrect (missCount);
 	}
 	
 	private void MoonRabbitEvent() {

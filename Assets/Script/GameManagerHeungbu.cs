@@ -98,10 +98,6 @@ public class GameManagerHeungbu : GameManager {
 				GameEnd(true);
 
 			SawEvent ();
-			/*if (!gourdOpen) 
-				ChangeProgressBar();
-
-			labelPoint.text = gameScore.ToString();*/
 		}	
 	}
 

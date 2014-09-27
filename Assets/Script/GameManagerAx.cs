@@ -82,11 +82,7 @@ public class GameManagerAx : GameManager {
 			}
 			
 			showAxTime--;
-			gameTime -= Time.deltaTime;
 		}
-		
-		if (gameTime <= 0) printTime.text = "00.00";
-		else printTime.text = gameTime.ToString ("00.00").Replace(".", ":");
 	}
 
 	public override void GameStart() {

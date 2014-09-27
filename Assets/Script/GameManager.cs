@@ -92,9 +92,7 @@ abstract public class GameManager : MonoBehaviour {
 	protected int correctCount;
 	protected int incorrectCount;
 	protected int missCount;
-	protected float playTime;
-	protected float gameTime;
-	private float MaxGameTime;	
+	protected float playTime;	
 	private bool firstStart = false;
 	private bool readyState = false;	
 	
@@ -135,40 +133,12 @@ abstract public class GameManager : MonoBehaviour {
 		missCount = 0;
 
 		playTime = 0.0f;
-		gameTime = 60.0f;
-		MaxGameTime = 60.0f;
 		readyState = false;
-
-		labelPoint.text = gameScore.ToString();
-		ChangeProgressBar();
 
 		// 게임 기본 설정
 		Time.timeScale = GameSpeedNormal;
 		stateTime = 0f;
 		stateShow.texture = stateTexture [0];
-	}
-
-	// GameTime 관련 함수 삭제 - 달토끼 작업 필요
-	public void SetMaxGameTime(float aTime) {
-		gameTime = aTime;
-		MaxGameTime = aTime;
-	}
-	public float GetMaxGameTime() {
-		return MaxGameTime;
-	}
-	public void GameTimeCorrect(int timeValue = 1) {
-		/*float tTime = gameTime + (gameComboCount * timeValue);
-
-		if (tTime > MaxGameTime)
-			gameTime = MaxGameTime;
-		else 
-			gameTime = tTime;*/
-	}
-	public void GameTimeIncorrect(int missCount = 1) {
-		//gameTime -= missCount;
-
-		//if (gameTime < 0)
-		//	GameEnd ();
 	}
 	                          
 	/////////////////////////////////////////////////////

@@ -19,8 +19,6 @@ public class GameManagerSunMoon : GameManager {
 	
 	public override void GameStart() {
 		Init ();
-		
-		labelPoint.text = gameScore.ToString();
 
 		beatIndex = 0;
 		// 비트 파일로부터 정보를 읽어들임
@@ -53,9 +51,6 @@ public class GameManagerSunMoon : GameManager {
 			if (beatIndex == 0) {
 				StartCoroutine ("WaitThrowCake");
 			}
-			ChangeProgressBar ();
-			
-			labelPoint.text = gameScore.ToString();
 		}	
 	}
 

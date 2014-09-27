@@ -98,6 +98,8 @@ abstract public class GameManager : MonoBehaviour {
 	
 	public AudioClip backgroundMusic;	// 배경음악
 	public GameObject AnotherSpaker;	// 효과음
+	public Texture2D logoImageTexture;
+	public Animator logoAnimator;
 
 	public GameState GetGameState() {
 		return GS;
@@ -106,11 +108,15 @@ abstract public class GameManager : MonoBehaviour {
 		GS = state;
 	}
 
-	public IEnumerator LogoShow () {
-		logoImage.enabled = true;
-		if (logoImage.texture != null) 
-			yield return new WaitForSeconds (1.0f);
-		logoImage.enabled = false;
+	public IEnumerator LogoShow (string gameName) {
+		gameLogo.SetActive (true);
+		gameLogo.guiTexture.texture = logoImageTexture;
+		if (gameName =="MoonRabbit") logoAnimator.SetTrigger ("ShowMoonRabbit");
+		else if (gameName =="Heungbu") logoAnimator.SetTrigger ("ShowHeungbu");
+
+		yield return new WaitForSeconds (1.0f);
+
+		gameLogo.SetActive (false);
 	}
 
 	public void Init() {
@@ -149,10 +155,7 @@ abstract public class GameManager : MonoBehaviour {
 	/// <summary>
 	/// 게임 화면 UI
 	/// </summary>
-	public GUITexture 	logoImage;
-	public GUIText 		labelPoint;			// 점수 출력 라벨
-	public GUITexture 	progressTimeBar;	// 게임 남은 시간 출력
-	private float 		progressBarWidth;
+	public GameObject	gameLogo;
 	public GUITexture 	stateShow;			// 게임 시작시 Ready, Start 출력
 	public Texture2D[] 	stateTexture;		// stateShow에 출력되는 이미지
 	protected float 	stateTime;			// stateShow가 표시될 시간
@@ -378,14 +381,9 @@ abstract public class GameManager : MonoBehaviour {
 				UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 				PauseOn ();
 			}
-		} else if (GS == GameState.Play && touch.phase == TouchPhase.Began) {
-			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
-				PauseOn ();
-			} else {
-				// 해당 게임으로 이동 처리 하도록 함
-				TouchHandlingGame (touch); 
-			}
+		} else if (GS == GameState.Play) {
+			// 해당 게임으로 이동 처리 하도록 함
+			TouchHandlingGame (touch);
 		} else if (GS == GameState.Pause && touch.phase == TouchPhase.Ended) {
 			if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				PauseOff ();

@@ -94,13 +94,21 @@ public class GameManagerRabbit : GameManager {
 	}
 	
 	public override void TouchHandlingGame(Touch touch) {
-		// 달토끼가 입력 대기 상태일때만 터치를 처리
-		if (RS == RabbitState.Wait) {
-			PlayerAnimator.SetTrigger("PlayerPounding");
-			CorrectCheck();
-			
-			preTouchTime = Time.fixedTime;
-			touchCount++;	
+		if (UIButton [(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && touch.phase == TouchPhase.Began) {
+			UIGroup [(int)UIGroupList.UIPause].SendMessage ("ShowPausePanel");
+			PauseOn ();
+		} else {
+			if (touch.phase == TouchPhase.Began) {
+				// 달토끼가 입력 대기 상태일때만 터치를 처리
+				if (RS == RabbitState.Wait) {
+					PlayerAnimator.SetTrigger("PlayerPounding");
+					CorrectCheck();
+					
+					preTouchTime = Time.fixedTime;
+					touchCount++;	
+				}
+			} else if (touch.phase == TouchPhase.Ended) {
+			}
 		}
 	}
 	

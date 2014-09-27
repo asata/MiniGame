@@ -43,7 +43,7 @@ public class GameManagerRabbit : GameManager {
 		// 필요 정보 초기화
 		RS = RabbitState.Standby;
 		
-		SetMaxGameTime (70);	// 기본 60.0f 변경시 수정
+		SetMaxGameTime (170);	// 기본 60.0f 변경시 수정
 		
 		poundingTimeRabbit = 0;
 		poundingTimePlayer = 0;
@@ -60,6 +60,8 @@ public class GameManagerRabbit : GameManager {
 		audio.clip = backgroundMusic;
 		//audio.loop = true;
 		audio.volume = 1.0f;
+		//console.log( audio.time ());
+
 		if (PlayerPrefs.GetInt("BackgroundSound") != 0) 
 			audio.volume = 0.0f;
 		audio.Play ();
@@ -82,10 +84,9 @@ public class GameManagerRabbit : GameManager {
 		if (count == 1) {	
 			TouchHandling (Input.touches[0]);
 		}
-		
 		// Back Key Touch
 		BackKeyTouch ();
-		
+		//Debug.Log(audio.time ());
 		// 달토끼 이벤트 처리
 		if (GetGameState () == GameState.Ready) {
 			GameReady();
@@ -206,8 +207,8 @@ public class GameManagerRabbit : GameManager {
 	// 달토끼 절구질 
 	public IEnumerator WaitPounding() {
 		BeatInfo beat = (BeatInfo) RabbitBeatList[beatIndex];
-		if ((beat.beatTime - audio.time) - 0.08f > 0) {
-			yield return new WaitForSeconds ((beat.beatTime - audio.time) - 0.08f);
+		if ((beat.beatTime - audio.time) - 0.2f > 0) {
+			yield return new WaitForSeconds ((beat.beatTime - audio.time) - 0.2f);
 		} else {
 			audio.time = beat.beatTime;
 		}
@@ -226,12 +227,21 @@ public class GameManagerRabbit : GameManager {
 		if (beat.beatAction == 1) {
 			// 다음 절구질 대기
 			RabbitAnimator.SetTrigger ("Pounding");
+			//RabbitAnimator.SetTrigger("RabbitReady");
 			StartCoroutine ("WaitPounding");
 		} else if (beat.beatAction == 2) {
 			RabbitAnimator.SetTrigger ("PoundingDone");
 			
 			RS = RabbitState.Wait;
 			//lastPoundingTimeRabbit = audio.time;
+			preTouchTime = Time.fixedTime + 0.01f;
+		} else if (beat.beatAction == 3) {
+			RabbitAnimator.SetTrigger("PoundingLow");
+			StartCoroutine ("WaitPounding");
+		} else if (beat.beatAction == 4) {
+			RabbitAnimator.SetTrigger ("PoundingLowDone");
+			
+			RS = RabbitState.Wait;
 			preTouchTime = Time.fixedTime + 0.01f;
 		}
 	}

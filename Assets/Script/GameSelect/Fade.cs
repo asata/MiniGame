@@ -86,18 +86,18 @@ public class Fade : MonoBehaviour {
 		StartCoroutine ("StartButtonEffect");
 	}
 	
-	private void ButtonDown () {
-		buttonList[0].guiTexture.pixelInset = new Rect(buttonList[0].guiTexture.pixelInset.x,
-		                                               buttonList[0].guiTexture.pixelInset.y - ButtonMoveLength,
-		                                               buttonList[0].guiTexture.pixelInset.width,
-		                                               buttonList[0].guiTexture.pixelInset.height);
+	public void ButtonDown (int index = 0) {
+		buttonList[index].guiTexture.pixelInset = new Rect(buttonList[index].guiTexture.pixelInset.x,
+		                                                   buttonList[index].guiTexture.pixelInset.y - ButtonMoveLength,
+		                                                   buttonList[index].guiTexture.pixelInset.width,
+		                                                   buttonList[index].guiTexture.pixelInset.height);
 	}
 	
-	private void ButtonUp () {
-		buttonList[0].guiTexture.pixelInset = new Rect(buttonList[0].guiTexture.pixelInset.x,
-		                                               buttonList[0].guiTexture.pixelInset.y + ButtonMoveLength,
-		                                               buttonList[0].guiTexture.pixelInset.width,
-		                                               buttonList[0].guiTexture.pixelInset.height);
+	public void ButtonUp (int index = 0) {
+		buttonList[index].guiTexture.pixelInset = new Rect(buttonList[index].guiTexture.pixelInset.x,
+		                                               buttonList[index].guiTexture.pixelInset.y + ButtonMoveLength,
+		                                               buttonList[index].guiTexture.pixelInset.width,
+		                                               buttonList[index].guiTexture.pixelInset.height);
 	}
 
 	public void FadeIn () {

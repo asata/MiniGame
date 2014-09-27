@@ -189,7 +189,7 @@ public class GameSelect : MonoBehaviour {
 
 		if (count == 1) {	
 			Touch touch = Input.touches[0];
-			if (!UIOption.activeInHierarchy && !UIShop.activeInHierarchy && touch.phase == TouchPhase.Ended) {
+			if (!UIOption.activeInHierarchy && !UIShop.activeInHierarchy) {
 				for (int i = 0; i < buttonList.Length; i++) {
 					GUITexture buttonTexture = buttonList[i].guiTexture;
 					if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && touch.phase == TouchPhase.Ended) {
@@ -203,17 +203,27 @@ public class GameSelect : MonoBehaviour {
 						SetGameInfo(i);
 					}
 				} 
-
 				if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					GameInfo info = (GameInfo) GameList[resizeIndex];
-					PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
-					PlayerPrefs.SetInt("GameNo", info.no);
-					PlayerPrefs.SetInt("HighScore", info.score);
+					if (touch.phase == TouchPhase.Began) {
+						fade.ButtonDown(0);
+					} else if (touch.phase == TouchPhase.Ended) {
+						fade.ButtonUp(0);
 
-					Application.LoadLevel(buttonList[resizeIndex].name);
+						GameInfo info = (GameInfo) GameList[resizeIndex];
+						PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
+						PlayerPrefs.SetInt("GameNo", info.no);
+						PlayerPrefs.SetInt("HighScore", info.score);
+
+						Application.LoadLevel(buttonList[resizeIndex].name);
+					}
 				} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					fade.FadeIn();
-				} else if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					if (touch.phase == TouchPhase.Began) {
+						fade.ButtonDown(1);
+					} else if (touch.phase == TouchPhase.Ended) {
+						fade.ButtonUp(1);
+						fade.FadeIn();
+					}
+				} else if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && touch.phase == TouchPhase.Ended) {
 					UIOption.SetActive(true);
 					UIOption.SendMessage("ShowOptionPanel"); 
 				}
@@ -242,13 +252,10 @@ public class GameSelect : MonoBehaviour {
 
 	private void SetGameInfo(int gameNo) {
 		fixedTexture [(int) FixedTextureName.Tutorial].texture = tutorialImage [gameNo];
-		//GameInfo info = (GameInfo)GameList [gameNo];
-		//fixedText [(int) FixedTextName.HighScore].text = "최고 기록 : " + info.score;
 	}
 
 	// 배경화면 이동
 	private void BackgroundMove() {
-		//
 		for (int i = 0; i < BackgroundImageBlock.Length; i++) {
 			BackgroundImageBlock[i].transform.Translate(Vector3.left * backgroundMoveSpeed * Time.deltaTime);
 			BackgroundImageBlock[i].transform.Translate(Vector3.down * backgroundMoveSpeed * Time.deltaTime / 2);
@@ -260,8 +267,7 @@ public class GameSelect : MonoBehaviour {
 			Destroy(BackgroundImageBlock[2]);
 			Destroy(BackgroundImageBlock[3]);
 			Destroy(BackgroundImageBlock[6]);
-			//Destroy(BackgroundImageC);
-			//Destroy(BackgroundImageD);
+
 			BackgroundImageBlock[0] = BackgroundImageBlock[4];
 			BackgroundImageBlock[4] = BackgroundImageBlock[8];
 			BackgroundImageBlock[1] = BackgroundImageBlock[5];
@@ -269,15 +275,12 @@ public class GameSelect : MonoBehaviour {
 			BackgroundMake();
 		}
 	}
-	private void BackgroundMake() {
-		
+	private void BackgroundMake() {		
 		BackgroundImageBlock[2] = Instantiate (BackgroundImage, new Vector3 (BackgroundImageBlock[0].transform.position.x + backgroundWidth * 2, BackgroundImageBlock[0].transform.position.y + backgroundHeight * 0, 0), transform.rotation) as GameObject;
 		BackgroundImageBlock[5] = Instantiate (BackgroundImage, new Vector3 (BackgroundImageBlock[0].transform.position.x + backgroundWidth * 2, BackgroundImageBlock[0].transform.position.y + backgroundHeight * 1, 0), transform.rotation) as GameObject;
 		BackgroundImageBlock[6] = Instantiate (BackgroundImage, new Vector3 (BackgroundImageBlock[0].transform.position.x + backgroundWidth * 0, BackgroundImageBlock[0].transform.position.y + backgroundHeight * 2, 0), transform.rotation) as GameObject;
 		BackgroundImageBlock[7] = Instantiate (BackgroundImage, new Vector3 (BackgroundImageBlock[0].transform.position.x + backgroundWidth * 1, BackgroundImageBlock[0].transform.position.y + backgroundHeight * 2, 0), transform.rotation) as GameObject;
 		BackgroundImageBlock[8] = Instantiate (BackgroundImage, new Vector3 (BackgroundImageBlock[0].transform.position.x + backgroundWidth * 2, BackgroundImageBlock[0].transform.position.y + backgroundHeight * 2, 0), transform.rotation) as GameObject;
-		//BackgroundImageB = Instantiate (BackgroundImage, new Vector3 (backgroundWidth, backgroundHeight, 0), transform.rotation) as GameObject;
-		//BackgroundImageD = Instantiate (BackgroundImage, new Vector3 (backgroundWidth, 0, 0), transform.rotation) as GameObject;
 	}
 
 	// UI를 화면에 맞게 조정
@@ -285,7 +288,7 @@ public class GameSelect : MonoBehaviour {
 		// 화면 해상도 처리 시작
 		Screen.SetResolution (Screen.width, Screen.height, true);
 		float sWidth = Screen.width;
-		guiRatio = sWidth / 1600;
+		guiRatio = sWidth / 1600.0f;
 		// 화면 해상도 처리 끝
 		
 		string strTexture = "UITexture";

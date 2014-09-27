@@ -26,6 +26,13 @@ public enum GameState {
 	Pause,
 	End
 }
+public enum ResultMessage {
+	Null = 0,
+	Excellent,
+	Good,
+	Miss
+}
+
 public enum UIGroupList {
 	UIPause = 0,
 	UIEnd
@@ -100,6 +107,14 @@ abstract public class GameManager : MonoBehaviour {
 	public void SetGameState(GameState state) {
 		GS = state;
 	}
+
+	public IEnumerator LogoShow () {
+		logoImage.enabled = true;
+		if (logoImage.texture != null) 
+			yield return new WaitForSeconds (1.0f);
+		logoImage.enabled = false;
+	}
+
 	public void Init() {
 		GS = GameState.Ready;
 		
@@ -132,6 +147,8 @@ abstract public class GameManager : MonoBehaviour {
 		stateTime = 0f;
 		stateShow.texture = stateTexture [0];
 	}
+
+	// GameTime 관련 함수 삭제 - 달토끼 작업 필요
 	public void SetMaxGameTime(float aTime) {
 		gameTime = aTime;
 		MaxGameTime = aTime;
@@ -140,18 +157,18 @@ abstract public class GameManager : MonoBehaviour {
 		return MaxGameTime;
 	}
 	public void GameTimeCorrect(int timeValue = 1) {
-		float tTime = gameTime + (gameComboCount * timeValue);
+		/*float tTime = gameTime + (gameComboCount * timeValue);
 
 		if (tTime > MaxGameTime)
 			gameTime = MaxGameTime;
 		else 
-			gameTime = tTime;
+			gameTime = tTime;*/
 	}
 	public void GameTimeIncorrect(int missCount = 1) {
-		gameTime -= missCount;
+		//gameTime -= missCount;
 
-		if (gameTime < 0)
-			GameEnd ();
+		//if (gameTime < 0)
+		//	GameEnd ();
 	}
 	                          
 	/////////////////////////////////////////////////////
@@ -200,16 +217,14 @@ abstract public class GameManager : MonoBehaviour {
 	private void ChangeUISize() {			
 		// 화면 해상도 처리 시작
 		Screen.SetResolution (Screen.width, Screen.height, true);
-		float guiRatio = Screen.width / 1600;
+		float guiRatio = Screen.width / 1600.0f;
 		// 화면 해상도 처리 끝
 		
 		string strTexture = "UITexture";
 		string strText = "UIText";
-		
-		progressBarWidth = progressTimeBar.transform.guiTexture.pixelInset.width * guiRatio;
+
 		GameObject[] UITextureList = GameObject.FindGameObjectsWithTag (strTexture);
 		foreach (GameObject temp in UITextureList) {
-			//Debug.Log(temp.transform.guiTexture.name +  " : " + temp.transform.guiTexture.enabled.ToString());
 			if (!temp.transform.guiTexture.enabled) continue;
 			temp.transform.guiTexture.pixelInset = new Rect(temp.transform.guiTexture.pixelInset.x * guiRatio,
 			                                                temp.transform.guiTexture.pixelInset.y * guiRatio,
@@ -228,14 +243,14 @@ abstract public class GameManager : MonoBehaviour {
 
 	// 남은 시간 표시
 	public void ChangeProgressBar() {
-		gameTime -= Time.deltaTime;
+	/*	gameTime -= Time.deltaTime;
 		playTime += Time.deltaTime;
 
-		if (gameTime < 0) GameEnd ();
+		//if (gameTime < 0) GameEnd ();
 		progressTimeBar.transform.guiTexture.pixelInset = new Rect(progressTimeBar.transform.guiTexture.pixelInset.x,
 		                                                           progressTimeBar.transform.guiTexture.pixelInset.y,
 		                                                           gameTime / MaxGameTime * progressBarWidth,
-		                                                           progressTimeBar.transform.guiTexture.pixelInset.height);
+		                                                           progressTimeBar.transform.guiTexture.pixelInset.height);*/
 	}
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
@@ -272,7 +287,6 @@ abstract public class GameManager : MonoBehaviour {
 			Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
 		UIGroup[(int)UIGroupList.UIEnd].SetActive (true);
-		// GUITexture 출력
 		UIButton[(int)UIButtonList.FacebookEnd].gameObject.SetActive (FB.IsLoggedIn);
 
 		Time.timeScale = GameSpeedStop;
@@ -390,17 +404,13 @@ abstract public class GameManager : MonoBehaviour {
 
 	public void TouchHandling(Touch touch) {
 		if (GS == GameState.Ready && touch.phase == TouchPhase.Ended) {
-			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
+			if (UIButton [(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				UIGroup [(int)UIGroupList.UIPause].SendMessage ("ShowPausePanel");
 				PauseOn ();
 			}
-		} else if (GS == GameState.Play && touch.phase == TouchPhase.Ended) {
-			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
-				PauseOn ();
-			} else {
-				TouchHandlingGame(touch);
-			}
+		} else if (GS == GameState.Play && touch.phase == TouchPhase.Began) {
+			// 해당 게임으로 이동 처리 하도록 함
+			TouchHandlingGame (touch); 
 		} else if (GS == GameState.Pause && touch.phase == TouchPhase.Ended) {
 			if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				PauseOff ();

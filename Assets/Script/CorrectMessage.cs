@@ -7,7 +7,7 @@ public class CorrectMessage : MonoBehaviour {
 
 	void Update () {
 		if (showTime < 0) {
-			this.guiTexture.texture = messageList[0];
+			this.guiTexture.texture = messageList[(int) ResultMessage.Null];
 		}
 
 		showTime--;

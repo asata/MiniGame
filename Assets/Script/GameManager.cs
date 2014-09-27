@@ -121,17 +121,17 @@ abstract public class GameManager : MonoBehaviour {
 	}
 	public IEnumerator LogoShowTime () {
 		showLogo = false;
-		yield return new WaitForSeconds (1.0f);
+		yield return new WaitForSeconds (2.0f);
 		
 		logoAnimator.SetTrigger ("SetDefault");
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		gameLogo.SetActive (false);
-		GS = GameState.Ready;
+		GameStart();
 	}
 
 	public void Init() {
-		if(!showLogo) GS = GameState.Ready;
+		GS = GameState.Ready;
 		
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;

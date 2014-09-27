@@ -205,10 +205,13 @@ public class GameSelect : MonoBehaviour {
 				} 
 				if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					if (touch.phase == TouchPhase.Began) {
-						fade.ButtonDown(0);
+						for (int i = 0; i < 10; i++) {
+							fade.ButtonDown(0);
+						}
 					} else if (touch.phase == TouchPhase.Ended) {
-						fade.ButtonUp(0);
-
+						for (int i = 0; i < 10; i++) {
+							fade.ButtonUp(0);
+						}
 						GameInfo info = (GameInfo) GameList[resizeIndex];
 						PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
 						PlayerPrefs.SetInt("GameNo", info.no);
@@ -218,9 +221,13 @@ public class GameSelect : MonoBehaviour {
 					}
 				} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					if (touch.phase == TouchPhase.Began) {
-						fade.ButtonDown(1);
+						for (int i = 0; i < 10; i++) {
+							fade.ButtonDown(1);	
+						}
 					} else if (touch.phase == TouchPhase.Ended) {
-						fade.ButtonUp(1);
+						for (int i = 0; i < 10; i++) {
+							fade.ButtonUp(1);
+						}
 						fade.FadeIn();
 					}
 				} else if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && touch.phase == TouchPhase.Ended) {

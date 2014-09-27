@@ -33,7 +33,7 @@ public class GameManagerRabbit : GameManager {
 	void Start () {
 		ChangeUI ();
 		LogoShow("MoonRabbit");
-		GameStart();
+		if (!showLogo) GameStart();
 	}
 	
 	public override void GameStart() {

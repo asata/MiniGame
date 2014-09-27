@@ -285,7 +285,7 @@ Transform:
   m_LocalScale: {x: 0, y: 0, z: 1}
   m_Children: []
   m_Father: {fileID: 268760850}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!131 &91646172
 GUITexture:
   m_ObjectHideFlags: 0
@@ -711,6 +711,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1861922541}
   - {fileID: 1759525869}
   - {fileID: 787600318}
   - {fileID: 91646171}
@@ -747,7 +748,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 268760850}
-  m_RootOrder: 4
+  m_RootOrder: 5
 --- !u!132 &269073282
 GUIText:
   m_ObjectHideFlags: 0
@@ -935,11 +936,11 @@ Transform:
   m_PrefabInternal: {fileID: 2114382026}
   m_GameObject: {fileID: 787600317}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .5, y: .5, z: 0}
+  m_LocalPosition: {x: .5, y: .5, z: 2}
   m_LocalScale: {x: 0, y: 0, z: 1}
   m_Children: []
   m_Father: {fileID: 268760850}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!131 &787600319
 GUITexture:
   m_ObjectHideFlags: 0
@@ -987,7 +988,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 268760850}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!132 &847101437
 GUIText:
   m_ObjectHideFlags: 0
@@ -1135,7 +1136,7 @@ Transform:
   m_LocalScale: {x: 0, y: 0, z: 1}
   m_Children: []
   m_Father: {fileID: 268760850}
-  m_RootOrder: 5
+  m_RootOrder: 6
 --- !u!131 &1026047914
 GUITexture:
   m_ObjectHideFlags: 0
@@ -1746,7 +1747,7 @@ Transform:
   m_LocalScale: {x: 0, y: 0, z: 1}
   m_Children: []
   m_Father: {fileID: 268760850}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!131 &1759525870
 GUITexture:
   m_ObjectHideFlags: 0
@@ -1846,7 +1847,7 @@ Transform:
   m_LocalScale: {x: 0, y: 0, z: 1}
   m_Children: []
   m_Father: {fileID: 268760850}
-  m_RootOrder: 6
+  m_RootOrder: 7
 --- !u!131 &1822428357
 GUITexture:
   m_ObjectHideFlags: 0
@@ -1967,6 +1968,54 @@ GUIText:
     rgba: 4294967295
   m_PixelCorrect: 1
   m_RichText: 1
+--- !u!1 &1861922540
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100016, guid: 7e39b1b6230c09944a709169fa73a68e, type: 2}
+  m_PrefabInternal: {fileID: 2114382026}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1861922541}
+  - 131: {fileID: 1861922542}
+  m_Layer: 0
+  m_Name: GameLogo
+  m_TagString: UITexture
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1861922541
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400016, guid: 7e39b1b6230c09944a709169fa73a68e, type: 2}
+  m_PrefabInternal: {fileID: 2114382026}
+  m_GameObject: {fileID: 1861922540}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: .5, y: .5, z: 20}
+  m_LocalScale: {x: 0, y: 0, z: 1}
+  m_Children: []
+  m_Father: {fileID: 268760850}
+  m_RootOrder: 0
+--- !u!131 &1861922542
+GUITexture:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 13100010, guid: 7e39b1b6230c09944a709169fa73a68e,
+    type: 2}
+  m_PrefabInternal: {fileID: 2114382026}
+  m_GameObject: {fileID: 1861922540}
+  m_Enabled: 1
+  m_Texture: {fileID: 2800000, guid: 6623d828860834656b9100541f1d36d9, type: 3}
+  m_Color: {r: .5, g: .5, b: .5, a: .5}
+  m_PixelInset:
+    serializedVersion: 2
+    x: -800
+    y: -450
+    width: 1600
+    height: 900
+  m_LeftBorder: 0
+  m_RightBorder: 0
+  m_TopBorder: 0
+  m_BottomBorder: 0
 --- !u!1 &1962384052
 GameObject:
   m_ObjectHideFlags: 0
@@ -2045,6 +2094,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backgroundMusic: {fileID: 8300000, guid: 4280c214c4a5dbc43a4994bb378e4ebd, type: 3}
   AnotherSpaker: {fileID: 1215416446}
+  logoImage: {fileID: 1861922542}
   labelPoint: {fileID: 269073282}
   progressTimeBar: {fileID: 1822428357}
   stateShow: {fileID: 787600319}
@@ -2069,7 +2119,6 @@ MonoBehaviour:
   - {fileID: 114865402}
   - {fileID: 1626266101}
   - {fileID: 1698374272}
-  labelTime: {fileID: 847101437}
   resultMessage: {fileID: 1597162481}
   RS: 1
   RabbitAnimator: {fileID: 116159224}
@@ -2207,6 +2256,10 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 13100010, guid: 7e39b1b6230c09944a709169fa73a68e, type: 2}
+      propertyPath: m_Texture
+      value: 
+      objectReference: {fileID: 2800000, guid: 6623d828860834656b9100541f1d36d9, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7e39b1b6230c09944a709169fa73a68e, type: 2}
   m_RootGameObject: {fileID: 268760849}

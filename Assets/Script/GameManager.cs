@@ -373,7 +373,6 @@ abstract public class GameManager : MonoBehaviour {
 	public abstract void TouchHandlingGame (Touch touch);
 
 	public void TouchHandling(Touch touch) {
-
 		if (GS == GameState.Ready && touch.phase == TouchPhase.Ended) {
 			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
@@ -393,6 +392,9 @@ abstract public class GameManager : MonoBehaviour {
 			} else if (UIButton[(int)UIButtonList.RestartPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				UIGroup[(int)UIGroupList.UIPause].SetActive (false);
 				GameStart();
+			} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				Time.timeScale = GameSpeedNormal;
+				Application.LoadLevel("GameSelect");
 			} else {
 				UIGroup[(int)UIGroupList.UIPause].SendMessage("PauseTouchHandling");
 			} 

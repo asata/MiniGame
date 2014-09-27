@@ -34,7 +34,7 @@ public class GameManagerHeungbu : GameManager {
 
 	void Start () {	
 		ChangeUI ();		
-		StartCoroutine ("LogoShow");
+		LogoShow("Heungbu");
 		GameStart ();
 	}
 
@@ -85,7 +85,9 @@ public class GameManagerHeungbu : GameManager {
 		// Back Key Touch
 		BackKeyTouch ();
 		
-		if (GetGameState () == GameState.Ready) {
+		if (GetGameState () == GameState.Logo) {
+			if(showLogo) StartCoroutine("LogoShowTime");
+		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 
 			// 게임 시작시 초기 설정

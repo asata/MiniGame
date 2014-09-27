@@ -32,13 +32,13 @@ public class GameManagerRabbit : GameManager {
 	
 	void Start () {
 		ChangeUI ();
-		StartCoroutine ("LogoShow");
+		LogoShow("MoonRabbit");
 		GameStart();
 	}
 	
 	public override void GameStart() {
-		Init ();
-		
+		Init ();		
+
 		// 필요 정보 초기화
 		RS = RabbitState.Standby;
 
@@ -82,7 +82,9 @@ public class GameManagerRabbit : GameManager {
 		BackKeyTouch ();
 		
 		// 달토끼 이벤트 처리
-		if (GetGameState () == GameState.Ready) {
+		if (GetGameState () == GameState.Logo) {
+			if(showLogo) StartCoroutine("LogoShowTime");
+		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 		} else if (GetGameState() == GameState.Play) {
 			MoonRabbitEvent();
@@ -134,8 +136,6 @@ public class GameManagerRabbit : GameManager {
 			incorrectCount++;
 			Incorrect();
 		}
-		
-		//labelTime.text = compareTime.ToString();
 	}
 	
 	private void Correct() {

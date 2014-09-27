@@ -20,7 +20,7 @@ public class BeatInfo {
 }
 
 public enum GameState {
-	//Tutorial,
+	Logo,
 	Ready,
 	Play,
 	Pause,
@@ -100,6 +100,7 @@ abstract public class GameManager : MonoBehaviour {
 	public GameObject AnotherSpaker;	// 효과음
 	public Texture2D logoImageTexture;
 	public Animator logoAnimator;
+	protected bool showLogo = true;
 
 	public GameState GetGameState() {
 		return GS;
@@ -107,20 +108,30 @@ abstract public class GameManager : MonoBehaviour {
 	public void SetGameState(GameState state) {
 		GS = state;
 	}
-
-	public IEnumerator LogoShow (string gameName) {
+	
+	public void LogoShow (string gameName) {
 		gameLogo.SetActive (true);
-		gameLogo.guiTexture.texture = logoImageTexture;
-		if (gameName =="MoonRabbit") logoAnimator.SetTrigger ("ShowMoonRabbit");
-		else if (gameName =="Heungbu") logoAnimator.SetTrigger ("ShowHeungbu");
+		if (gameName == "MoonRabbit") {
+			logoAnimator.SetBool ("StartRabbitAnimation", true);
+		} else if (gameName == "Heungbu") {
+			logoAnimator.SetBool ("StartHeungbuAnimation", true);
+		}
 
+		GS = GameState.Logo;
+	}
+	public IEnumerator LogoShowTime () {
+		showLogo = false;
 		yield return new WaitForSeconds (1.0f);
-
+		
+		logoAnimator.SetTrigger ("SetDefault");
+		logoAnimator.SetBool ("StartRabbitAnimation", false);
+		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		gameLogo.SetActive (false);
+		GS = GameState.Ready;
 	}
 
 	public void Init() {
-		GS = GameState.Ready;
+		if(!showLogo) GS = GameState.Ready;
 		
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -144,7 +155,6 @@ abstract public class GameManager : MonoBehaviour {
 		// 게임 기본 설정
 		Time.timeScale = GameSpeedNormal;
 		stateTime = 0f;
-		stateShow.texture = stateTexture [0];
 	}
 	                          
 	/////////////////////////////////////////////////////
@@ -165,15 +175,18 @@ abstract public class GameManager : MonoBehaviour {
 	public GUIText[] 	labelGameEnd;		// 게임 종료시 출력될 점수들
 
 	public void GameReady () {
-		if(stateTime > ShowStartTime) {
+		if (stateTime > ShowStartTime && GS == GameState.Ready) {
 			readyState = true;
-			SetGameState(GameState.Play);
+			SetGameState (GameState.Play);
 			stateShow.texture = stateTexture [2];
-		} else if(stateTime > ShowReadyTime) {
+		} else if (stateTime > ShowReadyTime && GS == GameState.Ready) {
 			stateShow.texture = stateTexture [1];
-		} 
+		} else {
+			stateShow.texture = stateTexture [0];
+		}
 
-		stateTime += Time.deltaTime;
+		if(GS == GameState.Ready)
+			stateTime += Time.deltaTime;
 	}
 
 	public void ChangeUI () {

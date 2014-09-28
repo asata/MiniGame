@@ -237,6 +237,7 @@ abstract public class GameManager : MonoBehaviour {
 	/////////////////////////////////////////////////////
 
 	public Animator GameEndResultAnimator;
+	public GUIText[] GameEndLabel;
 
 	/// <summary>
 	/// 게임 일시 정지, 해제, 종료등 게임 진행 UI 관련
@@ -299,6 +300,18 @@ abstract public class GameManager : MonoBehaviour {
 			}
 		}
 
+		string gameName = "Game Name";
+		string gameComment = "가 실력에 반했다는데???";	// 등급에 따라 메시지 변경?
+		if (gameNo == 1) {
+			gameName = "달토끼 방아찧기";
+			gameComment = "달토끼" + gameComment;
+		} else if (gameNo == 2) {
+			gameName = "흥부네 박타기";
+			gameComment = "흥부네" + gameComment;
+		}
+
+		GameEndLabel [0].text = gameName;
+		GameEndLabel [1].text = gameComment;
 		GameEndResultAnimator.SetBool ("GameReslut", true);
 
 		// UI에 게임 기록 출력

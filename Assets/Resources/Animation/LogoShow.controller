@@ -179,7 +179,7 @@ State:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MoonRabbit
-  m_Speed: 1
+  m_Speed: .300000012
   m_CycleOffset: 0
   m_Motions:
   - {fileID: 7400000, guid: bd60252cc0c73e5489f94f3bb6531607, type: 2}
@@ -194,7 +194,7 @@ State:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Heungbu
-  m_Speed: 1
+  m_Speed: .300000012
   m_CycleOffset: 0
   m_Motions:
   - {fileID: 7400000, guid: 522b8e7a026ee9c42803d8cca46f16c8, type: 2}

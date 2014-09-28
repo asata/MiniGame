@@ -41,13 +41,13 @@ Transition:
   m_Name: 
   m_SrcState: {fileID: 110200000}
   m_DstState: {fileID: 110246314}
-  m_TransitionDuration: .004223892
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_Conditions:
   - m_ConditionMode: 5
     m_ConditionEvent: PlayerPounding
     m_EventTreshold: 0
-    m_ExitTime: .995776117
+    m_ExitTime: 1
   m_Atomic: 1
   m_Solo: 0
   m_Mute: 0
@@ -78,7 +78,7 @@ State:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: player_hand_pounding
-  m_Speed: 3
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Motions:
   - {fileID: 7400000, guid: cbf7cf040edc0cf408917afab7b1377f, type: 2}

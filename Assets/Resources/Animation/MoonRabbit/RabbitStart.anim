@@ -19,31 +19,31 @@ AnimationClip:
   - curve:
     - time: 0
       value: {fileID: 21300000, guid: 27215b3eefe6d3c42b6ec4195de1e011, type: 3}
-    - time: .0833333358
+    - time: .0166666675
       value: {fileID: 21300000, guid: b5163161d7bc82444ab608635d923a21, type: 3}
-    - time: .166666672
+    - time: .0333333351
       value: {fileID: 21300000, guid: 4e1a1cd72e0401f4b9d29d5940f06f66, type: 3}
-    - time: .25
+    - time: .0500000007
       value: {fileID: 21300000, guid: c27daf5903dc9844fad5fa990f1f5bea, type: 3}
-    - time: .333333343
+    - time: .0666666701
       value: {fileID: 21300000, guid: fa388bd0523c9eb4f8adacfa551edc99, type: 3}
-    - time: .416666657
+    - time: .0833333358
       value: {fileID: 21300000, guid: c887a9452d0806042a9c51e9489035c6, type: 3}
-    - time: .5
+    - time: .100000001
       value: {fileID: 21300000, guid: 106741d0d3aed314f86285bee24e5e57, type: 3}
-    - time: .583333313
+    - time: .116666667
       value: {fileID: 21300000, guid: 2c4aecf63bdff11428b24fd44e98fd1a, type: 3}
-    - time: .666666687
+    - time: .13333334
       value: {fileID: 21300000, guid: dc0eed3a6e23b09469f9af628c87c771, type: 3}
-    - time: .75
+    - time: .150000006
       value: {fileID: 21300000, guid: 70bc073bf9a7f4e4baadfbc13129f352, type: 3}
-    - time: .833333313
+    - time: .166666672
       value: {fileID: 21300000, guid: 8c8bf688290c1424495a5677679965b7, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
-  m_SampleRate: 12
+  m_SampleRate: 60
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -71,7 +71,7 @@ AnimationClip:
   m_AnimationClipSettings:
     serializedVersion: 2
     m_StartTime: 0
-    m_StopTime: .916666687
+    m_StopTime: .183333337
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -87,4 +87,11 @@ AnimationClip:
     m_Mirror: 0
   m_EditorCurves: []
   m_EulerEditorCurves: []
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: 
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

@@ -45,7 +45,7 @@ public class GameSelect : MonoBehaviour {
 	private GameObject BackgroundImageB;
 	private GameObject BackgroundImageC;
 	private GameObject BackgroundImageD;
-	private const float backgroundMoveSpeed = 0.5f;
+	private const float backgroundMoveSpeed = 3f;
 	private const float backgroundWidth = 20;
 	private const float backgroundHeight = 10;
 	private const int DatabaseVersion = 1;

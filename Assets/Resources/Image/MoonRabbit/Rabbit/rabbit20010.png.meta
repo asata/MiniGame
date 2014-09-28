@@ -1,9 +1,7 @@
 fileFormatVersion: 2
-guid: 5e95d9101d7cb644a9aa7c1eabb1d410
+guid: eca520195257b40318caa2b9787e07f0
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: rabbit20000
-    21300002: rabbit20010
+  fileIDToRecycleName: {}
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0

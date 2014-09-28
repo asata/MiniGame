@@ -96,7 +96,7 @@ public class GameManagerHeungbu : GameManager {
 				StartCoroutine("SawMoveFirst");
 			}
 		} else if (GetGameState() == GameState.Play) {
-			if (audio.clip.samples <= audio.timeSamples && beatIndex == -1) 
+			if (audio.clip.samples <= audio.timeSamples && beatIndex == -1)
 				GameEnd(true);
 
 			SawEvent ();

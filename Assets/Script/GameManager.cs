@@ -98,7 +98,6 @@ abstract public class GameManager : MonoBehaviour {
 	
 	public AudioClip backgroundMusic;	// 배경음악
 	public GameObject AnotherSpaker;	// 효과음
-	public Texture2D logoImageTexture;
 	public Animator logoAnimator;
 	protected bool showLogo = true;
 
@@ -134,7 +133,6 @@ abstract public class GameManager : MonoBehaviour {
 
 		gameLogo.SetActive (false);
 		GameStart();
-		UIButton [(int)UIButtonList.Pause].enabled = true;
 	}
 
 	public void Init() {
@@ -160,6 +158,7 @@ abstract public class GameManager : MonoBehaviour {
 		readyState = false;
 
 		// 게임 기본 설정
+		UIButton [(int)UIButtonList.Pause].enabled = true;
 		Time.timeScale = GameSpeedNormal;
 		stateTime = 0f;
 	}
@@ -237,7 +236,7 @@ abstract public class GameManager : MonoBehaviour {
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
 
-
+	public Animator GameEndResultAnimator;
 
 	/// <summary>
 	/// 게임 일시 정지, 해제, 종료등 게임 진행 UI 관련
@@ -264,6 +263,7 @@ abstract public class GameManager : MonoBehaviour {
 		UIGroup[(int)UIGroupList.UIPause].SetActive (false);
 	}
 	public void GameEnd(bool beatEnd = false) {		
+		UIButton [(int)UIButtonList.Pause].enabled = false;
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
@@ -289,8 +289,7 @@ abstract public class GameManager : MonoBehaviour {
 			UpdateHighScore(gameNo, highScore, grade);
 
 			// 다음 열 게임이 있는지 검사
-			// 있을 경우 Open한지 검사 후 열도록 함
-			// 가짜버튼도 있어서 제한을 걸어야 함
+			// 있을 경우 Open한지 검사 후 열도록 함, 가짜버튼도 있어서 제한을 걸어야 함
 			if (highScore >= NextGameOpenScore && gameNo < GameCount) {
 				bool newGameOpen = NextGameOpen(gameNo);			
 				if(newGameOpen) {
@@ -299,6 +298,8 @@ abstract public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+
+		GameEndResultAnimator.SetBool ("GameReslut", true);
 
 		// UI에 게임 기록 출력
 		//labelGameEnd [(int)GameEndTextNumber.TotalScore].text = gameScore.ToString();

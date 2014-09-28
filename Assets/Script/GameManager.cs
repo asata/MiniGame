@@ -111,12 +111,16 @@ abstract public class GameManager : MonoBehaviour {
 	
 	public void LogoShow (string gameName) {
 		gameLogo.SetActive (true);
+		Material mt = Resources.Load ("Material/BackGroundLogoMoonRabbit", typeof(Material)) as Material;
+
 		if (gameName == "MoonRabbit") {
 			logoAnimator.SetBool ("StartRabbitAnimation", true);
 		} else if (gameName == "Heungbu") {
 			logoAnimator.SetBool ("StartHeungbuAnimation", true);
+			mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
 		}
-
+		
+		gameLogo.renderer.material = mt;
 		GS = GameState.Logo;
 	}
 	public IEnumerator LogoDelayTime () {
@@ -175,7 +179,7 @@ abstract public class GameManager : MonoBehaviour {
 
 	public GameObject[] UIGroup;
 	public GUITexture[] UIButton;
-	public GUIText[] 	labelGameEnd;		// 게임 종료시 출력될 점수들
+	//public GUIText[] 	labelGameEnd;		// 게임 종료시 출력될 점수들
 
 	public void GameReady () {
 		if (stateTime > ShowStartTime && GS == GameState.Ready) {
@@ -297,11 +301,11 @@ abstract public class GameManager : MonoBehaviour {
 		}
 
 		// UI에 게임 기록 출력
-		labelGameEnd [(int)GameEndTextNumber.TotalScore].text = gameScore.ToString();
-		labelGameEnd [(int)GameEndTextNumber.PlayTime].text = playTime.ToString("00");	// 초단위로 출력함, 분으로 변환시 수정 필요
-		labelGameEnd [(int)GameEndTextNumber.MaxCombo].text = gameMaxCombo.ToString();
-		labelGameEnd [(int)GameEndTextNumber.HighScore].text = highScore.ToString ();
-		labelGameEnd [(int)GameEndTextNumber.Grade].text = grade;
+		//labelGameEnd [(int)GameEndTextNumber.TotalScore].text = gameScore.ToString();
+		//labelGameEnd [(int)GameEndTextNumber.PlayTime].text = playTime.ToString("00");	// 초단위로 출력함, 분으로 변환시 수정 필요
+		//labelGameEnd [(int)GameEndTextNumber.MaxCombo].text = gameMaxCombo.ToString();
+		//labelGameEnd [(int)GameEndTextNumber.HighScore].text = highScore.ToString ();
+		//labelGameEnd [(int)GameEndTextNumber.Grade].text = grade;
 	}
 
 	private void UpdateHighScore (int gameNo, int highScore, string grade) {		

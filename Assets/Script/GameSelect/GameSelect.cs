@@ -75,6 +75,7 @@ public class GameSelect : MonoBehaviour {
 		UIGameInfo.SetActive (true);
 
 		ChangeUISize ();
+		fade.SetGUIRatio (guiRatio);
 		fade.HideInfo ();
 		UIShop.SendMessage ("SetGUIRatio", guiRatio);
 
@@ -164,6 +165,7 @@ public class GameSelect : MonoBehaviour {
 		}
 	}
 
+	private int touchButtonIndex = -1;
 	void Update () {
 		int count = Input.touchCount;	
 
@@ -187,49 +189,53 @@ public class GameSelect : MonoBehaviour {
 		if (count == 1) {	
 			Touch touch = Input.touches[0];
 			if (!UIOption.activeInHierarchy && !UIShop.activeInHierarchy) {
-				for (int i = 0; i < buttonList.Length; i++) {
-					GUITexture buttonTexture = buttonList[i].guiTexture;
-					if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && touch.phase == TouchPhase.Ended) {
-						if (buttonTexture.texture == buttonImage[0]) continue;
-
-						if (fade != null)
-							fade.FadeOut();
-						
-						resizeIndex = i;
-						UIGameInfo.SetActive(true);
-						SetGameInfo(i);
-					}
-				} 
-				if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				if (UIGameInfo.activeInHierarchy) {
 					if (touch.phase == TouchPhase.Began) {
-						for (int i = 0; i < 10; i++) {
-							fade.ButtonDown(0);
+						if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+							fade.ButtonDown(0, 10);	
+							touchButtonIndex = 0;
+						} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+							fade.ButtonDown(1, 10);
+							touchButtonIndex = 1;
 						}
 					} else if (touch.phase == TouchPhase.Ended) {
-						for (int i = 0; i < 10; i++) {
-							fade.ButtonUp(0);
-						}
-						GameInfo info = (GameInfo) GameList[resizeIndex];
-						PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
-						PlayerPrefs.SetInt("GameNo", info.no);
-						PlayerPrefs.SetInt("HighScore", info.score);
+						if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+							fade.ButtonUp(0, 10);
 
-						Application.LoadLevel(buttonList[resizeIndex].name);
-					}
-				} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					if (touch.phase == TouchPhase.Began) {
-						for (int i = 0; i < 10; i++) {
-							fade.ButtonDown(1);	
+							GameInfo info = (GameInfo) GameList[resizeIndex];
+							PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
+							PlayerPrefs.SetInt("GameNo", info.no);
+							PlayerPrefs.SetInt("HighScore", info.score);
+							
+							Application.LoadLevel(buttonList[resizeIndex].name);					
+						} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+							fade.ButtonUp(1, 10);
+							fade.FadeIn();
+						} else if (touchButtonIndex != -1) {
+							fade.ButtonUp(touchButtonIndex, 10);
 						}
-					} else if (touch.phase == TouchPhase.Ended) {
-						for (int i = 0; i < 10; i++) {
-							fade.ButtonUp(1);
+
+						touchButtonIndex = -1;
+					} 
+				} else {
+					for (int i = 0; i < buttonList.Length; i++) {
+						GUITexture buttonTexture = buttonList[i].guiTexture;
+						if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+							if (buttonTexture.texture == buttonImage[0]) continue;
+
+							if (fade != null)
+								fade.FadeOut();
+							
+							resizeIndex = i;
+							UIGameInfo.SetActive(true);
+							SetGameInfo(i);
 						}
-						fade.FadeIn();
+					} 
+
+					if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+						UIOption.SetActive(true);
+						UIOption.SendMessage("ShowOptionPanel"); 
 					}
-				} else if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && touch.phase == TouchPhase.Ended) {
-					UIOption.SetActive(true);
-					UIOption.SendMessage("ShowOptionPanel"); 
 				}
 				/*} else if (buttonShop.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					UIShop.SetActive(true);

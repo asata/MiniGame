@@ -516,8 +516,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textureOn: {fileID: 2800000, guid: 5847492a635acc24580e3d7ad1e926fc, type: 3}
   textureOff: {fileID: 2800000, guid: 6279b7a034e12cb49b50ddbfdceee5b1, type: 3}
-  buttonBackgroundSound: {fileID: 1692336058}
-  buttonEffectSound: {fileID: 128364118}
   buttonOptionClose: {fileID: 873950512}
 --- !u!1 &780931121
 GameObject:

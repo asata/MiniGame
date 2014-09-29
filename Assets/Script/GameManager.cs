@@ -43,7 +43,8 @@ public enum UIButtonList {
 	RestartPause,
 	MainPause,
 	RestartEnd,
-	MainEnd
+	MainEnd,
+	ShadowPause
 }
 // 게임 종료시 나타날 GUIText Array
 public enum GameEndTextNumber {
@@ -86,6 +87,7 @@ abstract public class GameManager : MonoBehaviour {
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
 	private GameState GS;
+	private float guiRatio = 1.0f;
 	protected int gameScore;
 	protected int gameComboCount;
 	protected int gameMaxCombo;
@@ -125,6 +127,7 @@ abstract public class GameManager : MonoBehaviour {
 	public IEnumerator LogoDelayTime () {
 		showLogo = false;
 		UIButton [(int)UIButtonList.Pause].enabled = false;
+		UIButton [(int)UIButtonList.ShadowPause].enabled = false;
 		yield return new WaitForSeconds (LogoShowTime);
 
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
@@ -159,6 +162,7 @@ abstract public class GameManager : MonoBehaviour {
 
 		// 게임 기본 설정
 		UIButton [(int)UIButtonList.Pause].enabled = true;
+		UIButton [(int)UIButtonList.ShadowPause].enabled = true;
 		Time.timeScale = GameSpeedNormal;
 		stateTime = 0f;
 	}
@@ -213,7 +217,7 @@ abstract public class GameManager : MonoBehaviour {
 	private void ChangeUISize() {			
 		// 화면 해상도 처리 시작
 		Screen.SetResolution (Screen.width, Screen.height, true);
-		float guiRatio = Screen.width / 1600.0f;
+		guiRatio = Screen.width / 1600.0f;
 		// 화면 해상도 처리 끝
 		
 		string strTexture = "UITexture";
@@ -269,6 +273,8 @@ abstract public class GameManager : MonoBehaviour {
 	}
 	public void GameEnd(bool beatEnd = false) {		
 		UIButton [(int)UIButtonList.Pause].enabled = false;
+		UIButton [(int)UIButtonList.ShadowPause].enabled = false;
+
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
@@ -384,7 +390,7 @@ abstract public class GameManager : MonoBehaviour {
 	public void BackKeyTouch () {
 		if (Application.platform == RuntimePlatform.Android && Input.GetKeyUp (KeyCode.Escape)) {
 			if (GS == GameState.Ready || GS == GameState.Play) {
-				UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
+				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 				PauseOn ();
 			} else if (GS == GameState.Pause) {
 				PauseOff ();
@@ -399,38 +405,103 @@ abstract public class GameManager : MonoBehaviour {
 	public abstract void GameStart ();		// 게임 시작시 초기 설정
 	public abstract void ResetGame ();	
 	public abstract void TouchHandlingGame (Touch touch);
+	private int touchButtonIndex = -1;
 
 	public void TouchHandling(Touch touch) {
-		if (GS == GameState.Ready && touch.phase == TouchPhase.Ended) {
+		if (GS == GameState.Ready) {
 			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
-				PauseOn ();
+				if (touch.phase == TouchPhase.Began) {
+					ButtonDown(UIButton[(int)UIButtonList.Pause]);					
+					//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
+					PauseOn ();
+				}
 			}
 		} else if (GS == GameState.Play) {
-			// 해당 게임으로 이동 처리 하도록 함
-			TouchHandlingGame (touch);
-		} else if (GS == GameState.Pause && touch.phase == TouchPhase.Ended) {
-			if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				PauseOff ();
-			} else if (UIButton[(int)UIButtonList.RestartPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				UIGroup[(int)UIGroupList.UIPause].SetActive (false);
-				GameStart();
-			} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				Time.timeScale = GameSpeedNormal;
-				Application.LoadLevel("GameSelect");
+			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				if (touch.phase == TouchPhase.Began) {
+					ButtonDown(UIButton[(int)UIButtonList.Pause]);				
+					//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
+					PauseOn ();
+				}
 			} else {
-				UIGroup[(int)UIGroupList.UIPause].SendMessage("PauseTouchHandling");
-			} 
-		} else if (GS == GameState.End && touch.phase == TouchPhase.Ended) {
+				TouchHandlingGame (touch);
+			}
+		} else if (GS == GameState.Pause) {// && touch.phase == TouchPhase.Ended) {
+			if (touch.phase == TouchPhase.Began) {
+				if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					touchButtonIndex = (int)UIButtonList.UnPause;
+				} else if (UIButton[(int)UIButtonList.RestartPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					touchButtonIndex = (int)UIButtonList.RestartPause;
+				} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					touchButtonIndex = (int)UIButtonList.MainPause;
+				}
+				
+				if (touchButtonIndex != -1) ButtonDown(UIButton[touchButtonIndex]);
+			} else if (touch.phase == TouchPhase.Ended) {
+				if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					ButtonUp(UIButton[(int)UIButtonList.UnPause]);
+					
+					touchButtonIndex = -1;
+					PauseOff ();
+					ButtonUp(UIButton[(int)UIButtonList.Pause]);
+				} else if (UIButton[(int)UIButtonList.RestartPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					ButtonUp(UIButton[(int)UIButtonList.RestartPause]);
+					
+					UIGroup[(int)UIGroupList.UIPause].SetActive (false);
+					GameStart();
+				} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					ButtonUp(UIButton[(int)UIButtonList.MainPause]);
+					
+					Time.timeScale = GameSpeedNormal;
+					Application.LoadLevel("GameSelect");
+				} else if (touchButtonIndex != -1) {
+					ButtonUp(UIButton[touchButtonIndex]);
+				}
+
+				touchButtonIndex = -1;
+			}
+		} else if (GS == GameState.End) {
 			// 게임 종료 상태일 경우
-			if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				UIGroup[(int)UIGroupList.UIEnd].SetActive (false);
-				GameStart();
-			} else if (UIButton[(int)UIButtonList.MainEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-				Time.timeScale = GameSpeedNormal;
-				Application.LoadLevel("GameSelect");
+			if (touch.phase == TouchPhase.Began) {
+				if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					touchButtonIndex = (int)UIButtonList.RestartEnd;
+				} else if (UIButton[(int)UIButtonList.MainEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					touchButtonIndex = (int)UIButtonList.MainEnd;
+				}
+
+				if (touchButtonIndex != -1) ButtonDown(UIButton[touchButtonIndex]);
+			} else if (touch.phase == TouchPhase.Ended) {
+				if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					ButtonUp(UIButton[(int)UIButtonList.RestartEnd]);
+					
+					UIGroup[(int)UIGroupList.UIEnd].SetActive (false);
+					GameStart();
+				} else if (UIButton[(int)UIButtonList.MainEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					ButtonUp(UIButton[(int)UIButtonList.MainEnd]);
+					
+					Time.timeScale = GameSpeedNormal;
+					Application.LoadLevel("GameSelect");
+				} else if (touchButtonIndex != -1) {
+					ButtonUp(UIButton[touchButtonIndex]);
+				}
+				
+				touchButtonIndex = -1;
 			} 
 		}
+	}
+	
+	private void ButtonDown(GUITexture button) {
+		button.guiTexture.pixelInset = new Rect(button.guiTexture.pixelInset.x,
+		                                        button.guiTexture.pixelInset.y - (10 * guiRatio),
+		                                        button.guiTexture.pixelInset.width,
+		                                        button.guiTexture.pixelInset.height);
+	}
+	
+	private void ButtonUp(GUITexture button) {
+		button.guiTexture.pixelInset = new Rect(button.guiTexture.pixelInset.x,
+		                                        button.guiTexture.pixelInset.y + (10 * guiRatio),
+		                                        button.guiTexture.pixelInset.width,
+		                                        button.guiTexture.pixelInset.height);
 	}
 
 	// CSV 파일 읽기 관련 처리

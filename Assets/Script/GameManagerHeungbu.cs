@@ -242,26 +242,20 @@ public class GameManagerHeungbu : GameManager {
 	}
 
 	public override void TouchHandlingGame(Touch touch) {
-		if (UIButton [(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && 
-		    touch.phase == TouchPhase.Began) {
-			UIGroup [(int)UIGroupList.UIPause].SendMessage ("ShowPausePanel");
-			PauseOn ();
-		} else {
-			if (touch.phase == TouchPhase.Began) {
-			} else if (touch.phase == TouchPhase.Ended) {
-				if (gourdTime == 0.0f && touchCount == 0) {
-				// Saw moving animation play
-					touchTime = Time.fixedTime;
-				} else if (gourdTime > 0.0f && touchCount == 0) {
-					// Saw player input wait
-					touchTime = Time.fixedTime;
-					CorrectCheck ();
-				} else if (gourdTime == 0.0f && touchCount > 0 || gourdTime > 0.0f && touchCount > 0) {
-					// 이전 터치 값들로 정답을 판별함. 다른 값들은 무시 처리함.
-				}
-
-				touchCount++;	
+		if (touch.phase == TouchPhase.Began) {
+		} else if (touch.phase == TouchPhase.Ended) {
+			if (gourdTime == 0.0f && touchCount == 0) {
+			// Saw moving animation play
+				touchTime = Time.fixedTime;
+			} else if (gourdTime > 0.0f && touchCount == 0) {
+				// Saw player input wait
+				touchTime = Time.fixedTime;
+				CorrectCheck ();
+			} else if (gourdTime == 0.0f && touchCount > 0 || gourdTime > 0.0f && touchCount > 0) {
+				// 이전 터치 값들로 정답을 판별함. 다른 값들은 무시 처리함.
 			}
+
+			touchCount++;	
 		}
 	}
 

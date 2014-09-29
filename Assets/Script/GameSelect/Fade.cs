@@ -8,6 +8,7 @@ public class Fade : MonoBehaviour {
 	float _time;
 	public bool FadeIn_ing = false;
 	public bool FadeOut_ing = false;
+	private float guiRatio = 1.0f;
 
 	public GameObject infoGroup;
 	public GUITexture[] buttonList;
@@ -15,10 +16,14 @@ public class Fade : MonoBehaviour {
 	private bool FadeOutComplete = false;
 	private const float ShowGameInfoAlpha = 0.6f;
 	private const float ShowGameInfoButton = 0.75f;
-	private const float ButtonMoveLength = 0.5f;
+	private const float ButtonMoveLength = 0.8f;
 	private const float ButtonReEffectTime = 10.0f;
 	private const float ButtonMoveWaitTime = 0.01f;
 	private const float ButtonWaitTime = 0.1f;
+	
+	public void SetGUIRatio(float aRatio) {
+		guiRatio = aRatio;
+	}
 
 	void Start () {
 		Black_screen = GetComponent<GUITexture> ();
@@ -86,18 +91,18 @@ public class Fade : MonoBehaviour {
 		StartCoroutine ("StartButtonEffect");
 	}
 	
-	public void ButtonDown (int index = 0) {
+	public void ButtonDown (int index = 0, int count = 1) {
 		buttonList[index].guiTexture.pixelInset = new Rect(buttonList[index].guiTexture.pixelInset.x,
-		                                                   buttonList[index].guiTexture.pixelInset.y - ButtonMoveLength,
+		                                                   buttonList[index].guiTexture.pixelInset.y - (ButtonMoveLength * guiRatio * count),
 		                                                   buttonList[index].guiTexture.pixelInset.width,
 		                                                   buttonList[index].guiTexture.pixelInset.height);
 	}
 	
-	public void ButtonUp (int index = 0) {
+	public void ButtonUp (int index = 0, int count = 1) {
 		buttonList[index].guiTexture.pixelInset = new Rect(buttonList[index].guiTexture.pixelInset.x,
-		                                               buttonList[index].guiTexture.pixelInset.y + ButtonMoveLength,
-		                                               buttonList[index].guiTexture.pixelInset.width,
-		                                               buttonList[index].guiTexture.pixelInset.height);
+		                                                   buttonList[index].guiTexture.pixelInset.y + (ButtonMoveLength * guiRatio * count),
+		                                                   buttonList[index].guiTexture.pixelInset.width,
+		                                                   buttonList[index].guiTexture.pixelInset.height);
 	}
 
 	public void FadeIn () {

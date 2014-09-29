@@ -13,8 +13,8 @@ public class OptionControl : MonoBehaviour {
 	public Texture2D textureOn;
 	public Texture2D textureOff;
 	
-	//public GUITexture buttonBackgroundSound;
-	//public GUITexture buttonEffectSound;
+	public GUITexture buttonBackgroundSound;
+	public GUITexture buttonEffectSound;
 	public GUITexture buttonOptionClose;
 
 	void Start() {
@@ -24,8 +24,8 @@ public class OptionControl : MonoBehaviour {
 
 	// 옵션 패널을 열 때 초기값 설정
 	void ShowOptionPanel() {
-		//SetButtonTexture(buttonBackgroundSound, PlayerPrefs.GetInt("BackgroundSound"));
-		//SetButtonTexture(buttonEffectSound, PlayerPrefs.GetInt("EffectSound"));
+		SetButtonTexture(buttonBackgroundSound, PlayerPrefs.GetInt("BackgroundSound"));
+		SetButtonTexture(buttonEffectSound, PlayerPrefs.GetInt("EffectSound"));
 	}
 
 	// 버튼별 On, Off 이미지 출력
@@ -52,12 +52,11 @@ public class OptionControl : MonoBehaviour {
 	}
 
 	void OptionTouchHandling() {
-		//if (buttonBackgroundSound.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-		//	ChangeSoundOption(buttonBackgroundSound, "BackgroundSound");
-		//} else if (buttonEffectSound.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-		//	ChangeSoundOption(buttonEffectSound, "EffectSound");
-		//} else 
-		if (buttonOptionClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+		if (buttonBackgroundSound.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+			ChangeSoundOption(buttonBackgroundSound, "BackgroundSound");
+		} else if (buttonEffectSound.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+			ChangeSoundOption(buttonEffectSound, "EffectSound");
+		} else if (buttonOptionClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 			gameObject.SetActive(false);
 		}
 	}

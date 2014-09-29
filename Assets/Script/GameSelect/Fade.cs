@@ -20,6 +20,8 @@ public class Fade : MonoBehaviour {
 	private const float ButtonReEffectTime = 10.0f;
 	private const float ButtonMoveWaitTime = 0.01f;
 	private const float ButtonWaitTime = 0.1f;
+
+	private int moveCount = 0;
 	
 	public void SetGUIRatio(float aRatio) {
 		guiRatio = aRatio;
@@ -76,14 +78,14 @@ public class Fade : MonoBehaviour {
 	}
 	
 	public IEnumerator StartButtonEffect() {
-		for (int i = 0; i < 10; i++) {
+		for (int i = moveCount; i < 10; i++) {
 			ButtonDown();
 			yield return new WaitForSeconds (ButtonMoveWaitTime);
 		}
 		
 		yield return new WaitForSeconds (ButtonWaitTime);
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = moveCount; i > 0; i--) {
 			ButtonUp();
 			yield return new WaitForSeconds (ButtonMoveWaitTime);
 		}
@@ -96,13 +98,15 @@ public class Fade : MonoBehaviour {
 		                                                   buttonList[index].guiTexture.pixelInset.y - (ButtonMoveLength * guiRatio * count),
 		                                                   buttonList[index].guiTexture.pixelInset.width,
 		                                                   buttonList[index].guiTexture.pixelInset.height);
+		moveCount += count;
 	}
 	
 	public void ButtonUp (int index = 0, int count = 1) {
 		buttonList[index].guiTexture.pixelInset = new Rect(buttonList[index].guiTexture.pixelInset.x,
 		                                                   buttonList[index].guiTexture.pixelInset.y + (ButtonMoveLength * guiRatio * count),
 		                                                   buttonList[index].guiTexture.pixelInset.width,
-		                                                   buttonList[index].guiTexture.pixelInset.height);
+		                                                   buttonList[index].guiTexture.pixelInset.height);                             
+		moveCount -= count;
 	}
 
 	public void FadeIn () {

@@ -134,6 +134,9 @@ abstract public class GameManager : MonoBehaviour {
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		logoAnimator.SetTrigger ("SetDefault");
 
+		//yield return new WaitForSeconds (0.005f);
+		//Destroy (logoAnimator);
+
 		gameLogo.SetActive (false);
 		GameStart();
 	}
@@ -391,8 +394,10 @@ abstract public class GameManager : MonoBehaviour {
 		if (Application.platform == RuntimePlatform.Android && Input.GetKeyUp (KeyCode.Escape)) {
 			if (GS == GameState.Ready || GS == GameState.Play) {
 				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
+				ButtonDown(UIButton[(int)UIButtonList.Pause]);	
 				PauseOn ();
 			} else if (GS == GameState.Pause) {
+				ButtonUp(UIButton[(int)UIButtonList.Pause]);
 				PauseOff ();
 			} else if (GS == GameState.End) {
 				Time.timeScale = GameSpeedNormal;
@@ -445,8 +450,10 @@ abstract public class GameManager : MonoBehaviour {
 					PauseOff ();
 					ButtonUp(UIButton[(int)UIButtonList.Pause]);
 				} else if (UIButton[(int)UIButtonList.RestartPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					ButtonUp(UIButton[(int)UIButtonList.RestartPause]);
-					
+					ButtonUp(UIButton[(int)UIButtonList.RestartPause]);					
+					ButtonUp(UIButton[(int)UIButtonList.Pause]);
+					touchButtonIndex = -1;
+
 					UIGroup[(int)UIGroupList.UIPause].SetActive (false);
 					GameStart();
 				} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
@@ -472,7 +479,9 @@ abstract public class GameManager : MonoBehaviour {
 				if (touchButtonIndex != -1) ButtonDown(UIButton[touchButtonIndex]);
 			} else if (touch.phase == TouchPhase.Ended) {
 				if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					ButtonUp(UIButton[(int)UIButtonList.RestartEnd]);
+					ButtonUp(UIButton[(int)UIButtonList.RestartEnd]);			
+					ButtonUp(UIButton[(int)UIButtonList.Pause]);
+					touchButtonIndex = -1;
 					
 					UIGroup[(int)UIGroupList.UIEnd].SetActive (false);
 					GameStart();

@@ -63,8 +63,8 @@ abstract public class GameManager : MonoBehaviour {
 	private   const float 	ShowStartTime = 2.5f;
 
 	// 정답 체크 시간 
-	protected const float 	CorrectTime1 = 0.05f;
-	protected const float 	CorrectTime2 = 0.15f;
+	protected const float 	CorrectTime1 = 0.04f;
+	protected const float 	CorrectTime2 = 0.08f;
 
 	private   const float	LogoShowTime = 1.5f;
 	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
@@ -204,6 +204,10 @@ abstract public class GameManager : MonoBehaviour {
 		UIGroup[(int)UIGroupList.UIPause].SetActive (false);
 		UIGroup[(int)UIGroupList.UIEnd].SetActive (false);
 	}	
+	
+	protected void PrintResultMessage(GUITexture resultMessage, int imageNumber) {
+		resultMessage.SendMessage("SetImage", imageNumber);
+	}
 
 	// UI를 화면에 맞게 조정
 	private void ChangeUISize() {			

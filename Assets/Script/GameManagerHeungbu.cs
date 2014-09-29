@@ -242,7 +242,8 @@ public class GameManagerHeungbu : GameManager {
 	}
 
 	public override void TouchHandlingGame(Touch touch) {
-		if (UIButton [(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && touch.phase == TouchPhase.Began) {
+		if (UIButton [(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0)) && 
+		    touch.phase == TouchPhase.Began) {
 			UIGroup [(int)UIGroupList.UIPause].SendMessage ("ShowPausePanel");
 			PauseOn ();
 		} else {
@@ -272,12 +273,14 @@ public class GameManagerHeungbu : GameManager {
 		if (compareTime < CorrectTime1) {
 			gameScore += (CorrectPoint1 + 2 * gameComboCount);
 
-			PrintResultMessage((int) ResultMessage.Excellent);
+			if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Excellent);
+			else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Excellent);
 			Correct();
 		} else if (compareTime < CorrectTime2) {
 			gameScore += (CorrectPoint2 + gameComboCount);
-
-			PrintResultMessage((int) ResultMessage.Good);
+			
+			if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Good);
+			else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Good);
 			Correct();
 		} else {
 			incorrectCount++;
@@ -301,12 +304,8 @@ public class GameManagerHeungbu : GameManager {
 
 	void Incorrect() {
 		gameComboCount = 0;
-
-		PrintResultMessage ((int) ResultMessage.Miss);
-	}
-	
-	private void PrintResultMessage(int imageNumber) {
-		if (sawDirection) resultMessage[ResultMessageRight].SendMessage("SetImage", imageNumber);
-		else resultMessage[ResultMessageLeft].SendMessage("SetImage", imageNumber);
+		
+		if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Miss);
+		else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Miss);
 	}
 }

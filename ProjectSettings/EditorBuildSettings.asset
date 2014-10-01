@@ -11,3 +11,5 @@ EditorBuildSettings:
     path: Assets/Scene/Heungbu.unity
   - enabled: 1
     path: Assets/Scene/MoonRabbit.unity
+  - enabled: 1
+    path: Assets/Scene/SunMoon.unity

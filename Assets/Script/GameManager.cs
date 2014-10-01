@@ -8,8 +8,8 @@ public class BeatInfo {
 	public float intervalTime;	// 비트간 간격
 	public int beatAction;		// 해당 동작
 	
-	public BeatInfo(float aInterval, int aAction) {
-		intervalTime = aInterval;
+	public BeatInfo(float aBeat, int aAction) {
+		beatTime = aBeat;
 		beatAction = aAction;
 	}
 	public BeatInfo(float aBeat, float aInterval, int aAction) {
@@ -66,6 +66,8 @@ abstract public class GameManager : MonoBehaviour {
 	// 정답 체크 시간 
 	protected const float 	CorrectTime1 = 0.04f;
 	protected const float 	CorrectTime2 = 0.08f;
+	protected const float 	CorrectDistance1 = 0.30f;
+	protected const float 	CorrectDistance2 = 0.60f;
 
 	private   const float	LogoShowTime = 1.5f;
 	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
@@ -87,7 +89,7 @@ abstract public class GameManager : MonoBehaviour {
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
 	private GameState GS;
-	private float guiRatio = 1.0f;
+	protected float guiRatio = 1.0f;
 	protected int gameScore;
 	protected int gameComboCount;
 	protected int gameMaxCombo;
@@ -119,6 +121,9 @@ abstract public class GameManager : MonoBehaviour {
 		} else if (gameName == "Heungbu") {
 			logoAnimator.SetBool ("StartHeungbuAnimation", true);
 			mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
+		} else if (gameName == "SunMoon") {
+			logoAnimator.SetBool ("StartSunMoonAnimation", true);
+			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;
 		}
 		
 		gameLogo.renderer.material = mt;
@@ -132,6 +137,7 @@ abstract public class GameManager : MonoBehaviour {
 
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
+		logoAnimator.SetBool ("StartSunMoonAnimation", false);
 		logoAnimator.SetTrigger ("SetDefault");
 
 		//yield return new WaitForSeconds (0.005f);
@@ -321,6 +327,9 @@ abstract public class GameManager : MonoBehaviour {
 		} else if (gameNo == 2) {
 			gameName = "흥부네 박타기";
 			gameComment = "흥부네" + gameComment;
+		} else if (gameNo == 3) {
+			gameName = "해님달님 호랑이";
+			gameComment = "호랑이" + gameComment;
 		}
 
 		GameEndLabel [0].text = gameName;
@@ -461,8 +470,8 @@ abstract public class GameManager : MonoBehaviour {
 					
 					Time.timeScale = GameSpeedNormal;
 					Application.LoadLevel("GameSelect");
-				} else if (touchButtonIndex != -1) {
-					ButtonUp(UIButton[touchButtonIndex]);
+				//} else if (touchButtonIndex != -1) {
+				//	ButtonUp(UIButton[touchButtonIndex]);
 				}
 
 				touchButtonIndex = -1;
@@ -479,8 +488,7 @@ abstract public class GameManager : MonoBehaviour {
 				if (touchButtonIndex != -1) ButtonDown(UIButton[touchButtonIndex]);
 			} else if (touch.phase == TouchPhase.Ended) {
 				if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					ButtonUp(UIButton[(int)UIButtonList.RestartEnd]);			
-					ButtonUp(UIButton[(int)UIButtonList.Pause]);
+					ButtonUp(UIButton[(int)UIButtonList.RestartEnd]);	
 					touchButtonIndex = -1;
 					
 					UIGroup[(int)UIGroupList.UIEnd].SetActive (false);
@@ -490,8 +498,8 @@ abstract public class GameManager : MonoBehaviour {
 					
 					Time.timeScale = GameSpeedNormal;
 					Application.LoadLevel("GameSelect");
-				} else if (touchButtonIndex != -1) {
-					ButtonUp(UIButton[touchButtonIndex]);
+				//} else if (touchButtonIndex != -1) {
+					//ButtonUp(UIButton[touchButtonIndex]);
 				}
 				
 				touchButtonIndex = -1;

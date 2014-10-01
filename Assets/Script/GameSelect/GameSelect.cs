@@ -48,7 +48,8 @@ public class GameSelect : MonoBehaviour {
 	private const float backgroundMoveSpeed = 3f;
 	private const float backgroundWidth = 20;
 	private const float backgroundHeight = 10;
-	private const int DatabaseVersion = 1;
+	private const int DatabaseVersion1 = 1;
+	private const int DatabaseVersion2 = 2;
 	
 	void Start () { 	
 		if (Application.platform == RuntimePlatform.Android)
@@ -103,9 +104,12 @@ public class GameSelect : MonoBehaviour {
 		// 최종빌드 이후에는 버전에 따라 디비를 추가, 수정
 		// 추가시 그냥 insert구문 실행 혹은 버전과 관계없이 갯수 파악 후 추가
 		// 수정시 해당항목 update or 미존재시 추가하도록 함
-		if (db_version < DatabaseVersion) {
+		if (db_version < DatabaseVersion2) {
+			sql.ExecuteQuery("update StageInfo set scene='SunMoon', open=1 where id=3");
+			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion2);
+		} else if (db_version < DatabaseVersion1) {
 			sql.ExecuteQuery("drop table if exists StageInfo");
-			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion);
+			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion1);
 		}
 			
 		// 이전 게임을 했던 기기라면 StageInfo를 삭제하고 해야함
@@ -115,7 +119,7 @@ public class GameSelect : MonoBehaviour {
 		if (_data.Rows.Count == 0) {
 			sql.ExecuteQuery("insert into StageInfo values(1, 'MoonRabbit', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(2, 'Heungbu', 1, 0, 'F')");
-			sql.ExecuteQuery("insert into StageInfo values(3, 'Test2', 0, 0, 'F')");
+			sql.ExecuteQuery("insert into StageInfo values(3, 'SunMoon', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(4, 'Test3', 0, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(5, 'Test4', 0, 0, 'F')");
 

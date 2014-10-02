@@ -104,14 +104,13 @@ public class GameSelect : MonoBehaviour {
 		// 최종빌드 이후에는 버전에 따라 디비를 추가, 수정
 		// 추가시 그냥 insert구문 실행 혹은 버전과 관계없이 갯수 파악 후 추가
 		// 수정시 해당항목 update or 미존재시 추가하도록 함
-		if (db_version < DatabaseVersion2) {
-			sql.ExecuteQuery("update StageInfo set scene='SunMoon', open=1 where id=3");
-			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion2);
-		} else if (db_version < DatabaseVersion1) {
+		if (db_version < DatabaseVersion1) {
 			sql.ExecuteQuery("drop table if exists StageInfo");
 			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion1);
+		} else if (db_version < DatabaseVersion2) {
+			sql.ExecuteQuery("update StageInfo set scene='SunMoon', open=1 where id=3");
+			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion2);
 		}
-			
 		// 이전 게임을 했던 기기라면 StageInfo를 삭제하고 해야함
 		sql.ExecuteQuery("create table if not exists StageInfo(id int primary key not null, scene text, open  integer default 0, score integer default 0, grade text)");
 

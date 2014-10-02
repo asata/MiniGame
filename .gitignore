@@ -40,5 +40,4 @@ Icon?
 ehthumbs.db
 *.apk
 Thumbs.db
-
-*.apk
+/*.apk

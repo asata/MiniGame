@@ -3,23 +3,26 @@ using System.Collections;
 
 public class Cake : MonoBehaviour {
 	private GameManagerSunMoon GM;
-	private float hitTime = 0.00f;
+
+	private int beatIndex = -1;
 	private int typeNo = 1;
-	private float throwForceX = -500.0f;
-	private float throwForceY = 400.0f;
-	
+
+	public void SetBeatIndex(object aIndex) {
+		beatIndex = (int) aIndex;
+	}
+	public int GetBeatIndex() {
+		return beatIndex;
+	}
 	public void SetTypeNo(object aType) {
 		typeNo = (int) aType;
 	}
 	public int GetTypeNo() {
 		return typeNo;
 	}
-	public void SetTime(object aTime) {
-		hitTime = (float) aTime;
-	}
-	public float GetTime() {
-		return hitTime;
-	}
+
+
+	private float throwForceX = -500.0f;
+	private float throwForceY = 400.0f;
 
 	public void SetForceX(float aForceX) {
 		throwForceX = aForceX;
@@ -37,9 +40,6 @@ public class Cake : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		//Debug.Log (other.name);
-		//GM.SendMessage ("CakeProcess", other);
-		//GM.SendMessage ("CatchCake");
 		if (other.name == "HitZone") {
 			GM.SendMessage ("HitZoneJoin", this);
 		} else if (other.name == "Tiger") {
@@ -49,13 +49,11 @@ public class Cake : MonoBehaviour {
 		} else  {
 
 		}
-
-		//Destroy (this.gameObject);
 	}
 	
 	void OnTriggerExit(Collider other) {
 		if (other.name == "HitZone") {
-			GM.SendMessage ("HitZoneOut");
+			GM.SendMessage ("HitZoneOut", this);
 		}
 	}
 

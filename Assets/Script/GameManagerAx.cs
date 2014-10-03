@@ -20,7 +20,7 @@ public class GameManagerAx : GameManager {
 	private Vector2 touchPosition;		// 터치한 위치(스와이프시 터치 시작 위치 저장)
 	private bool touchInput = false;
 
-	private bool correctInput = false;
+	//private bool correctInput = false;
 
 	//public AudioClip backgroundMusic;	// 배경음악
 	//public GameObject AnotherSpaker;	// 효과음
@@ -76,7 +76,7 @@ public class GameManagerAx : GameManager {
 				if (showAxTime == 0) {
 					animator.SetTrigger ("SetBasic");
 					AS = AxState.Null;
-					correctInput = false;
+					//correctInput = false;
 					showAxTime = 40;		// 난이도 조정시 해당 값 변경
 				}
 			}
@@ -136,7 +136,7 @@ public class GameManagerAx : GameManager {
 		if (x > y) {
 			// 좌 또는 우로 스와이프
 			if (AS == AxState.Bronze)
-				Incorrct ();
+				Incorrect ();
 			else if (AS == AxState.Gold || AS == AxState.Silver)
 				Correct ();
 			else
@@ -146,7 +146,7 @@ public class GameManagerAx : GameManager {
 			if (AS == AxState.Bronze)
 				Correct ();
 			else if (AS == AxState.Gold || AS == AxState.Silver)
-				Incorrct ();
+				Incorrect ();
 			else
 				InputTimeOver ();
 		}
@@ -155,7 +155,7 @@ public class GameManagerAx : GameManager {
 	// 정답 처리
 	// 현재 정답 입력시 계속 입력 가능
 	// 다음 도끼가 나오기 전까지 입력 차단?
-	void Correct() {
+	/*void Correct() {
 		if (correctInput) return;
 		if (PlayerPrefs.GetInt("EffectSound") == 0) {
 			AnotherSpaker.SendMessage("SoundCorrectPlay");
@@ -175,7 +175,7 @@ public class GameManagerAx : GameManager {
 	}
 
 	// 오답 처리
-	void Incorrct() {
+	void Incorrect() {
 		if (correctInput) return;
 		Handheld.Vibrate ();
 		
@@ -184,7 +184,7 @@ public class GameManagerAx : GameManager {
 		//gameLife--;
 		gameComboCount = 0;
 		animator.speed = 1.0f;
-	}
+	}*/
 
 	// 도끼가 보여지지 않을때 처리?
 	void InputTimeOver() {

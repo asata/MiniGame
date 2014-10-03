@@ -7,10 +7,10 @@ public enum HitZoneInItem {
 	Stone,
 }
 public class GameManagerSunMoon : GameManager {
-	private const float HitZoneX = -5.00f;
-	private const float HitZoneY = 1.50f;
-	private const float MakeCakeX = 4.00f;
-	private const float MakeCakeY = -4.50f;
+	private const float AnimationMoveCakeTime = 0.875f;
+	private const float MakeCakeX = 8.00f;
+	private const float MakeCakeY = 0.00f;
+
 
 	//public GameObject Tiger;
 	public GameObject Cake;
@@ -22,8 +22,10 @@ public class GameManagerSunMoon : GameManager {
 	public GUIText show2;
 
 	private int beatIndex = 0;
+	private int checkIndex = 0;
+	//private ArrayList CakePlayList;
 	private ArrayList CakeBeatList;
-	private float FlyCakeTime = 1.333f;
+	private bool throwCake = false;
 
 	void Start () {	
 		ChangeUI ();
@@ -35,11 +37,15 @@ public class GameManagerSunMoon : GameManager {
 	public override void GameStart() {
 		Init ();
 
+		throwCake = false;
+
 		// 비트 파일로부터 정보를 읽어들임
 		if (CakeBeatList != null)
 			CakeBeatList.Clear ();
 		CakeBeatList = LoadBeatFile ("Beat/SunMoon01");
 		beatIndex = 0;
+		checkIndex = 0;
+		//CakePlayList = new ArrayList ();
 		
 		// 배경음악 재생 여부에 따라 음악 재생
 		audio.clip = backgroundMusic;
@@ -57,8 +63,7 @@ public class GameManagerSunMoon : GameManager {
 		StopCoroutine ("WaitThrowCake");
 		
 		// 호랑이 애니메이션 종료 및 바닥에 착지하도록 함 - 이건 애니메이션이 적용되면 하도록 함.
-		//RabbitAnimator.Play ("RabbitReady");
-		//PlayerAnimator.Play ("player_hand_wait");
+		//TigerAnimator.Play (" ");
 	}
 	
 	void Update () {
@@ -67,6 +72,7 @@ public class GameManagerSunMoon : GameManager {
 		if (count == 1) {	
 			TouchHandling (Input.touches [0]);
 		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
+			// keyboadrd space bar press
 			CorrectCheck ();
 		}
 		
@@ -78,40 +84,43 @@ public class GameManagerSunMoon : GameManager {
 		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 
-			if (stateShow.texture == stateTexture[2]) {
-				//StartCoroutine ("WaitThrowCake");
+			if (stateShow.texture == stateTexture[2] && !throwCake) {
+				StartCoroutine ("WaitThrowCake");
+				throwCake = true;
 			}
 		} else if (GetGameState() == GameState.Play) {	
 			if (audio.clip.samples <= audio.timeSamples)
 				GameEnd(true);
-
-			// 비트 index가 0일 경우 
-			if (beatIndex == 0) {
-			}
 		}	
 	}
 
 	public IEnumerator WaitThrowCake() {
 		if (beatIndex < CakeBeatList.Count) {
 			BeatInfo beat = (BeatInfo)CakeBeatList [beatIndex];
-			float waitMoveTime = beat.beatTime - (audio.time + FlyCakeTime);
+			float waitMoveTime = beat.beatTime - audio.time - AnimationMoveCakeTime;
 			yield return new WaitForSeconds (waitMoveTime);
 	
 			// beat.beatAction으로 떡과 돌을 구분
 			GameObject makeCake = null;
 			if (beat.beatAction == 1) {
 				makeCake = (GameObject)Instantiate (Cake, new Vector3 (MakeCakeX, MakeCakeY), transform.rotation);
-				makeCake.SendMessage ("SetTime", beat.beatTime);
 			} else if (beat.beatAction == 2) {
 				makeCake = (GameObject)Instantiate (Stone, new Vector3 (MakeCakeX, MakeCakeY), transform.rotation);
 				makeCake.SendMessage ("SetTypeNo", HitZoneInItem.Stone);
-				makeCake.SendMessage ("SetTime", beat.beatTime);
 			}
-			makeCake.SendMessage ("ThrowCake");
+
+			makeCake.SendMessage ("SetBeatIndex", beatIndex);
+			//makeCake.SendMessage ("SetTime", beat.beatTime);
+
+			// move(throw) cake or stone
+			Animator temp = makeCake.GetComponent<Animator> ();
+			temp.SetTrigger("MoveCake");
+			//makeCake.SendMessage ("ThrowCake");	//throw up
+
 			beatIndex++;	// 여기서 증가를 시키지 않으면 Update 함수에서 계속 호출됨
 
 			if (GetGameState () == GameState.Play) {
-				//StartCoroutine ("WaitThrowCake");
+				StartCoroutine ("WaitThrowCake");
 			}
 		}
 	}
@@ -120,108 +129,51 @@ public class GameManagerSunMoon : GameManager {
 		if (touch.phase == TouchPhase.Began) {
 			CorrectCheck ();
 		} else if (touch.phase == TouchPhase.Ended) {
+
 		}
 	}
 
 	private void CorrectCheck () {
-		if (itemZoneInside == (int) HitZoneInItem.None) {
-			Incorrect();
-		} else if (itemZoneInside == (int) HitZoneInItem.Cake) {
-			if (cakeInfo == null) return;
+		for (int i = checkIndex; i < CakeBeatList.Count; i++) {
+			BeatInfo beat = (BeatInfo) CakeBeatList[i];
+			float compareTime = Mathf.Abs(beat.beatTime - audio.time);
 
-			float distance = DistanceCalculation(cakeInfo.transform.position.x, cakeInfo.transform.position.y);
-			Debug.Log(distance.ToString());
-			if (distance < CorrectDistance1) {
-				gameScore += (CorrectPoint1 + 2 * gameComboCount);
-				PrintResultMessage(resultMessage, (int) ResultMessage.Excellent);
-				Correct();				
-				
-				// 애니메이션 재생
-
-				cakeInfo.SendMessage("DestroyCake");
-			} else if (distance < CorrectDistance2) {
-				gameScore += (CorrectPoint2 + gameComboCount);
-				PrintResultMessage(resultMessage, (int) ResultMessage.Good);
-				Correct();
-				
-				// 애니메이션 재생
-
-				cakeInfo.SendMessage("DestroyCake");
-			} else {
-				Incorrect();
-			}
-		} else if (itemZoneInside == (int) HitZoneInItem.Stone) {
-			if (cakeInfo == null) return;
-			
-			float distance = DistanceCalculation(cakeInfo.transform.position.x, cakeInfo.transform.position.y);
-			if (distance < CorrectDistance1) {
+			if (compareTime < CorrectTime1) {
 				gameScore += (CorrectPoint1 + 2 * gameComboCount);
 				PrintResultMessage(resultMessage, (int) ResultMessage.Excellent);
 				Correct();
 
-				// 애니메이션 재생
-
-				cakeInfo.SendMessage("DestroyCake");
-			} else if (distance < CorrectDistance2) {
-				gameScore += (CorrectPoint2 + gameComboCount);
+				checkIndex = i;
+				break;
+			} else if (compareTime < CorrectTime2) {
+				gameScore += (CorrectPoint1 + gameComboCount);
 				PrintResultMessage(resultMessage, (int) ResultMessage.Good);
 				Correct();
-				
-				// 애니메이션 재생
 
-				cakeInfo.SendMessage("DestroyCake");
-			} else {
+				checkIndex = i;
+				break;
+			} else if (beat.beatTime < audio.time) {
+				// miss beat					
+				PrintResultMessage(resultMessage, (int) ResultMessage.Miss);
 				Incorrect();
+				i++;
+			} else if (beat.beatTime > audio.time) {
+				checkIndex = i;
+				break;
 			}
 		}
 	}
 
-	private float DistanceCalculation(float x, float y) {		
-		float result = Mathf.Sqrt(Mathf.Pow ((HitZoneX - x), 2) + Mathf.Pow ((HitZoneY - y), 2));
-
-		if (HitZoneX - x > 0) {
-			result = Mathf.Abs(result - 0.5f);
-		}
-		return result;
-	}
-
-	private void Correct () {	
-		correctCount++;
-		gameComboCount++;
-				
-		if (gameMaxCombo < gameComboCount)
-			gameMaxCombo = gameComboCount;
-		
-		if (PlayerPrefs.GetInt("EffectSound") == 0) {
-			AnotherSpaker.SendMessage("SoundPlay");
-		}
-	}
-	private void Incorrect() {
-		gameComboCount = 0;
-		incorrectCount++;
-		
-		PrintResultMessage(resultMessage, (int) ResultMessage.Miss);
-	}
-	
-	private Cake cakeInfo;
-	private int itemZoneInside = 0;
 	public void HitZoneJoin(object item) {
-		if (cakeInfo != null)
-			Debug.Log ("Exist" + cakeInfo.GetTime().ToString());
-		cakeInfo = (Cake)item;
-		//show.text = cakeInfo.transform.position.x.ToString() + " : " + cakeInfo.transform.position.y.ToString ();
-		//show2.text = DistanceCalculation (cakeInfo.transform.position.x, cakeInfo.transform.position.y).ToString ();
-		itemZoneInside = cakeInfo.GetTypeNo();
+		//Cake cakeInfo = (Cake)item;
+		//CakePlayList.Add (cakeInfo.GetTypeNo());
 	}
-	public void HitZoneOut() {
-		itemZoneInside = (int) HitZoneInItem.None;
-		
-		//show.text = cakeInfo.transform.position.x.ToString() + " : " + cakeInfo.transform.position.y.ToString ();
-		//show2.text = DistanceCalculation (cakeInfo.transform.position.x, cakeInfo.transform.position.y).ToString ();
-		cakeInfo = null;
+	public void HitZoneOut(object item) {
+		Cake cakeInfo = (Cake)item;
+		checkIndex = cakeInfo.GetBeatIndex ();
 	}
 	public void HitTiger(object item) {
-		Cake garbageCake = (Cake)item;
-		garbageCake.SendMessage ("DestroyCake");
+		//Cake garbageCake = (Cake)item;
+		//garbageCake.SendMessage ("DestroyCake");
 	}
 }

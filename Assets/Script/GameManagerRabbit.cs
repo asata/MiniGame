@@ -92,6 +92,13 @@ public class GameManagerRabbit : GameManager {
 		int count = Input.touchCount;		
 		if (count == 1) {	
 			TouchHandling (Input.touches[0]);
+		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
+			// keyboadrd space bar press
+			if (RS == RabbitState.Wait) {
+				PlayerAnimator.SetTrigger("PlayerPounding");
+				CorrectCheck();
+				touchCount++;	
+			}
 		}
 
 		// Back Key Touch
@@ -127,66 +134,38 @@ public class GameManagerRabbit : GameManager {
 	
 	// 정답 체크
 	private void CorrectCheck() {
-		float compareTime = TimeReturn(audio.time);
-
-		if (compareTime < CorrectTime1) {
-			gameScore += (CorrectPoint1 + 2 * gameComboCount);
-			PrintResultMessage(resultMessage, (int) ResultMessage.Excellent);
-			Correct();
-		} else if (compareTime < CorrectTime2) {
-			gameScore += (CorrectPoint2 + gameComboCount);
-			PrintResultMessage(resultMessage, (int) ResultMessage.Good);
-			Correct();
-		} else {
-			RabbitAnimator.SetTrigger("PlayerIncorrect");
-			incorrectCount++;
-			gameComboCount = 0;//Incorrect();
-		}
-	}
-
-	private float TimeReturn(float touchTime) {
-		float result = 99;
-
 		for (int i = checkIndex; i < RabbitHitBeat.Count; i++) {
 			PlayerBeatInput inputBeat = (PlayerBeatInput) RabbitHitBeat[i];
 			if (inputBeat.GetCheck()) continue;
+			float compareTime = Mathf.Abs(inputBeat.GetTime() - audio.time);
 
-			if ((inputBeat.GetTime() + CorrectTime2) < touchTime) {
-				// 이미 지나간 비트인 경우 - miss 처리
+			if (compareTime < CorrectTime1) {
 				inputBeat.SetCheck(true);
-				missCount++;
-				gameComboCount = 0;//Incorrect();
-				checkIndex = i;
-
-				continue;
-			} else if ((inputBeat.GetTime() - CorrectTime2) > touchTime) {
-				break;
-			} else {
-				result = Mathf.Abs(inputBeat.GetTime() - touchTime);
-				inputBeat.SetCheck(true);
-				checkIndex = i;
+				gameScore += (CorrectPoint1 + 2 * gameComboCount);
+				PrintResultMessage(resultMessage, (int) ResultMessage.Excellent);
+				Correct();
 				
+				checkIndex = i;
+				break;
+			} else if (compareTime < CorrectTime2) {
+				inputBeat.SetCheck(true);
+				gameScore += (CorrectPoint1 + gameComboCount);
+				PrintResultMessage(resultMessage, (int) ResultMessage.Good);
+				Correct();
+				
+				checkIndex = i;
+				break;
+			} else if (inputBeat.GetTime() < audio.time) {
+				// miss beat					
+				inputBeat.SetCheck(true);
+				PrintResultMessage(resultMessage, (int) ResultMessage.Miss);
+				Incorrect();
+				i++;
+			} else if (inputBeat.GetTime() > audio.time) {
+				checkIndex = i;
 				break;
 			}
 		}
-
-		return result;
-	}
-	
-	private void Correct() {
-		gameComboCount++;
-		correctCount++;
-		
-		if (gameMaxCombo < gameComboCount)
-			gameMaxCombo = gameComboCount;
-		
-		if (PlayerPrefs.GetInt("EffectSound") == 0) {
-			AnotherSpaker.SendMessage("SoundPlay");
-		}
-	}
-	
-	private void Incorrect(int missCount = 1) {
-		gameComboCount = 0;
 	}
 
 	private void RhythmTurnEnd() {

@@ -80,6 +80,9 @@ public class GameManagerHeungbu : GameManager {
 		int count = Input.touchCount;		
 		if (count == 1) {	
 			TouchHandling(Input.touches[0]);
+		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
+			CorrectCheck();
+			touchCount++;
 		}
 		
 		// Back Key Touch
@@ -209,6 +212,8 @@ public class GameManagerHeungbu : GameManager {
 			if (waitSaw) return;
 
 			if (waitTime == 0.0f) {
+				BeatInfo beat = (BeatInfo) GourdBeatList[beatIndex];
+				Debug.Log(Time.fixedTime.ToString() + " : " + beat.beatTime.ToString());
 				gourdTime = Time.fixedTime;
 				
 				// 톱이 움직이는 동안 터치를 헀을 경우
@@ -234,7 +239,9 @@ public class GameManagerHeungbu : GameManager {
 				// 경과 시간 체크, 정답 입력 가능 시간이 지났을 경우 오답 처리
 				if(Time.fixedTime - touchTime > CorrectTime2) {
 					touchCheck = true;
-					incorrectCount++;
+					
+					if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Miss);
+					else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Miss);
 					Incorrect();
 				}
 			}
@@ -269,37 +276,22 @@ public class GameManagerHeungbu : GameManager {
 
 			if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Excellent);
 			else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Excellent);
+			
+			correctTrunCount++;
 			Correct();
 		} else if (compareTime < CorrectTime2) {
 			gameScore += (CorrectPoint2 + gameComboCount);
 			
 			if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Good);
 			else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Good);
+			
+			correctTrunCount++;
 			Correct();
 		} else {
-			incorrectCount++;
+			if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Miss);
+			else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Miss);
+
 			Incorrect();
 		}
-	}
-	
-	// 정답 처리 - 공용 처리 부분
-	void Correct() {		
-		gameComboCount++;
-		correctCount++;
-		correctTrunCount++;
-
-		if (gameMaxCombo < gameComboCount)
-			gameMaxCombo = gameComboCount;
-	
-		if (PlayerPrefs.GetInt("EffectSound") == 0) {
-			AnotherSpaker.SendMessage("SoundPlay");
-		}
-	}
-
-	void Incorrect() {
-		gameComboCount = 0;
-		
-		if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Miss);
-		else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Miss);
 	}
 }

@@ -64,10 +64,8 @@ abstract public class GameManager : MonoBehaviour {
 	private   const float 	ShowStartTime = 2.5f;
 
 	// 정답 체크 시간 
-	protected const float 	CorrectTime1 = 0.04f;
-	protected const float 	CorrectTime2 = 0.08f;
-	protected const float 	CorrectDistance1 = 0.30f;
-	protected const float 	CorrectDistance2 = 0.60f;
+	protected const float 	CorrectTime1 = 0.05f;
+	protected const float 	CorrectTime2 = 0.10f;
 
 	private   const float	LogoShowTime = 1.5f;
 	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
@@ -175,7 +173,24 @@ abstract public class GameManager : MonoBehaviour {
 		Time.timeScale = GameSpeedNormal;
 		stateTime = 0f;
 	}
-	                          
+	
+	public void Correct() {
+		gameComboCount++;
+		correctCount++;
+		
+		if (gameMaxCombo < gameComboCount)
+			gameMaxCombo = gameComboCount;
+		
+		if (PlayerPrefs.GetInt("EffectSound") == 0) {
+			AnotherSpaker.SendMessage("SoundPlay");
+		}
+	}
+	
+	
+	public void Incorrect() {
+		gameComboCount = 0;
+		incorrectCount++;
+	}                   
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////

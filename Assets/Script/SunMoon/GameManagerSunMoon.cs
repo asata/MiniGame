@@ -61,6 +61,9 @@ public class GameManagerSunMoon : GameManager {
 		
 		audio.Stop ();
 		StopCoroutine ("WaitThrowCake");
+
+		// 날아다니는 떡 및 돌 소멸 처리
+
 		
 		// 호랑이 애니메이션 종료 및 바닥에 착지하도록 함 - 이건 애니메이션이 적용되면 하도록 함.
 		//TigerAnimator.Play (" ");

@@ -119,7 +119,7 @@ public class GameManagerAx : GameManager {
 				float x = Mathf.Abs (touch.position.x - touchPosition.x);
 				float y = Mathf.Abs (touch.position.y - touchPosition.y);
 
-				CheckCorrect (x, y);
+				//CheckCorrect (x, y);
 			}
 
 			touchInput = false;
@@ -131,7 +131,10 @@ public class GameManagerAx : GameManager {
 		}
 	}
 	
-	void CheckCorrect (float x, float y) {
+	public override void CorrectCheck() {
+
+	}
+	/*public override void CheckCorrect (float x, float y) {
 		// 스와이프 방향 판별
 		if (x > y) {
 			// 좌 또는 우로 스와이프
@@ -150,7 +153,7 @@ public class GameManagerAx : GameManager {
 			else
 				InputTimeOver ();
 		}
-	}
+	}*/
 
 	// 정답 처리
 	// 현재 정답 입력시 계속 입력 가능

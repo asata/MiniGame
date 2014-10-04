@@ -91,7 +91,9 @@ public class GameManagerRabbit : GameManager {
 		// 터치 이벤트 처리
 		int count = Input.touchCount;		
 		if (count == 1) {	
-			TouchHandling (Input.touches[0]);
+			TouchHandling (Input.touches [0]);
+		} else if (Input.GetMouseButtonDown(0)) {
+			MouseHandling();
 		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
 			// keyboadrd space bar press
 			if (RS == RabbitState.Wait) {
@@ -133,7 +135,7 @@ public class GameManagerRabbit : GameManager {
 	}
 	
 	// 정답 체크
-	private void CorrectCheck() {
+	public override void CorrectCheck() {
 		for (int i = checkIndex; i < RabbitHitBeat.Count; i++) {
 			PlayerBeatInput inputBeat = (PlayerBeatInput) RabbitHitBeat[i];
 			if (inputBeat.GetCheck()) continue;

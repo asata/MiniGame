@@ -433,9 +433,10 @@ abstract public class GameManager : MonoBehaviour {
 	// 아래 함수는 각 게임에서 구현
 	public abstract void GameStart ();		// 게임 시작시 초기 설정
 	public abstract void ResetGame ();	
+	public abstract void CorrectCheck ();	
 	public abstract void TouchHandlingGame (Touch touch);
 	private int touchButtonIndex = -1;
-
+	
 	public void TouchHandling(Touch touch) {
 		if (GS == GameState.Ready) {
 			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
@@ -477,7 +478,7 @@ abstract public class GameManager : MonoBehaviour {
 					ButtonUp(UIButton[(int)UIButtonList.RestartPause]);					
 					ButtonUp(UIButton[(int)UIButtonList.Pause]);
 					touchButtonIndex = -1;
-
+					
 					UIGroup[(int)UIGroupList.UIPause].SetActive (false);
 					GameStart();
 				} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
@@ -485,10 +486,10 @@ abstract public class GameManager : MonoBehaviour {
 					
 					Time.timeScale = GameSpeedNormal;
 					Application.LoadLevel("GameSelect");
-				//} else if (touchButtonIndex != -1) {
-				//	ButtonUp(UIButton[touchButtonIndex]);
+					//} else if (touchButtonIndex != -1) {
+					//	ButtonUp(UIButton[touchButtonIndex]);
 				}
-
+				
 				touchButtonIndex = -1;
 			}
 		} else if (GS == GameState.End) {
@@ -499,7 +500,7 @@ abstract public class GameManager : MonoBehaviour {
 				} else if (UIButton[(int)UIButtonList.MainEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					touchButtonIndex = (int)UIButtonList.MainEnd;
 				}
-
+				
 				if (touchButtonIndex != -1) ButtonDown(UIButton[touchButtonIndex]);
 			} else if (touch.phase == TouchPhase.Ended) {
 				if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
@@ -513,12 +514,48 @@ abstract public class GameManager : MonoBehaviour {
 					
 					Time.timeScale = GameSpeedNormal;
 					Application.LoadLevel("GameSelect");
-				//} else if (touchButtonIndex != -1) {
+					//} else if (touchButtonIndex != -1) {
 					//ButtonUp(UIButton[touchButtonIndex]);
 				}
 				
 				touchButtonIndex = -1;
 			} 
+		}
+	}
+	public void MouseHandling() {
+		if (GS == GameState.Ready) {
+			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				ButtonDown(UIButton[(int)UIButtonList.Pause]);					
+				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
+				PauseOn ();
+			}
+		} else if (GS == GameState.Play) {
+			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				ButtonDown(UIButton[(int)UIButtonList.Pause]);				
+				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
+				PauseOn ();
+			} else {
+				CorrectCheck();
+			}
+		} else if (GS == GameState.Pause) {
+			if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				PauseOff ();
+			} else if (UIButton[(int)UIButtonList.RestartPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				UIGroup[(int)UIGroupList.UIPause].SetActive (false);
+				GameStart();
+			} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				Time.timeScale = GameSpeedNormal;
+				Application.LoadLevel("GameSelect");
+			}
+		} else if (GS == GameState.End) {
+			// 게임 종료 상태일 경우
+			if (UIButton[(int)UIButtonList.RestartEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				UIGroup[(int)UIGroupList.UIEnd].SetActive (false);
+				GameStart();
+			} else if (UIButton[(int)UIButtonList.MainEnd].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				Time.timeScale = GameSpeedNormal;
+				Application.LoadLevel("GameSelect");
+			}
 		}
 	}
 	

@@ -59,6 +59,9 @@ public class GameManagerSunMoon : GameManager {
 		if (CakeBeatList != null)
 			CakeBeatList.Clear ();
 		
+		DestoyItem ("SunMoonCake");
+		DestoyItem ("SunMoonStone");
+
 		audio.Stop ();
 		StopCoroutine ("WaitThrowCake");
 
@@ -68,12 +71,24 @@ public class GameManagerSunMoon : GameManager {
 		// 호랑이 애니메이션 종료 및 바닥에 착지하도록 함 - 이건 애니메이션이 적용되면 하도록 함.
 		//TigerAnimator.Play (" ");
 	}
+
+	private void DestoyItem(string tagName) {
+		GameObject[] cakeList = GameObject.FindGameObjectsWithTag (tagName);
+		Debug.Log (tagName + " : " + cakeList.Length.ToString ());
+		if (cakeList.Length > 0) {
+			for(int i = 0; i < cakeList.Length; i++) {
+				Destroy(cakeList[i]);
+			}
+		}
+	}
 	
 	void Update () {
 		// 터치 이벤트 처리
 		int count = Input.touchCount;		
 		if (count == 1) {	
 			TouchHandling (Input.touches [0]);
+		} else if (Input.GetMouseButtonDown(0)) {
+			MouseHandling();
 		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
 			// keyboadrd space bar press
 			CorrectCheck ();
@@ -136,7 +151,7 @@ public class GameManagerSunMoon : GameManager {
 		}
 	}
 
-	private void CorrectCheck () {
+	public override void CorrectCheck () {
 		for (int i = checkIndex; i < CakeBeatList.Count; i++) {
 			BeatInfo beat = (BeatInfo) CakeBeatList[i];
 			float compareTime = Mathf.Abs(beat.beatTime - audio.time);
@@ -159,7 +174,6 @@ public class GameManagerSunMoon : GameManager {
 				// miss beat					
 				PrintResultMessage(resultMessage, (int) ResultMessage.Miss);
 				Incorrect();
-				i++;
 			} else if (beat.beatTime > audio.time) {
 				checkIndex = i;
 				break;

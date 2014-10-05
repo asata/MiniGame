@@ -12,14 +12,16 @@ public enum FixedTextName {
 }
 
 public class GameSelect : MonoBehaviour {
+	private const float backgroundMoveSpeed 	= 2.5f;
+	private const float backgroundWidth 		= 20;
+	private const float backgroundHeight 		= 10;
+	private const int 	DatabaseVersion1 		= 1;
+	private const int 	DatabaseVersion2 		= 2;
 	private float guiRatio;							// 화면 비율
 
 	private Fade fade;
 	private DataTable _data;						// SQL
 	private ArrayList GameList;						// SQL에서 읽은 게임 정보
-	/*public GUITexture buttonFacebook;
-	public GUITexture buttonShop;
-	public GUITexture buttonEnd;*/
 	public GUITexture buttonOption;
 	public GUITexture buttonGameStart;				// 게임 선택 UI에서 나타남
 	public GUITexture buttonInfoClose;				// 게임 선택 UI에서 나타남
@@ -45,11 +47,6 @@ public class GameSelect : MonoBehaviour {
 	private GameObject BackgroundImageB;
 	private GameObject BackgroundImageC;
 	private GameObject BackgroundImageD;
-	private const float backgroundMoveSpeed = 3f;
-	private const float backgroundWidth = 20;
-	private const float backgroundHeight = 10;
-	private const int DatabaseVersion1 = 1;
-	private const int DatabaseVersion2 = 2;
 	
 	void Start () { 	
 		if (Application.platform == RuntimePlatform.Android)
@@ -170,8 +167,6 @@ public class GameSelect : MonoBehaviour {
 
 	private int touchButtonIndex = -1;
 	void Update () {
-		int count = Input.touchCount;	
-
 		// 배경화면 이동
 		BackgroundMove ();
 
@@ -188,75 +183,95 @@ public class GameSelect : MonoBehaviour {
 			UIGameInfo.SetActive(false);
 			gameInfoHide = false;
 		}
-
+		
+		int count = Input.touchCount;	
 		if (count == 1) {	
-			Touch touch = Input.touches[0];
-			if (!UIOption.activeInHierarchy && !UIShop.activeInHierarchy) {
-				if (UIGameInfo.activeInHierarchy) {
-					if (touch.phase == TouchPhase.Began) {
-						if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-							fade.ButtonDown(0, 10);	
-							touchButtonIndex = 0;
-						} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-							fade.ButtonDown(1, 10);
-							touchButtonIndex = 1;
-						}
-					} else if (touch.phase == TouchPhase.Ended) {
-						if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-							fade.ButtonUp(0, 10);
-
-							GameInfo info = (GameInfo) GameList[resizeIndex];
-							PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
-							PlayerPrefs.SetInt("GameNo", info.no);
-							PlayerPrefs.SetInt("HighScore", info.score);
-							
-							Application.LoadLevel(buttonList[resizeIndex].name);					
-						} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-							fade.ButtonUp(1, 10);
-							fade.FadeIn();
-						} else if (touchButtonIndex != -1) {
-							fade.ButtonUp(touchButtonIndex, 10);
-						}
-
-						touchButtonIndex = -1;
-					} 
-				} else {
-					for (int i = 0; i < buttonList.Length; i++) {
-						GUITexture buttonTexture = buttonList[i].guiTexture;
-						if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-							if (buttonTexture.texture == buttonImage[0]) continue;
-
-							if (fade != null)
-								fade.FadeOut();
-							
-							resizeIndex = i;
-							UIGameInfo.SetActive(true);
-							SetGameInfo(i);
-						}
-					} 
-
-					if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-						UIOption.SetActive(true);
-						UIOption.SendMessage("ShowOptionPanel"); 
-					}
-				}
-				/*} else if (buttonShop.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					UIShop.SetActive(true);
-				} else if (buttonEnd.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-					Application.Quit(); 
-				}*/
-			/*} else if (UIShop.activeInHierarchy) {
-				if (touch.phase == TouchPhase.Ended) {
-					UIShop.SendMessage("ShopTouchHandling");
-				} else if (touch.phase == TouchPhase.Moved) {
-					UIShop.SendMessage("ShopScrollHandling");
-				}*/
-			} else if (UIOption.activeInHierarchy && touch.phase == TouchPhase.Ended) {
-				UIOption.SendMessage("OptionTouchHandling");
-			} 
-		}	
+			TouchHandling();
+		} else if (Input.GetMouseButtonDown(0)) {
+			MouseHandling();
+		}
 	} 
 
+	private void TouchHandling() {
+		Touch touch = Input.touches[0];
+		if (!UIOption.activeInHierarchy && !UIShop.activeInHierarchy) {
+			if (UIGameInfo.activeInHierarchy) {
+				if (touch.phase == TouchPhase.Began) {
+					if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+						fade.ButtonDown(0, 10);	
+						touchButtonIndex = 0;
+					} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+						fade.ButtonDown(1, 10);
+						touchButtonIndex = 1;
+					}
+				} else if (touch.phase == TouchPhase.Ended) {
+					if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+						fade.ButtonUp(0, 10);
+						
+						GameInfo info = (GameInfo) GameList[resizeIndex];
+						PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
+						PlayerPrefs.SetInt("GameNo", info.no);
+						PlayerPrefs.SetInt("HighScore", info.score);
+						
+						Application.LoadLevel(buttonList[resizeIndex].name);					
+					} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+						fade.ButtonUp(1, 10);
+						fade.FadeIn();
+					} else if (touchButtonIndex != -1) {
+						fade.ButtonUp(touchButtonIndex, 10);
+					}
+					
+					touchButtonIndex = -1;
+				} 
+			} else {
+				for (int i = 0; i < buttonList.Length; i++) {
+					GUITexture buttonTexture = buttonList[i].guiTexture;
+					if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+						if (buttonTexture.texture == buttonImage[0]) continue;
+						
+						if (fade != null)
+							fade.FadeOut();
+						
+						resizeIndex = i;
+						UIGameInfo.SetActive(true);
+						SetGameInfo(i);
+					}
+				} 
+				
+				if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					UIOption.SetActive(true);
+					UIOption.SendMessage("ShowOptionPanel"); 
+				}
+			}
+		} else if (UIOption.activeInHierarchy && touch.phase == TouchPhase.Ended) {
+			UIOption.SendMessage("OptionTouchHandling");
+		} 
+	}
+
+	private void MouseHandling () {
+		if (!UIOption.activeInHierarchy && !UIShop.activeInHierarchy) {
+			if (UIGameInfo.activeInHierarchy) {
+			} else {
+				for (int i = 0; i < buttonList.Length; i++) {
+					GUITexture buttonTexture = buttonList[i].guiTexture;
+					if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+						if (buttonTexture.texture == buttonImage[0]) continue;
+						
+						UIGameInfo.SetActive(true);
+						SetGameInfo(i);
+					}
+				}
+
+				if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					UIOption.SetActive(true);
+					UIOption.SendMessage("ShowOptionPanel"); 
+				}
+			}
+		} else if (UIOption.activeInHierarchy) {
+			UIOption.SendMessage("OptionTouchHandling");
+		}
+	}
+	
 	private void SetGameInfo(int gameNo) {
 		fixedTexture [(int) FixedTextureName.Tutorial].texture = tutorialImage [gameNo];
 	}

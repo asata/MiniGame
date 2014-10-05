@@ -133,6 +133,7 @@ abstract public class GameManager : MonoBehaviour {
 		UIButton [(int)UIButtonList.ShadowPause].enabled = false;
 		yield return new WaitForSeconds (LogoShowTime);
 
+		Debug.Log (LogoShowTime.ToString ());
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		logoAnimator.SetBool ("StartSunMoonAnimation", false);

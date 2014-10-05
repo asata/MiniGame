@@ -3,10 +3,9 @@ using System.Collections;
 
 public class GameManagerHeungbu : GameManager {
 	// 애니메이션 재생 시간(속도 : 1.0f 기준)
-	private const float AnimationLeftToRightTime = 0.5833333f;	
-	private const float AnimationRightToLeftTime = 0.5833333f;	//0.6666667f;
-	//private const float AnimationLeftToRightTime = 0.6666666f;
-	//private const float AnimationRightToLeftTime = 0.5833333f;	
+	private const float SawAnimationSlowSpeed 	= 0.6697f;
+	private const float SawAnimationNormalSpeed = 0.6075f;
+	private const float SawAnimationFastSpeed 	= 0.5532f;	
 	
 	private const float GourdEffetValue 	= 1.5f;			// 박이 열릴때 정답에 대한 가중치
 	private const int ResultMessageLeft 	= 0;
@@ -21,10 +20,7 @@ public class GameManagerHeungbu : GameManager {
 	public Animator SawAnimator;
 	public GUITexture[] resultMessage;
 
-	private int touchCount = 0;
 	private bool touchCheck = false;
-	private float touchTime = 0f;
-	private float gourdTime = 0f;
 	private float waitTime = 0f;
 	private int beatIndex = 0;
 	private int checkIndex = 0;
@@ -37,8 +33,9 @@ public class GameManagerHeungbu : GameManager {
 
 	void Start () {	
 		ChangeUI ();		
-		LogoShow("Heungbu");
-		if (!showLogo) GameStart ();
+		//LogoShow("Heungbu");
+		//if (!showLogo) 
+			GameStart ();
 	}
 
 	public override void GameStart() {
@@ -85,12 +82,14 @@ public class GameManagerHeungbu : GameManager {
 		int count = Input.touchCount;		
 		if (count == 1) {	
 			TouchHandling(Input.touches[0]);
+		} else if (Input.GetMouseButtonDown(0)) {
+			MouseHandling();
 		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
 			// keyboadrd space bar press
 			CorrectCheck ();
 		}
 		
-		// Back Key Touch
+		// Back Key TouchS
 		BackKeyTouch ();
 		
 		if (GetGameState () == GameState.Logo) {
@@ -119,6 +118,7 @@ public class GameManagerHeungbu : GameManager {
 			BeatInfo beat = (BeatInfo)GourdBeatList [beatIndex];
 			
 			if (beat.beatAction == 1 || beat.beatAction == 2) {
+				beatTurnCount++;
 				StartCoroutine ("SawMoveWaitTime", beat);
 			} else if (beat.beatAction == 3) {
 				// beat.beatAction에 맞는 효과 재생, 일정 시간 동안만 재생
@@ -138,8 +138,8 @@ public class GameManagerHeungbu : GameManager {
 		BeatInfo beat = (BeatInfo)GourdBeatList [beatIndex];
 		SawAnimator.speed = beat.intervalTime;
 
-		if (beat.beatTime > (audio.time - AnimationRightToLeftTime)) {
-			yield return new WaitForSeconds (beat.beatTime - audio.time - AnimationRightToLeftTime);
+		if (beat.beatTime > (audio.time - SawAnimationNormalSpeed)) {
+			yield return new WaitForSeconds (beat.beatTime - audio.time - SawAnimationNormalSpeed);
 			
 			SawAnimator.Play ("SawLeftToRight");
 			if (beat.beatAction == 1)
@@ -148,6 +148,7 @@ public class GameManagerHeungbu : GameManager {
 				sawDirection = false;
 			
 			beatIndex++;
+			beatTurnCount++;
 			waitSaw = false;
 		}
 
@@ -155,33 +156,33 @@ public class GameManagerHeungbu : GameManager {
 
 	public IEnumerator SawMoveWaitTime (BeatInfo beat) {
 		SawAnimator.speed = beat.intervalTime;
-		float beatLength = 1.0f + (1.0f - beat.intervalTime);
 
-		if (beat.beatAction == 1) {
-			beatLength *= AnimationLeftToRightTime;
-		} else if (beat.beatAction == 2) {
-			beatLength *= AnimationRightToLeftTime;
+		float beatLength = SawAnimationNormalSpeed;
+		if (beat.intervalTime == 0.9) {
+			beatLength = SawAnimationSlowSpeed;
+		} else if (beat.intervalTime == 1.0) {
+			beatLength = SawAnimationNormalSpeed;
+		} else if (beat.intervalTime == 1.1) {
+			beatLength = SawAnimationFastSpeed;
 		}
-		float waitMoveTime = beat.beatTime - audio.time - beatLength;
+
 		
 		waitSaw = true;
 		// 다음 beat가 재생되기 전까지 입력 대기
+		float waitMoveTime = beat.beatTime - audio.time - beatLength;
 		yield return new WaitForSeconds (waitMoveTime);
-		
-		if (touchCount == 0) {
-			missCount++;			
-			Incorrect ();
-		}
 		
 		// 필요 정보 초기화
 		waitTime = 0.0f;
 		
 		// 톱질 방향 변경
-		if (beat.beatAction == 1)
+		if (beat.beatAction == 1) {
 			SawAnimator.SetTrigger ("SawTurnRight");	
-		else if (beat.beatAction == 2)
+			sawDirection = true;
+		} else if (beat.beatAction == 2) {
 			SawAnimator.SetTrigger ("SawTurnLeft");	
-		sawDirection = !sawDirection;
+			sawDirection = false;
+		}
 
 		beatTurnCount++;
 		waitSaw = false;
@@ -221,17 +222,19 @@ public class GameManagerHeungbu : GameManager {
 			SawAnimator.ResetTrigger ("SawTurnLeft");
 			SawAnimator.ResetTrigger ("SawTurnRight");
 
+			// saw move end time print -> only use test
 			if (showTime) {
 				BeatInfo beat = (BeatInfo)GourdBeatList [beatIndex - 1];
-				if (Mathf.Abs (audio.time - beat.beatTime) > 0.01f) {
-					Debug.Log (audio.time.ToString () + " => " + (audio.time - beat.beatTime).ToString ());
+				if ((audio.time - beat.beatTime) < -0.01f) {
+					Debug.Log (audio.time.ToString () 
+					           + " / time : " + (audio.time - beat.beatTime).ToString () 
+					           + " / speed : " + beat.intervalTime.ToString());
 				}
 				showTime = false;
 			}
+			////////////////////////////////////////////////////////////////////////////////
 
-			if (waitTime == 0.0f) {
-				gourdTime = Time.fixedTime;
-			} else if (waitTime >= HeungbuWaitInputTime) {
+			if (waitTime >= HeungbuWaitInputTime) {
 				if (!gourdOpen && !waitSaw && beatIndex > -1) {
 					SawTypeSelect();
 				}
@@ -244,25 +247,17 @@ public class GameManagerHeungbu : GameManager {
 			// 우->좌로 이동시 해당 값이 초기화 되지 않는 문제가 발생하여 추가함
 			// 정, 오답 체크한 부분이외에 대하서는 무시 처리
 			waitTime = 0.0f;
-			gourdTime = 0.0f;
 			showTime = true;
 
+			//Debug.Log(SawAnimator.GetCurrentAnimatorStateInfo(0).length.ToString ());
 			BeatInfo beat = (BeatInfo) GourdBeatList[beatIndex - 1];
 			if(beat.beatTime < audio.time) {
-				audio.time -= (audio.time - beat.beatTime);
+				//audio.time -= (audio.time - beat.beatTime);
+
 				if (SawAnimator.GetCurrentAnimatorStateInfo(0).IsName("SawLeftToRight")) 
 					SawAnimator.SetTrigger("WaitRight");
 				else if (SawAnimator.GetCurrentAnimatorStateInfo(0).IsName("SawRightToLeft")) 
 					SawAnimator.SetTrigger("WaitLeft");
-			}
-
-			if (touchCount > 0 && !touchCheck) {
-				// 경과 시간 체크, 정답 입력 가능 시간이 지났을 경우 오답 처리
-				if(Time.fixedTime - touchTime > CorrectTime2) {
-					touchCheck = true;
-					incorrectCount++;
-					Incorrect();
-				}
 			}
 		}
 	}
@@ -274,12 +269,13 @@ public class GameManagerHeungbu : GameManager {
 		}
 	}
 
-	private void CorrectCheck() {		
+	public override void CorrectCheck() {		
 		for (int i = checkIndex; i < GourdBeatList.Count; i++) {
 			BeatInfo beat = (BeatInfo) GourdBeatList[i];
 			float compareTime = Mathf.Abs(beat.beatTime - audio.time);
-			
+
 			if (compareTime < CorrectTime1) {
+				correctTrunCount++;
 				gameScore += (CorrectPoint1 + 2 * gameComboCount);
 				if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Excellent);
 				else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Excellent);
@@ -288,6 +284,7 @@ public class GameManagerHeungbu : GameManager {
 				checkIndex = i;
 				break;
 			} else if (compareTime < CorrectTime2) {
+				correctTrunCount++;
 				gameScore += (CorrectPoint1 + gameComboCount);
 				if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Good);
 				else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Good);
@@ -300,7 +297,6 @@ public class GameManagerHeungbu : GameManager {
 				if (sawDirection) PrintResultMessage(resultMessage[ResultMessageRight], (int) ResultMessage.Miss);
 				else PrintResultMessage(resultMessage[ResultMessageLeft], (int) ResultMessage.Miss);
 				Incorrect();
-				i++;
 			} else if (beat.beatTime > audio.time) {
 				checkIndex = i;
 				break;

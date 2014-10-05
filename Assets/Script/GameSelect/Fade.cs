@@ -116,9 +116,9 @@ public class Fade : MonoBehaviour {
 	}
 	
 	public void FadeOut () {
-		if (infoGroup.activeInHierarchy)
+		if (infoGroup.activeInHierarchy) {
 			FadeIn ();
-		else {
+		} else {
 			Black_screen.enabled = true;
 			_time = 0;
 			FadeIn_ing = false;

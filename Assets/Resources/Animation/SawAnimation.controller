@@ -342,6 +342,9 @@ StateMachine:
       first: {fileID: 0}
       second: []
     data:
+      first: {fileID: 0}
+      second: []
+    data:
       first: {fileID: 110229689}
       second:
       - {fileID: 110192489}

@@ -17,12 +17,12 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: {x: 8, y: -.400000006, z: 0}
+        value: {x: 8, y: -3.11999989, z: 0}
         inSlope: {x: -8, y: 0, z: 0}
         outSlope: {x: -8, y: 0, z: 0}
         tangentMode: 0
       - time: 1
-        value: {x: 0, y: -.400000006, z: 0}
+        value: {x: 0, y: -3.11999989, z: 0}
         inSlope: {x: -8, y: 0, z: 0}
         outSlope: {x: -8, y: 0, z: 0}
         tangentMode: 1065353216
@@ -87,12 +87,12 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: -.400000006
+        value: -3.11999989
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: -.400000006
+        value: -3.11999989
         inSlope: 0
         outSlope: 0
         tangentMode: 10
@@ -122,4 +122,11 @@ AnimationClip:
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves: []
-  m_Events: []
+  m_Events:
+  - time: 1
+    functionName: DestroyCake
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

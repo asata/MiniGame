@@ -20,7 +20,7 @@ public class GameManagerHeungbu : GameManager {
 	public Animator SawAnimator;
 	public GUITexture[] resultMessage;
 
-	private bool touchCheck = false;
+	//private bool touchCheck = false;
 	private float waitTime = 0f;
 	private int beatIndex = 0;
 	private int checkIndex = 0;

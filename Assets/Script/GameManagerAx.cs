@@ -116,8 +116,8 @@ public class GameManagerAx : GameManager {
 		} else if (touch.phase == TouchPhase.Ended) {
 			if (touchInput) {
 				// 터치 위치 비교
-				float x = Mathf.Abs (touch.position.x - touchPosition.x);
-				float y = Mathf.Abs (touch.position.y - touchPosition.y);
+				//float x = Mathf.Abs (touch.position.x - touchPosition.x);
+				//float y = Mathf.Abs (touch.position.y - touchPosition.y);
 
 				//CheckCorrect (x, y);
 			}

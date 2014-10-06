@@ -33,8 +33,8 @@ public class GameManagerHeungbu : GameManager {
 
 	void Start () {	
 		ChangeUI ();		
-		//LogoShow("Heungbu");
-		//if (!showLogo) 
+		LogoShow("Heungbu");
+		if (!showLogo) 
 			GameStart ();
 	}
 
@@ -226,9 +226,13 @@ public class GameManagerHeungbu : GameManager {
 			if (showTime) {
 				BeatInfo beat = (BeatInfo)GourdBeatList [beatIndex - 1];
 				if ((audio.time - beat.beatTime) < -0.01f) {
+					// wait => call SawTypeSelect() function
+
 					Debug.Log (audio.time.ToString () 
 					           + " / time : " + (audio.time - beat.beatTime).ToString () 
 					           + " / speed : " + beat.intervalTime.ToString());
+				} else {
+					// call SawTypeSelect() function
 				}
 				showTime = false;
 			}
@@ -249,7 +253,6 @@ public class GameManagerHeungbu : GameManager {
 			waitTime = 0.0f;
 			showTime = true;
 
-			//Debug.Log(SawAnimator.GetCurrentAnimatorStateInfo(0).length.ToString ());
 			BeatInfo beat = (BeatInfo) GourdBeatList[beatIndex - 1];
 			if(beat.beatTime < audio.time) {
 				//audio.time -= (audio.time - beat.beatTime);
@@ -267,6 +270,9 @@ public class GameManagerHeungbu : GameManager {
 			CorrectCheck();
 		} else if (touch.phase == TouchPhase.Ended) {
 		}
+	}
+	public override void MouseHandlingGame() {
+		CorrectCheck ();
 	}
 
 	public override void CorrectCheck() {		

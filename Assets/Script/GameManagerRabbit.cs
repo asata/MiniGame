@@ -133,6 +133,14 @@ public class GameManagerRabbit : GameManager {
 		} else if (touch.phase == TouchPhase.Ended) {
 		}
 	}
+
+	public override void MouseHandlingGame() {
+		if (RS == RabbitState.Wait) {
+			PlayerAnimator.SetTrigger("PlayerPounding");
+			CorrectCheck();
+			touchCount++;	
+		}
+	}
 	
 	// 정답 체크
 	public override void CorrectCheck() {

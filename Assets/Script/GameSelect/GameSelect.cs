@@ -49,6 +49,8 @@ public class GameSelect : MonoBehaviour {
 	private GameObject BackgroundImageD;
 	
 	void Start () { 	
+		Time.timeScale = 1.0f;
+
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
@@ -187,7 +189,7 @@ public class GameSelect : MonoBehaviour {
 		int count = Input.touchCount;	
 		if (count == 1) {	
 			TouchHandling();
-		} else if (Input.GetMouseButtonDown(0)) {
+		} else if (Input.GetMouseButton(0)) {
 			MouseHandling();
 		}
 	} 
@@ -216,7 +218,7 @@ public class GameSelect : MonoBehaviour {
 						Application.LoadLevel(buttonList[resizeIndex].name);					
 					} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 						fade.ButtonUp(1, 10);
-						fade.FadeIn();
+						fade.FadeIn(UIGameInfo);
 					} else if (touchButtonIndex != -1) {
 						fade.ButtonUp(touchButtonIndex, 10);
 					}
@@ -251,16 +253,30 @@ public class GameSelect : MonoBehaviour {
 	private void MouseHandling () {
 		if (!UIOption.activeInHierarchy && !UIShop.activeInHierarchy) {
 			if (UIGameInfo.activeInHierarchy) {
+				if (buttonGameStart.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					GameInfo info = (GameInfo) GameList[resizeIndex];
+					PlayerPrefs.SetString("GameName", buttonList[resizeIndex].name);
+					PlayerPrefs.SetInt("GameNo", info.no);
+					PlayerPrefs.SetInt("HighScore", info.score);
+					
+					Application.LoadLevel(buttonList[resizeIndex].name);					
+				} else if (buttonInfoClose.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+					fade.FadeIn(UIGameInfo);
+				}
 			} else {
 				for (int i = 0; i < buttonList.Length; i++) {
 					GUITexture buttonTexture = buttonList[i].guiTexture;
 					if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 						if (buttonTexture.texture == buttonImage[0]) continue;
 						
+						if (fade != null)
+							fade.FadeOut();
+						
+						resizeIndex = i;
 						UIGameInfo.SetActive(true);
 						SetGameInfo(i);
 					}
-				}
+				} 
 
 				if (buttonOption.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					UIOption.SetActive(true);

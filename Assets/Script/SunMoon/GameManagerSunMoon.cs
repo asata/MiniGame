@@ -150,6 +150,9 @@ public class GameManagerSunMoon : GameManager {
 
 		}
 	}
+	public override void MouseHandlingGame() {
+		CorrectCheck ();
+	}
 
 	public override void CorrectCheck () {
 		for (int i = checkIndex; i < CakeBeatList.Count; i++) {

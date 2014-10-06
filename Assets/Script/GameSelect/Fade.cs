@@ -63,6 +63,7 @@ public class Fade : MonoBehaviour {
 				if (FadeIn_ing) {
 					Black_screen.enabled = false;
 					FadeOutComplete = false;
+					gameInfo.SetActive(false);
 				}
 				if (FadeOut_ing) FadeOutComplete = true;
 
@@ -109,10 +110,12 @@ public class Fade : MonoBehaviour {
 		moveCount -= count;
 	}
 
-	public void FadeIn () {
+	private GameObject gameInfo;
+	public void FadeIn (GameObject hideObject = null) {
 		_time = 0;
 		FadeIn_ing = true;
 		FadeOut_ing = false;
+		if(hideObject != null) gameInfo = hideObject;
 	}
 	
 	public void FadeOut () {

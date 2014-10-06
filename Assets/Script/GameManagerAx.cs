@@ -130,6 +130,8 @@ public class GameManagerAx : GameManager {
 			touchInput = false;
 		}
 	}
+	public override void MouseHandlingGame () {
+	}
 	
 	public override void CorrectCheck() {
 

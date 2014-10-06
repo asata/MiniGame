@@ -111,6 +111,7 @@ abstract public class GameManager : MonoBehaviour {
 	}
 	
 	public void LogoShow (string gameName) {
+		Time.timeScale = 1.0f;
 		gameLogo.SetActive (true);
 		Material mt = Resources.Load ("Material/BackGroundLogoMoonRabbit", typeof(Material)) as Material;
 
@@ -133,7 +134,6 @@ abstract public class GameManager : MonoBehaviour {
 		UIButton [(int)UIButtonList.ShadowPause].enabled = false;
 		yield return new WaitForSeconds (LogoShowTime);
 
-		Debug.Log (LogoShowTime.ToString ());
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		logoAnimator.SetBool ("StartSunMoonAnimation", false);
@@ -435,6 +435,7 @@ abstract public class GameManager : MonoBehaviour {
 	public abstract void GameStart ();		// 게임 시작시 초기 설정
 	public abstract void ResetGame ();	
 	public abstract void CorrectCheck ();	
+	public abstract void MouseHandlingGame();
 	public abstract void TouchHandlingGame (Touch touch);
 	private int touchButtonIndex = -1;
 	
@@ -536,7 +537,7 @@ abstract public class GameManager : MonoBehaviour {
 				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 				PauseOn ();
 			} else {
-				CorrectCheck();
+				MouseHandlingGame();
 			}
 		} else if (GS == GameState.Pause) {
 			if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {

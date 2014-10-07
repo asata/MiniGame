@@ -55,29 +55,29 @@ public enum GameEndTextNumber {
 	Grade
 }
 abstract public class GameManager : MonoBehaviour {	
-	private   const string	StageDBName = "/StageInfo.db";
-	private   const int 	GameCount = 2;					// 현재 개발된 게임 갯수
-	private   const int 	NextGameOpenScore = 3000;		// 다음 스테이지를 여는데 필요한 최소 점수
+	private   const string	StageDBName 		= "/StageInfo.db";
+	private   const int 	GameCount 			= 3;		// 현재 개발된 게임 갯수
+	private   const int 	NextGameOpenScore 	= 3000;		// 다음 스테이지를 여는데 필요한 최소 점수
 
 	// 게임 시작시 Ready, Start 메시지 출력 시간
-	private   const float 	ShowReadyTime = 2.0f;
-	private   const float 	ShowStartTime = 2.5f;
+	private   const float 	ShowReadyTime 		= 2.0f;
+	private   const float 	ShowStartTime 		= 2.5f;
 
 	// 정답 체크 시간 
-	protected const float 	CorrectTime1 = 0.05f;
-	protected const float 	CorrectTime2 = 0.10f;
+	protected const float 	CorrectTime1 		= 0.05f;
+	protected const float 	CorrectTime2 		= 0.10f;
 
-	private   const float	LogoShowTime = 1.5f;
+	private   const float	LogoShowTime 		= 1.5f;
 	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
-	protected const float 	HeungbuWaitInputTime = 0.2f;	// 흥부전 - 사용자 입력 대기 추가 시간
-	protected const float 	GourdOpenTime = 2.0f;			// 흥부전 - 박이 열리는 시간
+	protected const float 	HeungbuWaitInputTime= 0.2f;		// 흥부전 - 사용자 입력 대기 추가 시간
+	protected const float 	GourdOpenTime 		= 2.0f;		// 흥부전 - 박이 열리는 시간
 
-	protected const float 	GameSpeedStop 	= 0.0f;
-	protected const float	GameSpeedNormal = 1.0f;	
+	protected const float 	GameSpeedStop 		= 0.0f;
+	protected const float	GameSpeedNormal 	= 1.0f;	
 
 	// 정답 포인트
-	protected const int 	CorrectPoint1 = 500;
-	protected const int 	CorrectPoint2 = 300;
+	protected const int 	CorrectPoint1 		= 500;
+	protected const int 	CorrectPoint2 		= 300;
 	
 	protected const int 	PoundingAllPoint 	= 50;		// 달토끼 - 해당 턴에서 모두 터치를 한 경우
 	protected const int 	GourdOpenPoint 		= 200;		// 흥부전 - 박을 연 경우
@@ -310,7 +310,6 @@ abstract public class GameManager : MonoBehaviour {
 		GS = GameState.End;
 
 		// 점수에따라 등급 세팅
-		// DB에는 기록 하지 않음
 		string grade = CalGrade();
 
 		if (beatEnd)
@@ -418,7 +417,6 @@ abstract public class GameManager : MonoBehaviour {
 	public void BackKeyTouch () {
 		if (Application.platform == RuntimePlatform.Android && Input.GetKeyUp (KeyCode.Escape)) {
 			if (GS == GameState.Ready || GS == GameState.Play) {
-				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 				ButtonDown(UIButton[(int)UIButtonList.Pause]);	
 				PauseOn ();
 			} else if (GS == GameState.Pause) {
@@ -444,7 +442,6 @@ abstract public class GameManager : MonoBehaviour {
 			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				if (touch.phase == TouchPhase.Began) {
 					ButtonDown(UIButton[(int)UIButtonList.Pause]);					
-					//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 					PauseOn ();
 				}
 			}
@@ -452,13 +449,12 @@ abstract public class GameManager : MonoBehaviour {
 			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				if (touch.phase == TouchPhase.Began) {
 					ButtonDown(UIButton[(int)UIButtonList.Pause]);				
-					//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 					PauseOn ();
 				}
 			} else {
 				TouchHandlingGame (touch);
 			}
-		} else if (GS == GameState.Pause) {// && touch.phase == TouchPhase.Ended) {
+		} else if (GS == GameState.Pause) {
 			if (touch.phase == TouchPhase.Began) {
 				if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 					touchButtonIndex = (int)UIButtonList.UnPause;
@@ -488,8 +484,6 @@ abstract public class GameManager : MonoBehaviour {
 					
 					Time.timeScale = GameSpeedNormal;
 					Application.LoadLevel("GameSelect");
-					//} else if (touchButtonIndex != -1) {
-					//	ButtonUp(UIButton[touchButtonIndex]);
 				}
 				
 				touchButtonIndex = -1;
@@ -516,8 +510,6 @@ abstract public class GameManager : MonoBehaviour {
 					
 					Time.timeScale = GameSpeedNormal;
 					Application.LoadLevel("GameSelect");
-					//} else if (touchButtonIndex != -1) {
-					//ButtonUp(UIButton[touchButtonIndex]);
 				}
 				
 				touchButtonIndex = -1;
@@ -528,21 +520,21 @@ abstract public class GameManager : MonoBehaviour {
 		if (GS == GameState.Ready) {
 			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				ButtonDown(UIButton[(int)UIButtonList.Pause]);					
-				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 				PauseOn ();
 			}
 		} else if (GS == GameState.Play) {
 			if (UIButton[(int)UIButtonList.Pause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
 				ButtonDown(UIButton[(int)UIButtonList.Pause]);				
-				//UIGroup[(int)UIGroupList.UIPause].SendMessage("ShowPausePanel");
 				PauseOn ();
 			} else {
 				MouseHandlingGame();
 			}
 		} else if (GS == GameState.Pause) {
 			if (UIButton[(int)UIButtonList.UnPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				ButtonUp(UIButton[(int)UIButtonList.Pause]);				
 				PauseOff ();
 			} else if (UIButton[(int)UIButtonList.RestartPause].HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
+				ButtonUp(UIButton[(int)UIButtonList.Pause]);				
 				UIGroup[(int)UIGroupList.UIPause].SetActive (false);
 				GameStart();
 			} else if (UIButton[(int)UIButtonList.MainPause].HitTest(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {

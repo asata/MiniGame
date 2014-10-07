@@ -1,12 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum CakeState {
+	ThrowCake = 0,
+	HitStone,
+}
+
 public class Cake : MonoBehaviour {
+	private const float HideY 				= -5.0f;
+	private Vector3 CakeInitVector 			= new Vector3 (3.0f, -5.0f);
+	private Vector3 TigerMouseVector 		= new Vector3 (0.0f, -2.38f);
+	private Vector3 SecondPerStoneMoveSpeed = new Vector3 (6.666f, -6.666f);	// 0.3f
+	private Vector3 SecondPerCakeDownSpeed 	= new Vector3 (0.0f, -6.666f);
 	// move length / move time
-	private const float SecondMoveLengthX 	= 6.0f;
-	private const float SecondMoveLengthY 	= 4.0f;
-	private const float Curvature 			= 1.56f;
-	private GameManagerSunMoon GM;
+	private float MoveCakeTime 				= 0.5f;
+	private float ShowCakeTIme 				= 0.65f;
+	private int state = 0;
+	//private GameManagerSunMoon GM;
 
 	private int beatIndex = -1;
 	private int typeNo = 1;
@@ -27,37 +37,51 @@ public class Cake : MonoBehaviour {
 
 	void Start() {
 		moveTime = 0;
-		GM = GameObject.Find ("GameManager").GetComponent<GameManagerSunMoon> ();
+		state = (int) CakeState.ThrowCake;
+		//GM = GameObject.Find ("GameManager").GetComponent<GameManagerSunMoon> ();
+	}
+
+	public void SetMoveTime(float aTime) {
+		MoveCakeTime = aTime;
+		ShowCakeTIme = aTime + 0.15f;
 	}
 
 	void Update() {
-		if (moveTime < 0.5f) {
-			// move time : 0.5f
-			float moveX = Time.deltaTime * SecondMoveLengthX;
-			float moveY = Time.deltaTime * SecondMoveLengthY;
+		if (state == (int) CakeState.ThrowCake) { 
+			if (moveTime < MoveCakeTime) {
+				Vector3 center = (CakeInitVector + TigerMouseVector) * 0.8f;
+				center -= new Vector3(0, 1);
 
-			if(moveTime < 0.25f) {
-				moveX /= Curvature;
-				moveY *= Curvature;
-			} else { // if (moveTime > 0.4f) {
-				moveX *= Curvature;
-				moveY /= Curvature;
+				Vector3 riseRelCenter = CakeInitVector - center;
+				Vector3 setRelCenter = TigerMouseVector - center;
+				float fracComplete = moveTime / MoveCakeTime;
+
+				this.transform.position = Vector3.Slerp(riseRelCenter, setRelCenter, fracComplete);
+				this.transform.position += center;
+			} else if (moveTime > MoveCakeTime && moveTime < ShowCakeTIme) {
+				this.transform.position = TigerMouseVector;
+			} else if (moveTime > ShowCakeTIme) {
+				if (this.transform.position.y < HideY) {
+					Destroy (this.gameObject);
+				} else {
+					Vector3 moveVector = this.transform.position + (Time.deltaTime * SecondPerCakeDownSpeed);
+					this.transform.position = moveVector;
+				}
 			}
 			
-			float xValue = this.transform.position.x - moveX;
-			float yValue = this.transform.position.y + moveY;
-
-			if (xValue < 0) xValue = 0;
-			if (yValue > -3.0) yValue = -3.0f;
-
-			this.transform.position = new Vector3 (xValue, yValue);
-		} else if (moveTime > 0.5f && moveTime < 0.8f) {
-			this.transform.position = new Vector3(0, -3.0f);
-		} else if (moveTime > 0.8f) {
-			Destroy(this.gameObject);
+			moveTime += Time.deltaTime;
+		} else if (state == (int) CakeState.HitStone) {
+			if (this.transform.position.y < HideY) {
+				Destroy (this.gameObject);
+			} else {
+				Vector3 moveVector = this.transform.position + (Time.deltaTime * SecondPerStoneMoveSpeed);
+				this.transform.position = moveVector;
+			}
 		}
+	}
 
-		moveTime += Time.deltaTime;
+	public void HitStone() {
+		state = (int)CakeState.HitStone;
 	}
 
 	public void DestroyCake() {

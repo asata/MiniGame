@@ -9,6 +9,8 @@ public enum HitZoneInItem {
 public class GameManagerSunMoon : GameManager {
 	private const float AnimationMoveCakeTime = 0.5f;			// throw time 사용시 제거
 	private Vector3 CakeInitVector = new Vector3 (3.0f, -5.0f);
+	private const string CakeTagName = "SunMoonCake";
+	private const string StoneTagName = "SunMoonStone";
 
 	public GameObject Cake;
 	public GameObject Stone;
@@ -38,8 +40,8 @@ public class GameManagerSunMoon : GameManager {
 		// 비트 파일로부터 정보를 읽어들임
 		if (CakeBeatList != null)
 			CakeBeatList.Clear ();
-		CakeBeatList = LoadBeatFile ("Beat/SunMoon01");			// beat time, cake type
-		//CakeBeatList = LoadBeatFileTime ("Beat/SunMoon01");   // beat time, throw time, cake type
+		//CakeBeatList = LoadBeatFile ("Beat/SunMoon01");			// beat time, cake type
+		CakeBeatList = LoadBeatFileTime ("Beat/SunMoon01");   		// beat time, throw time, cake type
 		// throw time : 0.3f(fast)~0.8f(slow), default : 0.5f
 		beatIndex = 0;
 		checkIndex = 0;
@@ -57,8 +59,8 @@ public class GameManagerSunMoon : GameManager {
 			CakeBeatList.Clear ();
 		
 		// 날아다니는 떡 및 돌 소멸 처리
-		DestoyItem ("SunMoonCake");
-		DestoyItem ("SunMoonStone");
+		DestoyItem (CakeTagName);
+		DestoyItem (StoneTagName);
 
 		audio.Stop ();
 		StopCoroutine ("WaitThrowCake");
@@ -127,7 +129,7 @@ public class GameManagerSunMoon : GameManager {
 			}
 
 			// throw time 사용시 use
-			//makeCake.SendMessage ("SetMoveTime", beat.intervalTime);
+			makeCake.SendMessage ("SetMoveTime", beat.intervalTime);
 			makeCake.SendMessage ("SetBeatIndex", beatIndex);
 			beatIndex++;
 			throwCake = false;
@@ -156,7 +158,7 @@ public class GameManagerSunMoon : GameManager {
 				gameScore += (CorrectPoint1 + 2 * gameComboCount);
 				if (beat.beatAction == 1) {
 					TigerAnimator.SetTrigger("HitCake");
-					FindDestroyCake("SunMoonCake", i);
+					FindEatCake(i);
 				} else if (beat.beatAction == 2) {
 					TigerAnimator.SetTrigger("HitStone");
 					HitStone(i); 
@@ -170,7 +172,7 @@ public class GameManagerSunMoon : GameManager {
 				gameScore += (CorrectPoint1 + gameComboCount);
 				if (beat.beatAction == 1) {
 					TigerAnimator.SetTrigger("HitCake");
-					FindDestroyCake("SunMoonCake", i);
+					FindEatCake(i);
 				} else if (beat.beatAction == 2) {
 					TigerAnimator.SetTrigger("HitStone");
 					HitStone(i);
@@ -185,6 +187,11 @@ public class GameManagerSunMoon : GameManager {
 				PrintResultMessage(resultMessage, (int) ResultMessage.Miss);
 				Incorrect();
 			} else if (beat.beatTime > audio.time) {
+				if (beat.beatAction == 1) {
+					TigerAnimator.SetTrigger("HitCake");
+				} else if (beat.beatAction == 2) {
+					TigerAnimator.SetTrigger("HitStone");
+				}
 				checkIndex = i;
 				break;
 			}
@@ -192,16 +199,16 @@ public class GameManagerSunMoon : GameManager {
 	}
 
 	private void HitStone(int index) {
-		GameObject[] cakeList = GameObject.FindGameObjectsWithTag ("SunMoonStone");
+		GameObject[] cakeList = GameObject.FindGameObjectsWithTag (StoneTagName);
 		for (int i = 0; i < cakeList.Length; i++) {
 			cakeList[i].SendMessage("HitStone", index);
 		}
 	}
 	
-	private void FindDestroyCake(string tagName, int index) {
-		GameObject[] cakeList = GameObject.FindGameObjectsWithTag (tagName);
+	private void FindEatCake(int index) {
+		GameObject[] cakeList = GameObject.FindGameObjectsWithTag (CakeTagName);
 		for (int i = 0; i < cakeList.Length; i++) {
-			cakeList[i].SendMessage("DestroyIndex", index);
+			cakeList[i].SendMessage("EatCake", index);
 		}
 	}
 }

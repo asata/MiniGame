@@ -411,6 +411,7 @@ abstract public class GameManager : MonoBehaviour {
 		
 	void OnApplicationPause(bool pause) {
 		if (!pause && (GS != GameState.Logo && GS != GameState.End)) {
+			ButtonDown(UIButton[(int)UIButtonList.Pause]);	
 			PauseOn();
 		}
 	}

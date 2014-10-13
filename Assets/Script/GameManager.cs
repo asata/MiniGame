@@ -5,13 +5,9 @@ using System.Text.RegularExpressions;
 
 public class BeatInfo {
 	public float beatTime;		// 처음부터 시간
-	public float intervalTime;	// 비트간 간격
+	public float intervalTime;	// 비트간 간격 or Speed(Game 별로 상이)
 	public int beatAction;		// 해당 동작
-	
-	public BeatInfo(float aBeat, int aAction) {
-		beatTime = aBeat;
-		beatAction = aAction;
-	}
+
 	public BeatInfo(float aBeat, float aInterval, int aAction) {
 		beatTime = aBeat;
 		intervalTime = aInterval;
@@ -47,13 +43,13 @@ public enum UIButtonList {
 	ShadowPause
 }
 // 게임 종료시 나타날 GUIText Array
-public enum GameEndTextNumber {
+/*public enum GameEndTextNumber {
 	TotalScore = 0,
 	PlayTime,
 	MaxCombo,
 	HighScore,
 	Grade
-}
+}*/
 abstract public class GameManager : MonoBehaviour {	
 	private   const string	StageDBName 		= "/StageInfo.db";
 	private   const int 	GameCount 			= 3;		// 현재 개발된 게임 갯수
@@ -68,7 +64,7 @@ abstract public class GameManager : MonoBehaviour {
 	protected const float 	CorrectTime2 		= 0.10f;
 
 	private   const float	LogoShowTime 		= 1.5f;
-	protected const float 	RabbitWaitInputTime = 0.2f;		// 달토끼 - 사용자 입력 대기 추가 시간
+	protected const float 	RabbitWaitInputTime = 0.3f;		// 달토끼 - 사용자 입력 대기 추가 시간
 	protected const float 	HeungbuWaitInputTime= 0.2f;		// 흥부전 - 사용자 입력 대기 추가 시간
 	protected const float 	GourdOpenTime 		= 2.0f;		// 흥부전 - 박이 열리는 시간
 
@@ -94,7 +90,7 @@ abstract public class GameManager : MonoBehaviour {
 	protected int correctCount;
 	protected int incorrectCount;
 	protected int missCount;
-	protected float playTime;	
+	//protected float playTime;	
 	private bool firstStart = false;
 	private bool readyState = false;	
 	
@@ -102,6 +98,9 @@ abstract public class GameManager : MonoBehaviour {
 	public GameObject AnotherSpaker;	// 효과음
 	public Animator logoAnimator;
 	protected bool showLogo = true;
+	protected ArrayList BeatNote;
+	protected int beatIndex = 0;
+	protected int checkIndex = 0;
 
 	public GameState GetGameState() {
 		return GS;
@@ -157,6 +156,9 @@ abstract public class GameManager : MonoBehaviour {
 			ResetGame ();
 		firstStart = true;
 
+		if (BeatNote != null)
+			BeatNote.Clear ();
+
 		// 주요 변수 초기화
 		gameScore = 0;
 		gameMaxCombo = 0;
@@ -165,7 +167,7 @@ abstract public class GameManager : MonoBehaviour {
 		incorrectCount = 0;
 		missCount = 0;
 
-		playTime = 0.0f;
+		//playTime = 0.0f;
 		readyState = false;
 
 		// 게임 기본 설정
@@ -173,6 +175,15 @@ abstract public class GameManager : MonoBehaviour {
 		UIButton [(int)UIButtonList.ShadowPause].enabled = true;
 		Time.timeScale = GameSpeedNormal;
 		stateTime = 0f;
+	}
+
+	public void InitBackgroundMusic() {
+		// 배경음악 재생 여부에 따라 음악 재생
+		audio.clip = backgroundMusic;
+		audio.volume = 1.0f;
+		if (PlayerPrefs.GetInt ("BackgroundSound") != 0) 
+			audio.volume = 0.0f;
+		audio.Play ();
 	}
 	
 	public void Correct() {
@@ -410,8 +421,8 @@ abstract public class GameManager : MonoBehaviour {
 
 		
 	void OnApplicationPause(bool pause) {
-		if (!pause && (GS != GameState.Logo && GS != GameState.End)) {
-			ButtonDown(UIButton[(int)UIButtonList.Pause]);	
+		if (GS != GameState.Logo && GS != GameState.End) {
+			if (!UIGroup[(int)UIGroupList.UIPause].activeInHierarchy) ButtonDown(UIButton[(int)UIButtonList.Pause]);	
 			PauseOn();
 		}
 	}
@@ -567,26 +578,11 @@ abstract public class GameManager : MonoBehaviour {
 		                                        button.guiTexture.pixelInset.width,
 		                                        button.guiTexture.pixelInset.height);
 	}
-
+	
+	/////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
 	// CSV 파일 읽기 관련 처리
-	/////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////		
-	public ArrayList LoadBeatFile(string fileName) {
-		TextAsset csv = (TextAsset)Resources.Load<TextAsset> (fileName);
-		string[,] csvData = SplitCsvGrid (csv.text);
-		
-		ArrayList BeatList = new ArrayList ();
-		
-		for (int n = 0; n < csvData.GetUpperBound(1); n++) {
-			if (csvData[0, n] == null) continue;
-			
-			BeatInfo beat = new BeatInfo(float.Parse(csvData[0, n]), int.Parse(csvData[1, n]));
-			BeatList.Add(beat);
-		}
-		
-		return BeatList;
-	}
 	public ArrayList LoadBeatFileTime(string fileName) {
 		TextAsset csv = (TextAsset)Resources.Load<TextAsset> (fileName);
 		string[,] csvData = SplitCsvGrid (csv.text);

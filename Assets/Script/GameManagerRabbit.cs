@@ -7,25 +7,6 @@ public enum RabbitState {
 	Ready,			// 절구질 준비 
 	Pounding		// 절구질 애니메이션 재생
 }
-public class PlayerBeatInput {
-	private float touchTime;
-	private bool correctCheck;
-
-	public PlayerBeatInput(float aTime, bool aCheck = false){
-		touchTime = aTime;
-		correctCheck = aCheck;
-	}
-
-	public float GetTime() {
-		return touchTime;
-	}
-	public bool GetCheck() {
-		return correctCheck;
-	}
-	public void SetCheck(bool aCheck) {
-		correctCheck = aCheck;
-	}
-}
 public class GameManagerRabbit : GameManager {
 	private const float WaitChageRabbitState 	= 0.5f;
 	private const int 	MaxGameLife 			= 20;
@@ -36,16 +17,9 @@ public class GameManagerRabbit : GameManager {
 	public RabbitState RS;				// 토끼의 현재 상태
 	public Animator RabbitAnimator;		// 토끼 애니메이터
 	public Animator PlayerAnimator;		// 토끼 애니메이터
-	
-	private ArrayList RabbitBeatList;	// File로부터 토끼 절구질 정보를 읽어들임
-	private ArrayList RabbitHitBeat;	// 토끼 절구질 시간 간격
-	private float preTouchTime;			// 이전 터치 시간
-
-	private int checkIndex = 0;
-	private int beatIndex = 0;	
 	private int touchCount = 0;			// 플레이어 절구질 횟수
-	
-	
+	private int poundingCount = 0;
+
 	void Start () {
 		ChangeUI ();
 		LogoShow("MoonRabbit");
@@ -58,28 +32,17 @@ public class GameManagerRabbit : GameManager {
 		// 필요 정보 초기화
 		RS = RabbitState.Standby;
 
-		RabbitHitBeat = new ArrayList ();
-
 		checkIndex = 0;
 		beatIndex = 0;
+		poundingCount = 0;
 
 		// 비트 파일로부터 정보를 읽어들임
-		if (RabbitBeatList != null)
-			RabbitBeatList.Clear ();
-		RabbitBeatList = LoadBeatFileTime ("Beat/MoonRabbit02");
+		BeatNote = LoadBeatFileTime ("Beat/MoonRabbit02");
 
-		audio.clip = backgroundMusic;
-		audio.volume = 1.0f;
-
-		if (PlayerPrefs.GetInt("BackgroundSound") != 0) 
-			audio.volume = 0.0f;
-		audio.Play ();
+		InitBackgroundMusic ();
 	}
 	
-	public override void ResetGame () {
-		if (RabbitHitBeat != null)
-			RabbitHitBeat.Clear ();
-		
+	public override void ResetGame () {		
 		audio.Stop ();
 		StopCoroutine ("WaitPounding");
 		
@@ -144,13 +107,12 @@ public class GameManagerRabbit : GameManager {
 	
 	// 정답 체크
 	public override void CorrectCheck() {
-		for (int i = checkIndex; i < RabbitHitBeat.Count; i++) {
-			PlayerBeatInput inputBeat = (PlayerBeatInput) RabbitHitBeat[i];
-			if (inputBeat.GetCheck()) continue;
-			float compareTime = Mathf.Abs(inputBeat.GetTime() - audio.time);
+		for (int i = checkIndex; i < BeatNote.Count; i++) {
+			BeatInfo beat = (BeatInfo) BeatNote[i];
+			if(beat.beatAction != 0) continue;
+			float compareTime = Mathf.Abs(beat.beatTime - audio.time);
 
 			if (compareTime < CorrectTime1) {
-				inputBeat.SetCheck(true);
 				gameScore += (CorrectPoint1 + 2 * gameComboCount);
 				PrintResultMessage(resultMessage, (int) ResultMessage.Excellent);
 				Correct();
@@ -158,20 +120,18 @@ public class GameManagerRabbit : GameManager {
 				checkIndex = i;
 				break;
 			} else if (compareTime < CorrectTime2) {
-				inputBeat.SetCheck(true);
 				gameScore += (CorrectPoint1 + gameComboCount);
 				PrintResultMessage(resultMessage, (int) ResultMessage.Good);
 				Correct();
 				
 				checkIndex = i;
 				break;
-			} else if (inputBeat.GetTime() < audio.time) {
-				// miss beat					
-				inputBeat.SetCheck(true);
+			} else if (beat.beatTime < audio.time) {
+				// miss beat			
 				PrintResultMessage(resultMessage, (int) ResultMessage.Miss);
 				Incorrect();
 				i++;
-			} else if (inputBeat.GetTime() > audio.time) {
+			} else if (beat.beatTime > audio.time) {
 				checkIndex = i;
 				break;
 			}
@@ -179,21 +139,15 @@ public class GameManagerRabbit : GameManager {
 	}
 
 	private void RhythmTurnEnd() {
-		if (RabbitHitBeat.Count == touchCount) {
+		if (poundingCount == touchCount) {
 			// 지정된 절구질을 모두 한 경우 가산점 부여
 			if (gameComboCount >= touchCount) 
 				gameScore += PoundingAllPoint;
-		} else if (RabbitHitBeat.Count > touchCount) {
-			for (int i = 0; i < RabbitHitBeat.Count; i++) {
-				PlayerBeatInput beat = (PlayerBeatInput) RabbitHitBeat[i];
-				if (beat.GetCheck()) continue;
+		} else if (poundingCount > touchCount) {
+			missCount = poundingCount - touchCount;
+			gameComboCount = 0;
+		}
 
-				missCount++;
-				gameComboCount = 0;
-			}
-		}		
-		
-		RabbitHitBeat.Clear();
 		touchCount = 0;
 	}
 	private void MoonRabbitEvent() {
@@ -203,10 +157,12 @@ public class GameManagerRabbit : GameManager {
 			PlayerAnimator.speed = 1.0f;
 		} else if (RS == RabbitState.Wait) {
 			// 사용자 입력이 끝날때까지 대기
-			if (beatIndex < RabbitBeatList.Count) {
-				BeatInfo nextBeat = (BeatInfo) RabbitBeatList[beatIndex];
+			if (beatIndex < BeatNote.Count) {
+				BeatInfo nextBeat = (BeatInfo) BeatNote[beatIndex];
 
-				if ((nextBeat.beatTime - audio.time) <= RabbitWaitInputTime) {
+				if (nextBeat.beatAction == 0) {
+					beatIndex++;
+				} else if ((nextBeat.beatTime - audio.time) <= RabbitWaitInputTime) {
 					RabbitAnimator.SetTrigger("PlayerInputEnd");
 					RS = RabbitState.Ready;
 				}
@@ -223,7 +179,7 @@ public class GameManagerRabbit : GameManager {
 	
 	// 달토끼 절구질 
 	public IEnumerator WaitPounding() {
-		BeatInfo beat = (BeatInfo) RabbitBeatList[beatIndex];
+		BeatInfo beat = (BeatInfo) BeatNote[beatIndex];
 		if ((beat.beatTime - audio.time) - 0.1f > 0) {
 			yield return new WaitForSeconds ((beat.beatTime - audio.time) - 0.1f);
 		} else {
@@ -231,7 +187,7 @@ public class GameManagerRabbit : GameManager {
 		}
 				
 		// 절구질간 간격
-		if (beatIndex >= (RabbitBeatList.Count) - 1)
+		if (beatIndex >= (BeatNote.Count) - 1)
 			beatIndex = -1;
 		else 
 			beatIndex++;
@@ -240,32 +196,23 @@ public class GameManagerRabbit : GameManager {
 		//			  2 : 절구질 후 사용자 입력 대기
 		if (beat.beatAction == 1) {
 			// 다음 절구질 대기
+			poundingCount++;
 			RabbitAnimator.SetTrigger ("Pounding");
 			StartCoroutine ("WaitPounding");
 		} else if (beat.beatAction == 2) {
+			poundingCount++;
 			RabbitAnimator.SetTrigger ("PoundingDone");
 			
 			RS = RabbitState.Wait;
-			RabbitBeatListAdd();
 		} else if (beat.beatAction == 3) {
+			poundingCount++;
 			RabbitAnimator.SetTrigger("PoundingLow");
 			StartCoroutine ("WaitPounding");
 		} else if (beat.beatAction == 4) {
+			poundingCount++;
 			RabbitAnimator.SetTrigger ("PoundingLowDone");
 			
 			RS = RabbitState.Wait;
-			RabbitBeatListAdd();
 		}
-	}
-
-	private void RabbitBeatListAdd() {
-		for (; beatIndex < RabbitBeatList.Count; beatIndex++) {
-			BeatInfo beat = (BeatInfo) RabbitBeatList[beatIndex];
-			if (beat.beatAction != 0) break;
-
-			RabbitHitBeat.Add(new PlayerBeatInput(beat.beatTime));
-		}
-
-		checkIndex = 0;
 	}
 }

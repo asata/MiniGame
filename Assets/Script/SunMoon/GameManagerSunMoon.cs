@@ -1,11 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum HitZoneInItem {
-	None = 0,
-	Cake,
-	Stone,
-}
 public class GameManagerSunMoon : GameManager {
 	private const float AnimationMoveCakeTime = 0.5f;			// throw time 사용시 제거
 	private Vector3 CakeInitVector = new Vector3 (3.0f, -5.0f);
@@ -20,9 +15,7 @@ public class GameManagerSunMoon : GameManager {
 	public GUIText show;
 	public GUIText show2;
 
-	private int beatIndex = 0;
-	private int checkIndex = 0;
-	private ArrayList CakeBeatList;
+	//private ArrayList CakeBeatList;
 	private bool throwCake = false;
 
 	void Start () {	
@@ -38,26 +31,15 @@ public class GameManagerSunMoon : GameManager {
 		throwCake = false;
 
 		// 비트 파일로부터 정보를 읽어들임
-		if (CakeBeatList != null)
-			CakeBeatList.Clear ();
-		//CakeBeatList = LoadBeatFile ("Beat/SunMoon01");			// beat time, cake type
-		CakeBeatList = LoadBeatFileTime ("Beat/SunMoon01");   		// beat time, throw time, cake type
+		BeatNote = LoadBeatFileTime ("Beat/SunMoon01");   		// beat time, throw time, cake type
 		// throw time : 0.3f(fast)~0.8f(slow), default : 0.5f
 		beatIndex = 0;
 		checkIndex = 0;
-		
-		// 배경음악 재생 여부에 따라 음악 재생
-		audio.clip = backgroundMusic;
-		audio.volume = 1.0f;
-		if (PlayerPrefs.GetInt ("BackgroundSound") != 0) 
-			audio.volume = 0.0f;
-		audio.Play ();
+
+		InitBackgroundMusic ();
 	}	
 	
-	public override void ResetGame () {
-		if (CakeBeatList != null)
-			CakeBeatList.Clear ();
-		
+	public override void ResetGame () {		
 		// 날아다니는 떡 및 돌 소멸 처리
 		DestoyItem (CakeTagName);
 		DestoyItem (StoneTagName);
@@ -114,8 +96,8 @@ public class GameManagerSunMoon : GameManager {
 	}
 
 	public IEnumerator WaitThrowCake() {
-		if (beatIndex < CakeBeatList.Count) {
-			BeatInfo beat = (BeatInfo)CakeBeatList [beatIndex];
+		if (beatIndex < BeatNote.Count) {
+			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
 			float waitMoveTime = beat.beatTime - audio.time - AnimationMoveCakeTime;
 			yield return new WaitForSeconds (waitMoveTime);
 	
@@ -125,7 +107,7 @@ public class GameManagerSunMoon : GameManager {
 				makeCake = (GameObject)Instantiate (Cake, CakeInitVector, transform.rotation);
 			} else if (beat.beatAction == 2) {
 				makeCake = (GameObject)Instantiate (Stone, CakeInitVector, transform.rotation);
-				makeCake.SendMessage ("SetTypeNo", HitZoneInItem.Stone);
+				makeCake.SendMessage ("SetTypeNo", beat.beatAction);
 			}
 
 			// throw time 사용시 use
@@ -148,10 +130,10 @@ public class GameManagerSunMoon : GameManager {
 	}
 
 	public override void CorrectCheck () {
-		if (CakeBeatList == null) return;
+		if (BeatNote == null) return;
 
-		for (int i = checkIndex; i < CakeBeatList.Count; i++) {
-			BeatInfo beat = (BeatInfo) CakeBeatList[i];
+		for (int i = checkIndex; i < BeatNote.Count; i++) {
+			BeatInfo beat = (BeatInfo) BeatNote[i];
 			float compareTime = Mathf.Abs(beat.beatTime - audio.time);
 
 			if (compareTime < CorrectTime1) {

@@ -11,19 +11,14 @@ public class GameManagerHeungbu : GameManager {
 	private const int ResultMessageLeft 	= 0;
 	private const int ResultMessageRight 	= 1;
 
-	private const float SawDonwValue 	= 0.2f;				// 톱이 아래로 내려갈 높이
-	private const float GourdOpenYValue = -3.5f;			// 박이 열릴 높이
-
 	public GameObject gourdOpenEffect;
 	
-	private ArrayList GourdBeatList;
+	//private ArrayList GourdBeatList;
 	public Animator SawAnimator;
 	public GUITexture[] resultMessage;
 
 	//private bool touchCheck = false;
 	private float waitTime = 0f;
-	private int beatIndex = 0;
-	private int checkIndex = 0;
 	private bool sawDirection;			// true일 경우 좌->우, false 좌<-우
 	private bool gourdOpen;
 	private bool waitSaw = false;
@@ -50,25 +45,14 @@ public class GameManagerHeungbu : GameManager {
 		waitSaw = false;
 
 		// 비트 파일로부터 정보 읽어들이기
-		if (GourdBeatList != null)
-			GourdBeatList.Clear ();
-		GourdBeatList = LoadBeatFileTime ("Beat/Heungbu01");
+		BeatNote = LoadBeatFileTime ("Beat/Heungbu01");
 		beatIndex = 0;
 		checkIndex = 0;
 		
-		// 배경음악 재생 여부에 따라 음악 재생
-		audio.clip = backgroundMusic;
-		audio.time = 0.0f;
-		audio.volume = 1.0f;
-		if (PlayerPrefs.GetInt ("BackgroundSound") != 0) 
-			audio.volume = 0.0f;
-		audio.Play ();
+		InitBackgroundMusic ();
 	}	
 	
 	public override void ResetGame () {
-		if (GourdBeatList != null)
-			GourdBeatList.Clear ();
-
 		audio.Stop ();
 
 		StopCoroutine ("SawMoveFirst");
@@ -112,10 +96,10 @@ public class GameManagerHeungbu : GameManager {
 
 	public void SawTypeSelect () {
 		// 흥부전은 beatAction을 사용하지 않음 - 초기 방향 설정시에만 사용함
-		if (beatIndex >= GourdBeatList.Count) {
+		if (beatIndex >= BeatNote.Count) {
 			beatIndex = -1;
 		} else {
-			BeatInfo beat = (BeatInfo)GourdBeatList [beatIndex];
+			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
 			
 			if (beat.beatAction == 1 || beat.beatAction == 2) {
 				beatTurnCount++;
@@ -135,7 +119,7 @@ public class GameManagerHeungbu : GameManager {
 	}
 	
 	public IEnumerator SawMoveFirst () {
-		BeatInfo beat = (BeatInfo)GourdBeatList [beatIndex];
+		BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
 		SawAnimator.speed = beat.intervalTime;
 
 		if (beat.beatTime > (audio.time - SawAnimationNormalSpeed)) {
@@ -208,8 +192,7 @@ public class GameManagerHeungbu : GameManager {
 		gourdOpen = false;
 		Destroy(particle);
 	}
-	
-	private bool showTime = false;
+
 	private void SawEvent () {
 		if (SawAnimator.GetCurrentAnimatorStateInfo (0).IsName ("TurnWaitLeft") || 
 			SawAnimator.GetCurrentAnimatorStateInfo (0).IsName ("TurnWaitRight") || 
@@ -221,22 +204,6 @@ public class GameManagerHeungbu : GameManager {
 			SawAnimator.ResetTrigger ("WaitRight");
 			SawAnimator.ResetTrigger ("SawTurnLeft");
 			SawAnimator.ResetTrigger ("SawTurnRight");
-
-			// saw move end time print -> only use test
-			if (showTime) {
-				BeatInfo beat = (BeatInfo)GourdBeatList [beatIndex - 1];
-				if ((audio.time - beat.beatTime) < -0.01f) {
-					// wait => call SawTypeSelect() function
-
-					Debug.Log (audio.time.ToString () 
-					           + " / time : " + (audio.time - beat.beatTime).ToString () 
-					           + " / speed : " + beat.intervalTime.ToString());
-				} else {
-					// call SawTypeSelect() function
-				}
-				showTime = false;
-			}
-			////////////////////////////////////////////////////////////////////////////////
 
 			if (waitTime >= HeungbuWaitInputTime) {
 				if (!gourdOpen && !waitSaw && beatIndex > -1) {
@@ -251,12 +218,9 @@ public class GameManagerHeungbu : GameManager {
 			// 우->좌로 이동시 해당 값이 초기화 되지 않는 문제가 발생하여 추가함
 			// 정, 오답 체크한 부분이외에 대하서는 무시 처리
 			waitTime = 0.0f;
-			showTime = true;
 
-			BeatInfo beat = (BeatInfo) GourdBeatList[beatIndex - 1];
+			BeatInfo beat = (BeatInfo) BeatNote[beatIndex - 1];
 			if(beat.beatTime < audio.time) {
-				//audio.time -= (audio.time - beat.beatTime);
-
 				if (SawAnimator.GetCurrentAnimatorStateInfo(0).IsName("SawLeftToRight")) 
 					SawAnimator.SetTrigger("WaitRight");
 				else if (SawAnimator.GetCurrentAnimatorStateInfo(0).IsName("SawRightToLeft")) 
@@ -276,8 +240,8 @@ public class GameManagerHeungbu : GameManager {
 	}
 
 	public override void CorrectCheck() {		
-		for (int i = checkIndex; i < GourdBeatList.Count; i++) {
-			BeatInfo beat = (BeatInfo) GourdBeatList[i];
+		for (int i = checkIndex; i < BeatNote.Count; i++) {
+			BeatInfo beat = (BeatInfo) BeatNote[i];
 			float compareTime = Mathf.Abs(beat.beatTime - audio.time);
 
 			if (compareTime < CorrectTime1) {

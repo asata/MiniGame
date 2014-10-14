@@ -3,26 +3,23 @@ using System.Collections;
 
 public class GameManagerHeungbu : GameManager {
 	// 애니메이션 재생 시간(속도 : 1.0f 기준)
-	private const float SawAnimationSlowSpeed 	= 0.6697f;
-	private const float SawAnimationNormalSpeed = 0.6075f;
-	private const float SawAnimationFastSpeed 	= 0.5532f;	
-	
+	private const float SawAnimationSlowSpeed 	= 0.6697f;	// 0.9f
+	private const float SawAnimationNormalSpeed = 0.6075f;	// 1.0f
+	private const float SawAnimationFastSpeed 	= 0.5532f;	// 1.1f
+
+	private 	Vector3 GourdOpenPosition 	= new Vector3 (0, -5, -10);
 	private const float GourdEffetValue 	= 1.5f;			// 박이 열릴때 정답에 대한 가중치
 	private const int ResultMessageLeft 	= 0;
 	private const int ResultMessageRight 	= 1;
+	private const int BeatFileNum 			= 1;
 
 	public GameObject gourdOpenEffect;
-	
-	//private ArrayList GourdBeatList;
 	public Animator SawAnimator;
 	public GUITexture[] resultMessage;
-
-	//private bool touchCheck = false;
 	private float waitTime = 0f;
 	private bool sawDirection;			// true일 경우 좌->우, false 좌<-우
 	private bool gourdOpen;
 	private bool waitSaw = false;
-
 	private int beatTurnCount = 0;
 	private int correctTrunCount = 0;
 
@@ -45,7 +42,8 @@ public class GameManagerHeungbu : GameManager {
 		waitSaw = false;
 
 		// 비트 파일로부터 정보 읽어들이기
-		BeatNote = LoadBeatFileTime ("Beat/Heungbu01");
+		int randomBeatFileNum = Random.Range (0, BeatFileNum);
+		BeatNote = LoadBeatFileTime ("Beat/Heungbu" + randomBeatFileNum);
 		beatIndex = 0;
 		checkIndex = 0;
 		
@@ -120,7 +118,7 @@ public class GameManagerHeungbu : GameManager {
 	
 	public IEnumerator SawMoveFirst () {
 		BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
-		SawAnimator.speed = beat.intervalTime;
+		SawAnimator.speed = beat.animation;
 
 		if (beat.beatTime > (audio.time - SawAnimationNormalSpeed)) {
 			yield return new WaitForSeconds (beat.beatTime - audio.time - SawAnimationNormalSpeed);
@@ -135,18 +133,17 @@ public class GameManagerHeungbu : GameManager {
 			beatTurnCount++;
 			waitSaw = false;
 		}
-
 	}
 
 	public IEnumerator SawMoveWaitTime (BeatInfo beat) {
-		SawAnimator.speed = beat.intervalTime;
+		SawAnimator.speed = beat.animation;
 
 		float beatLength = SawAnimationNormalSpeed;
-		if (beat.intervalTime == 0.9) {
+		if (beat.animation == 0.9) {
 			beatLength = SawAnimationSlowSpeed;
-		} else if (beat.intervalTime == 1.0) {
+		} else if (beat.animation == 1.0) {
 			beatLength = SawAnimationNormalSpeed;
-		} else if (beat.intervalTime == 1.1) {
+		} else if (beat.animation == 1.1) {
 			beatLength = SawAnimationFastSpeed;
 		}
 
@@ -182,12 +179,12 @@ public class GameManagerHeungbu : GameManager {
 		// 음악 중간에 효과 재생
 		Object particle = new Object ();
 		if (beat.beatAction == 3) {
-			particle = Instantiate (gourdOpenEffect, new Vector3 (0, -5, -10), transform.rotation);
+			particle = Instantiate (gourdOpenEffect, GourdOpenPosition, transform.rotation);
 		} else if (beat.beatAction == 4) {
 			// Goblin
-			particle = Instantiate (gourdOpenEffect, new Vector3 (0, -5, -10), transform.rotation);
+			particle = Instantiate (gourdOpenEffect, GourdOpenPosition, transform.rotation);
 		}
-		yield return new WaitForSeconds (beat.intervalTime);
+		yield return new WaitForSeconds (beat.animation);
 
 		gourdOpen = false;
 		Destroy(particle);

@@ -8,12 +8,9 @@ public enum RabbitState {
 	Pounding		// 절구질 애니메이션 재생
 }
 public class GameManagerRabbit : GameManager {
-	private const float WaitChageRabbitState 	= 0.5f;
-	private const int 	MaxGameLife 			= 20;
-	
-	// UI start
+	private const int 	BeatFileNum = 1;
+
 	public GUITexture resultMessage;
-	
 	public RabbitState RS;				// 토끼의 현재 상태
 	public Animator RabbitAnimator;		// 토끼 애니메이터
 	public Animator PlayerAnimator;		// 토끼 애니메이터
@@ -37,7 +34,8 @@ public class GameManagerRabbit : GameManager {
 		poundingCount = 0;
 
 		// 비트 파일로부터 정보를 읽어들임
-		BeatNote = LoadBeatFileTime ("Beat/MoonRabbit02");
+		int randomBeatFileNum = Random.Range (0, BeatFileNum);
+		BeatNote = LoadBeatFile ("Beat/MoonRabbit" + randomBeatFileNum);
 
 		InitBackgroundMusic ();
 	}

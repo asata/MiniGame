@@ -5,12 +5,17 @@ using System.Text.RegularExpressions;
 
 public class BeatInfo {
 	public float beatTime;		// 처음부터 시간
-	public float intervalTime;	// 비트간 간격 or Speed(Game 별로 상이)
+	public float animation;		// Animation Speed or Time(Game 별로 상이)
 	public int beatAction;		// 해당 동작
-
-	public BeatInfo(float aBeat, float aInterval, int aAction) {
+	
+	public BeatInfo(float aBeat, int aAction) {
 		beatTime = aBeat;
-		intervalTime = aInterval;
+		animation = 1.0f;
+		beatAction = aAction;
+	}
+	public BeatInfo(float aBeat, float aSpeed, int aAction) {
+		beatTime = aBeat;
+		animation = aSpeed;
 		beatAction = aAction;
 	}
 }
@@ -94,7 +99,7 @@ abstract public class GameManager : MonoBehaviour {
 	private bool firstStart = false;
 	private bool readyState = false;	
 	
-	public AudioClip backgroundMusic;	// 배경음악
+	private string backgroundMusicName;
 	public GameObject AnotherSpaker;	// 효과음
 	public Animator logoAnimator;
 	protected bool showLogo = true;
@@ -108,7 +113,11 @@ abstract public class GameManager : MonoBehaviour {
 	public void SetGameState(GameState state) {
 		GS = state;
 	}
-	
+
+	/// <summary>
+	/// 게임 로고를 출력
+	/// </summary>
+	/// <param name="gameName">Game name</param>
 	public void LogoShow (string gameName) {
 		Time.timeScale = 1.0f;
 		gameLogo.SetActive (true);
@@ -122,11 +131,19 @@ abstract public class GameManager : MonoBehaviour {
 		} else if (gameName == "SunMoon") {
 			logoAnimator.SetBool ("StartSunMoonAnimation", true);
 			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;
+		//} else if (gameName == "SunMoon") {
+			//logoAnimator.SetBool ("StartSunMoonAnimation", true);
+			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;
 		}
 		
 		gameLogo.renderer.material = mt;
 		GS = GameState.Logo;
 	}
+
+	/// <summary>
+	/// 일정 시간 게임 로고 출력
+	/// </summary>
+	/// <returns>The delay time</returns>
 	public IEnumerator LogoDelayTime () {
 		showLogo = false;
 		UIButton [(int)UIButtonList.Pause].enabled = false;
@@ -136,6 +153,7 @@ abstract public class GameManager : MonoBehaviour {
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		logoAnimator.SetBool ("StartSunMoonAnimation", false);
+		//logoAnimator.SetBool ("StartSunMoonAnimation", false);
 		logoAnimator.SetTrigger ("SetDefault");
 
 		//yield return new WaitForSeconds (0.005f);
@@ -144,7 +162,7 @@ abstract public class GameManager : MonoBehaviour {
 		gameLogo.SetActive (false);
 		GameStart();
 	}
-
+	
 	public void Init() {
 		GS = GameState.Ready;
 		
@@ -179,7 +197,8 @@ abstract public class GameManager : MonoBehaviour {
 
 	public void InitBackgroundMusic() {
 		// 배경음악 재생 여부에 따라 음악 재생
-		audio.clip = backgroundMusic;
+		//audio.clip = backgroundMusic;
+		audio.clip = (AudioClip) Resources.Load ("Sound/" + backgroundMusicName);
 		audio.volume = 1.0f;
 		if (PlayerPrefs.GetInt ("BackgroundSound") != 0) 
 			audio.volume = 0.0f;
@@ -193,11 +212,10 @@ abstract public class GameManager : MonoBehaviour {
 		if (gameMaxCombo < gameComboCount)
 			gameMaxCombo = gameComboCount;
 		
-		if (PlayerPrefs.GetInt("EffectSound") == 0) {
+		if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null) {
 			AnotherSpaker.SendMessage("SoundPlay");
 		}
 	}
-	
 	
 	public void Incorrect() {
 		gameComboCount = 0;
@@ -249,7 +267,9 @@ abstract public class GameManager : MonoBehaviour {
 		resultMessage.SendMessage("SetImage", imageNumber);
 	}
 
-	// UI를 화면에 맞게 조정
+	/// <summary>
+	/// UI를 Device 화면에 맞게 조정
+	/// </summary>
 	private void ChangeUISize() {			
 		// 화면 해상도 처리 시작
 		Screen.SetResolution (Screen.width, Screen.height, true);
@@ -283,9 +303,6 @@ abstract public class GameManager : MonoBehaviour {
 	public Animator GameEndResultAnimator;
 	public GUIText[] GameEndLabel;
 
-	/// <summary>
-	/// 게임 일시 정지, 해제, 종료등 게임 진행 UI 관련
-	/// </summary>
 	public void PauseOn() {
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.SystemSetting;
@@ -307,6 +324,11 @@ abstract public class GameManager : MonoBehaviour {
 			GS = GameState.Ready;
 		UIGroup[(int)UIGroupList.UIPause].SetActive (false);
 	}
+
+	/// <summary>
+	/// 게임 종료 UI 출력
+	/// </summary>
+	/// <param name="beatEnd">true : 정상 게임 종료, false : life 및 시간 부족으로 인한 종료</param>
 	public void GameEnd(bool beatEnd = false) {		
 		UIButton [(int)UIButtonList.Pause].enabled = false;
 		UIButton [(int)UIButtonList.ShadowPause].enabled = false;
@@ -378,6 +400,11 @@ abstract public class GameManager : MonoBehaviour {
 		sql.Close();
 	}
 
+	/// <summary>
+	/// Nexts the game open.
+	/// </summary>
+	/// <returns><c>true</c>, if game open was nexted, <c>false</c> otherwise.</returns>
+	/// <param name="gameNo">Game no</param>
 	private bool NextGameOpen(int gameNo) {
 		string strOut = Application.persistentDataPath + StageDBName;
 		SqliteDatabase sql = new SqliteDatabase();
@@ -588,11 +615,26 @@ abstract public class GameManager : MonoBehaviour {
 		string[,] csvData = SplitCsvGrid (csv.text);
 		
 		ArrayList BeatList = new ArrayList ();
-		
-		for (int n = 0; n < csvData.GetUpperBound(1); n++) {
+		backgroundMusicName = csvData [0, 0];
+		for (int n = 1; n < csvData.GetUpperBound(1); n++) {
 			if (csvData[0, n] == null) continue;
 			
 			BeatInfo beat = new BeatInfo(float.Parse(csvData[0, n]), float.Parse(csvData[1, n]), int.Parse(csvData[2, n]));
+			BeatList.Add(beat);
+		}
+		
+		return BeatList;
+	}
+	public ArrayList LoadBeatFile(string fileName) {
+		TextAsset csv = (TextAsset)Resources.Load<TextAsset> (fileName);
+		string[,] csvData = SplitCsvGrid (csv.text);
+		
+		ArrayList BeatList = new ArrayList ();
+		backgroundMusicName = csvData [0, 0];
+		for (int n = 1; n < csvData.GetUpperBound(1); n++) {
+			if (csvData[0, n] == null) continue;
+			
+			BeatInfo beat = new BeatInfo(float.Parse(csvData[0, n]), int.Parse(csvData[1, n]));
 			BeatList.Add(beat);
 		}
 		

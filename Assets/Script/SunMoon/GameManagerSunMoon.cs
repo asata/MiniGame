@@ -6,16 +6,12 @@ public class GameManagerSunMoon : GameManager {
 	private Vector3 CakeInitVector = new Vector3 (3.0f, -5.0f);
 	private const string CakeTagName = "SunMoonCake";
 	private const string StoneTagName = "SunMoonStone";
+	private const int BeatFileNum = 1;
 
 	public GameObject Cake;
 	public GameObject Stone;
 	public GUITexture resultMessage;
 	public Animator TigerAnimator;
-	
-	public GUIText show;
-	public GUIText show2;
-
-	//private ArrayList CakeBeatList;
 	private bool throwCake = false;
 
 	void Start () {	
@@ -31,7 +27,8 @@ public class GameManagerSunMoon : GameManager {
 		throwCake = false;
 
 		// 비트 파일로부터 정보를 읽어들임
-		BeatNote = LoadBeatFileTime ("Beat/SunMoon01");   		// beat time, throw time, cake type
+		int randomBeatFileNum = Random.Range (0, BeatFileNum);
+		BeatNote = LoadBeatFileTime ("Beat/SunMoon" + randomBeatFileNum);  	// beat time, throw time, cake type
 		// throw time : 0.3f(fast)~0.8f(slow), default : 0.5f
 		beatIndex = 0;
 		checkIndex = 0;
@@ -111,7 +108,7 @@ public class GameManagerSunMoon : GameManager {
 			}
 
 			// throw time 사용시 use
-			makeCake.SendMessage ("SetMoveTime", beat.intervalTime);
+			makeCake.SendMessage ("SetMoveTime", beat.animation);
 			makeCake.SendMessage ("SetBeatIndex", beatIndex);
 			beatIndex++;
 			throwCake = false;

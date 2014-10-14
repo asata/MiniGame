@@ -10,10 +10,10 @@ public enum CakeState {
 
 public class Cake : MonoBehaviour {
 	private const float HideY 				= -5.0f;
-	private Vector3 CakeInitVector 			= new Vector3 (3.0f, -5.0f);
-	private Vector3 TigerMouseVector 		= new Vector3 (0.0f, -2.38f);
+	private Vector3 CakeInitVector 			= new Vector3 (3.000f, -5.000f);
+	private Vector3 TigerMouseVector 		= new Vector3 (0.000f, -2.380f);
 	private Vector3 SecondPerStoneMoveSpeed = new Vector3 (6.666f, -6.666f);	// 0.3f
-	private Vector3 SecondPerCakeDownSpeed 	= new Vector3 (0.0f, -6.666f);
+	private Vector3 SecondPerCakeDownSpeed 	= new Vector3 (0.000f, -6.666f);
 	// move length / move time
 
 	private float MoveCakeTime 				= 0.5f;
@@ -24,7 +24,7 @@ public class Cake : MonoBehaviour {
 	private int beatIndex = -1;
 	private int typeNo = 1;
 	private float moveTime = 0;
-	private bool beatensStone = false;
+	//private bool beatensStone = false;
 
 	public void SetBeatIndex(object aIndex) {
 		beatIndex = (int) aIndex;
@@ -39,7 +39,7 @@ public class Cake : MonoBehaviour {
 
 	void Start() {
 		moveTime = 0;
-		beatensStone = false;
+		//beatensStone = false;
 		state = (int) CakeState.ThrowCake;
 		//GM = GameObject.Find ("GameManager").GetComponent<GameManagerSunMoon> ();
 	}

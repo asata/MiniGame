@@ -607,6 +607,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 599643846}
   - 131: {fileID: 599643845}
+  - 114: {fileID: 599643847}
   m_Layer: 0
   m_Name: ResultMessage
   m_TagString: Untagged
@@ -645,6 +646,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
+--- !u!114 &599643847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 599643844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47ab9410d9a1bf041bd3d834d4c99a89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageList:
+  - {fileID: 2800000, guid: 042e67a63ba30bb439e234fa15c09cf3, type: 3}
+  - {fileID: 2800000, guid: 7308a0fd7b27061418df5f1f5150ab5d, type: 3}
+  - {fileID: 2800000, guid: 9ef7288b734a24846a4b8650ce1373bb, type: 3}
+  - {fileID: 2800000, guid: 3e5fbfcd79534994ca82046784bcaa3b, type: 3}
+  showTime: 50
 --- !u!1 &717815855
 GameObject:
   m_ObjectHideFlags: 0
@@ -1436,6 +1454,7 @@ GameObject:
   - 212: {fileID: 1672098798}
   - 95: {fileID: 1672098797}
   - 82: {fileID: 1672098800}
+  - 114: {fileID: 1672098801}
   m_Layer: 0
   m_Name: Gildong
   m_TagString: Untagged
@@ -1500,8 +1519,8 @@ AudioSource:
   m_GameObject: {fileID: 1672098796}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 86ce3263089fcd34aa6a7d56554149e4, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -1550,6 +1569,17 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+--- !u!114 &1672098801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1672098796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a3ee561c3d5ab240aa4b47d12d39d7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1763296636
 GameObject:
   m_ObjectHideFlags: 0

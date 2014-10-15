@@ -24,7 +24,6 @@ public class GameManagerGildong : GameManager {
 		Init ();
 		
 		// 주요 변수 초기화
-		GildongAnimator.speed = 0f;
 		waitEnemy = false;
 		
 		// 비트 파일로부터 정보 읽어들이기

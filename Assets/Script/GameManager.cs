@@ -57,7 +57,7 @@ public enum UIButtonList {
 }*/
 abstract public class GameManager : MonoBehaviour {	
 	private   const string	StageDBName 		= "/StageInfo.db";
-	private   const int 	GameCount 			= 3;		// 현재 개발된 게임 갯수
+	private   const int 	GameCount 			= 4;		// 현재 개발된 게임 갯수
 	private   const int 	NextGameOpenScore 	= 3000;		// 다음 스테이지를 여는데 필요한 최소 점수
 
 	// 게임 시작시 Ready, Start 메시지 출력 시간
@@ -68,7 +68,7 @@ abstract public class GameManager : MonoBehaviour {
 	protected const float 	CorrectTime1 		= 0.05f;
 	protected const float 	CorrectTime2 		= 0.10f;
 
-	private   const float	LogoShowTime 		= 1.5f;
+	private   const float	LogoShowTime 		= 2.5f;
 	protected const float 	RabbitWaitInputTime = 0.3f;		// 달토끼 - 사용자 입력 대기 추가 시간
 	protected const float 	HeungbuWaitInputTime= 0.2f;		// 흥부전 - 사용자 입력 대기 추가 시간
 	protected const float 	GourdOpenTime 		= 2.0f;		// 흥부전 - 박이 열리는 시간
@@ -125,18 +125,20 @@ abstract public class GameManager : MonoBehaviour {
 
 		if (gameName == "MoonRabbit") {
 			logoAnimator.SetBool ("StartRabbitAnimation", true);
+			gameLogo.renderer.material = mt;
 		} else if (gameName == "Heungbu") {
 			logoAnimator.SetBool ("StartHeungbuAnimation", true);
 			mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
+			gameLogo.renderer.material = mt;
 		} else if (gameName == "SunMoon") {
 			logoAnimator.SetBool ("StartSunMoonAnimation", true);
-			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;
-		//} else if (gameName == "SunMoon") {
-			//logoAnimator.SetBool ("StartSunMoonAnimation", true);
-			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;
+			//mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
+		} else if (gameName == "Gildong") {
+			logoAnimator.SetBool ("StartGildongAnimation", true);
+			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
+			gameLogo.renderer.material = mt;
 		}
-		
-		gameLogo.renderer.material = mt;
+
 		GS = GameState.Logo;
 	}
 
@@ -153,7 +155,7 @@ abstract public class GameManager : MonoBehaviour {
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		logoAnimator.SetBool ("StartSunMoonAnimation", false);
-		//logoAnimator.SetBool ("StartSunMoonAnimation", false);
+		logoAnimator.SetBool ("StartGildongAnimation", false);
 		logoAnimator.SetTrigger ("SetDefault");
 
 		//yield return new WaitForSeconds (0.005f);
@@ -376,8 +378,11 @@ abstract public class GameManager : MonoBehaviour {
 			gameName = "흥부네 박타기";
 			gameComment = "흥부네" + gameComment;
 		} else if (gameNo == 3) {
-			gameName = "해님달님 호랑이";
+			gameName = "떡 먹는 호랑이";
 			gameComment = "호랑이" + gameComment;
+		} else if (gameNo == 4) {
+			gameName = "홍길동";
+			gameComment = "홍길동" + gameComment;
 		}
 
 		GameEndLabel [0].text = gameName;

@@ -1829,7 +1829,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ef8fab2cb7bcff448bd4913f27c952c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundMusic: {fileID: 8300000, guid: 4280c214c4a5dbc43a4994bb378e4ebd, type: 3}
   AnotherSpaker: {fileID: 240809906}
   logoAnimator: {fileID: 2053360566}
   gameLogo: {fileID: 1700359810}
@@ -1857,8 +1856,6 @@ MonoBehaviour:
   Stone: {fileID: 100000, guid: aed4d8f48b6a577409136d1278023d33, type: 2}
   resultMessage: {fileID: 1022505993}
   TigerAnimator: {fileID: 158021665}
-  show: {fileID: 0}
-  show2: {fileID: 0}
 --- !u!82 &2113980089
 AudioSource:
   m_ObjectHideFlags: 0

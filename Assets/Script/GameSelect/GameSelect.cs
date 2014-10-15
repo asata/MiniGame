@@ -17,6 +17,7 @@ public class GameSelect : MonoBehaviour {
 	private const float backgroundHeight 		= 10;
 	private const int 	DatabaseVersion1 		= 1;
 	private const int 	DatabaseVersion2 		= 2;
+	private const int 	DatabaseVersion3 		= 3;
 	private float guiRatio;							// 화면 비율
 
 	private Fade fade;
@@ -105,11 +106,13 @@ public class GameSelect : MonoBehaviour {
 		// 수정시 해당항목 update or 미존재시 추가하도록 함
 		if (db_version < DatabaseVersion1) {
 			sql.ExecuteQuery("drop table if exists StageInfo");
-			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion1);
 		} else if (db_version < DatabaseVersion2) {
 			sql.ExecuteQuery("update StageInfo set scene='SunMoon', open=1 where id=3");
-			PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion2);
+			sql.ExecuteQuery("update StageInfo set scene='Gildong', open=1 where id=4");
+		} else if (db_version < DatabaseVersion3) {
+			sql.ExecuteQuery("update StageInfo set scene='Gildong', open=1 where id=4");
 		}
+
 		// 이전 게임을 했던 기기라면 StageInfo를 삭제하고 해야함
 		sql.ExecuteQuery("create table if not exists StageInfo(id int primary key not null, scene text, open  integer default 0, score integer default 0, grade text)");
 
@@ -118,12 +121,13 @@ public class GameSelect : MonoBehaviour {
 			sql.ExecuteQuery("insert into StageInfo values(1, 'MoonRabbit', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(2, 'Heungbu', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(3, 'SunMoon', 1, 0, 'F')");
-			sql.ExecuteQuery("insert into StageInfo values(4, 'Test3', 0, 0, 'F')");
+			sql.ExecuteQuery("insert into StageInfo values(4, 'Gildong', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(5, 'Test4', 0, 0, 'F')");
 
 			_data = sql.ExecuteQuery("select * from StageInfo");
 		}
 		
+		PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion3);
 		sql.Close();
 	}
 

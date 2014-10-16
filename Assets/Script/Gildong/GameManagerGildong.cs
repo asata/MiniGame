@@ -33,6 +33,7 @@ public class GameManagerGildong : GameManager {
 		checkIndex = 0;
 		
 		InitBackgroundMusic ();
+		AnotherSpaker.SendMessage ("Init", "Gildong");
 	}	
 	
 	public override void ResetGame () {

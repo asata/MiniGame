@@ -610,7 +610,7 @@ GameObject:
   - 114: {fileID: 599643847}
   m_Layer: 0
   m_Name: ResultMessage
-  m_TagString: Untagged
+  m_TagString: UITexture
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1200,7 +1200,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1552942460}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1580,6 +1580,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a3ee561c3d5ab240aa4b47d12d39d7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clipList: []
 --- !u!1 &1763296636
 GameObject:
   m_ObjectHideFlags: 0

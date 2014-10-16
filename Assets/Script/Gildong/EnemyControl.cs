@@ -2,9 +2,6 @@
 using System.Collections;
 
 public class EnemyControl : MonoBehaviour {
-	//private Vector3 MakeLeftArrow = new Vector3 (-8, 3, 0);
-	//private Vector3 MakeRightArrow = new Vector3 (8, 3, 0);
-	
 	public Animator EnemyAnimator;
 	public GameObject ArrowObject;
 	private bool makeArrow = true;

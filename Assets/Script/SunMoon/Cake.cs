@@ -24,7 +24,7 @@ public class Cake : MonoBehaviour {
 	private int beatIndex = -1;
 	private int typeNo = 1;
 	private float moveTime = 0;
-	//private bool beatensStone = false;
+	private bool beatensStone = false;
 
 	public void SetBeatIndex(object aIndex) {
 		beatIndex = (int) aIndex;
@@ -39,7 +39,7 @@ public class Cake : MonoBehaviour {
 
 	void Start() {
 		moveTime = 0;
-		//beatensStone = false;
+		beatensStone = false;
 		state = (int) CakeState.ThrowCake;
 		//GM = GameObject.Find ("GameManager").GetComponent<GameManagerSunMoon> ();
 	}
@@ -60,7 +60,7 @@ public class Cake : MonoBehaviour {
 				this.transform.position = TigerMouseVector;
 			} else if (moveTime > ShowCakeTIme) {
 				// Beaten Stone effect
-				if (typeNo == 2) BeatenStone();
+				if (typeNo == 2 && !beatensStone) BeatenStone();
 
 				if (this.transform.position.y < HideY) {
 					Destroy (this.gameObject);
@@ -113,8 +113,12 @@ public class Cake : MonoBehaviour {
 	}
 
 	private void BeatenStone() {
-		//state = (int) CakeState.BeatenStone; 
-		
 		// effect play
+		GameManager GM = GameObject.Find ("GameManager").GetComponent<GameManagerSunMoon> ();
+		if (PlayerPrefs.GetInt ("EffectSound") == 0 && GM.AnotherSpaker != null) {
+			GM.AnotherSpaker.SendMessage ("SoundPlayLoadFile", (int) EffectSoundTiger.HitTiger);
+		}
+
+		beatensStone = true;
 	}
 }

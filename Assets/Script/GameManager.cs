@@ -131,7 +131,8 @@ abstract public class GameManager : MonoBehaviour {
 			mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
 			gameLogo.renderer.material = mt;
 		} else if (gameName == "SunMoon") {
-			logoAnimator.SetBool ("StartSunMoonAnimation", true);
+			logoAnimator.SetTrigger("StartSunMoonAnimation");
+			//logoAnimator.SetBool ("StartSunMoonAnimation", true);
 			//mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
 		} else if (gameName == "Gildong") {
 			logoAnimator.SetBool ("StartGildongAnimation", true);
@@ -154,7 +155,7 @@ abstract public class GameManager : MonoBehaviour {
 
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
-		logoAnimator.SetBool ("StartSunMoonAnimation", false);
+		//logoAnimator.SetBool ("StartSunMoonAnimation", false);
 		logoAnimator.SetBool ("StartGildongAnimation", false);
 		logoAnimator.SetTrigger ("SetDefault");
 
@@ -167,7 +168,7 @@ abstract public class GameManager : MonoBehaviour {
 	
 	public void Init() {
 		GS = GameState.Ready;
-		
+
 		if (Application.platform == RuntimePlatform.Android)
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -205,17 +206,19 @@ abstract public class GameManager : MonoBehaviour {
 		if (PlayerPrefs.GetInt ("BackgroundSound") != 0) 
 			audio.volume = 0.0f;
 		audio.Play ();
+		Debug.Log (audio.volume.ToString ());
 	}
 	
-	public void Correct() {
+	public void Correct(bool soundPlay = true) {
 		gameComboCount++;
 		correctCount++;
 		
 		if (gameMaxCombo < gameComboCount)
 			gameMaxCombo = gameComboCount;
 		
-		if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null) {
+		if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null && soundPlay) {
 			AnotherSpaker.SendMessage("SoundPlay");
+
 		}
 	}
 	

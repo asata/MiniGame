@@ -33,7 +33,8 @@ public class GameManagerSunMoon : GameManager {
 		beatIndex = 0;
 		checkIndex = 0;
 
-		InitBackgroundMusic ();
+		InitBackgroundMusic ();		
+		AnotherSpaker.SendMessage ("Init", "SunMoon");
 	}	
 	
 	public override void ResetGame () {		
@@ -135,29 +136,37 @@ public class GameManagerSunMoon : GameManager {
 
 			if (compareTime < CorrectTime1) {
 				gameScore += (CorrectPoint1 + 2 * gameComboCount);
+				bool soundPlay = true;
 				if (beat.beatAction == 1) {
 					TigerAnimator.SetTrigger("HitCake");
 					FindEatCake(i);
 				} else if (beat.beatAction == 2) {
 					TigerAnimator.SetTrigger("HitStone");
 					HitStone(i); 
+					if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null) 
+						AnotherSpaker.SendMessage("SoundPlayLoadFile", (int) EffectSoundTiger.HitStone);
+					soundPlay = false;
 				}
 				PrintResultMessage(resultMessage, (int) ResultMessage.Excellent);
-				Correct();
+				Correct(soundPlay);
 
 				checkIndex = i;
 				break;
 			} else if (compareTime < CorrectTime2) {
 				gameScore += (CorrectPoint1 + gameComboCount);
+				bool soundPlay = true;
 				if (beat.beatAction == 1) {
 					TigerAnimator.SetTrigger("HitCake");
 					FindEatCake(i);
 				} else if (beat.beatAction == 2) {
 					TigerAnimator.SetTrigger("HitStone");
 					HitStone(i);
+					if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null) 
+						AnotherSpaker.SendMessage("SoundPlayLoadFile", (int) EffectSoundTiger.HitStone);
+					soundPlay = false;
 				}
 				PrintResultMessage(resultMessage, (int) ResultMessage.Good);
-				Correct();
+				Correct(soundPlay);
 
 				checkIndex = i;
 				break;

@@ -26,14 +26,14 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: StartSunMoonAnimation
+  - m_Name: StartGildongAnimation
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: StartGildongAnimation
-    m_Type: 4
+  - m_Name: StartSunMoonAnimation
+    m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -182,7 +182,7 @@ Transition:
   m_TransitionDuration: .100000001
   m_TransitionOffset: 0
   m_Conditions:
-  - m_ConditionMode: 1
+  - m_ConditionMode: 5
     m_ConditionEvent: SetDefault
     m_EventTreshold: 0
     m_ExitTime: .899999976
@@ -343,10 +343,6 @@ StateMachine:
   m_ChildStateMachinePosition: []
   m_OrderedTransitions:
     data:
-      first: {fileID: 110281494}
-      second:
-      - {fileID: 110179897}
-    data:
       first: {fileID: 0}
       second:
       - {fileID: 110170845}
@@ -369,6 +365,10 @@ StateMachine:
       first: {fileID: 110249452}
       second:
       - {fileID: 110171047}
+    data:
+      first: {fileID: 110281494}
+      second:
+      - {fileID: 110179897}
   m_MotionSetCount: 1
   m_AnyStatePosition: {x: 84, y: -192, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}

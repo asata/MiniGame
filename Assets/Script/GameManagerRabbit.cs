@@ -38,6 +38,7 @@ public class GameManagerRabbit : GameManager {
 		BeatNote = LoadBeatFile ("Beat/MoonRabbit" + randomBeatFileNum);
 
 		InitBackgroundMusic ();
+		AnotherSpaker.SendMessage ("Init", "MoonRabbit");
 	}
 	
 	public override void ResetGame () {		

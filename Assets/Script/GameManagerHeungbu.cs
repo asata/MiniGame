@@ -48,6 +48,7 @@ public class GameManagerHeungbu : GameManager {
 		checkIndex = 0;
 		
 		InitBackgroundMusic ();
+		AnotherSpaker.SendMessage ("Init", "Heungbu");
 	}	
 	
 	public override void ResetGame () {
@@ -177,6 +178,7 @@ public class GameManagerHeungbu : GameManager {
 		yield return new WaitForSeconds (waitMoveTime);
 
 		// 음악 중간에 효과 재생
+		AnotherSpaker.SendMessage ("SoundPlayLoadFile", (int) EffectSoundHeunbu.BombGourd);
 		Object particle = new Object ();
 		if (beat.beatAction == 3) {
 			particle = Instantiate (gourdOpenEffect, GourdOpenPosition, transform.rotation);

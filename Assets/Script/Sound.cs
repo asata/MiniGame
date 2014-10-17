@@ -8,16 +8,17 @@ public enum EffectSoundTiger {
 	BombGourd
 }
 
-
 public enum EffectSoundHeunbu {
 	Correct = 0, 
 	BombGourd
 }
+
+
 public class Sound : MonoBehaviour {
 	public AudioClip[] clipList;// = new AudioClip[3];
 
 	void Init (string gameName = "basic") {
-		if (gameName == "basic" || gameName == "MoonRabbit" || gameName == "Gildong") {
+		if (gameName == "basic" || gameName == "MoonRabbit" || gameName == "Gildong" || gameName == "Pig") {
 			clipList = new AudioClip[1];
 			clipList [0] = Resources.Load ("Sound/correct_sound") as AudioClip;
 		} else if (gameName == "SunMoon") {
@@ -33,7 +34,7 @@ public class Sound : MonoBehaviour {
 	}
 
 	public void SoundPlay() {
-		//audio.clip = clipList[0];
+		audio.clip = clipList[0];
 		audio.Play();
 	}
 	public void SoundPlayLoadFile(int index) {

@@ -156,10 +156,10 @@ public class GameManagerGildong : GameManager {
 	}
 	
 	private void DestoyItem(string tagName) {
-		GameObject[] cakeList = GameObject.FindGameObjectsWithTag (tagName);
-		if (cakeList.Length > 0) {
-			for(int i = 0; i < cakeList.Length; i++) {
-				Destroy(cakeList[i]);
+		GameObject[] arrowList = GameObject.FindGameObjectsWithTag (tagName);
+		if (arrowList.Length > 0) {
+			for(int i = 0; i < arrowList.Length; i++) {
+				Destroy(arrowList[i]);
 			}
 		}
 	}

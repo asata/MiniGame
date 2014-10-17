@@ -57,7 +57,7 @@ public enum UIButtonList {
 }*/
 abstract public class GameManager : MonoBehaviour {	
 	private   const string	StageDBName 		= "/StageInfo.db";
-	private   const int 	GameCount 			= 4;		// 현재 개발된 게임 갯수
+	private   const int 	GameCount 			= 5;		// 현재 개발된 게임 갯수
 	private   const int 	NextGameOpenScore 	= 3000;		// 다음 스테이지를 여는데 필요한 최소 점수
 
 	// 게임 시작시 Ready, Start 메시지 출력 시간
@@ -132,10 +132,12 @@ abstract public class GameManager : MonoBehaviour {
 			gameLogo.renderer.material = mt;
 		} else if (gameName == "SunMoon") {
 			logoAnimator.SetTrigger("StartSunMoonAnimation");
-			//logoAnimator.SetBool ("StartSunMoonAnimation", true);
-			//mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
 		} else if (gameName == "Gildong") {
 			logoAnimator.SetBool ("StartGildongAnimation", true);
+			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
+			gameLogo.renderer.material = mt;
+		} else if (gameName == "Pig") {
+			logoAnimator.SetBool ("StartPigAnimation", true);
 			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
 			gameLogo.renderer.material = mt;
 		}
@@ -157,6 +159,7 @@ abstract public class GameManager : MonoBehaviour {
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
 		//logoAnimator.SetBool ("StartSunMoonAnimation", false);
 		logoAnimator.SetBool ("StartGildongAnimation", false);
+		logoAnimator.SetBool ("StartPigAnimation", false);
 		logoAnimator.SetTrigger ("SetDefault");
 
 		//yield return new WaitForSeconds (0.005f);
@@ -206,7 +209,6 @@ abstract public class GameManager : MonoBehaviour {
 		if (PlayerPrefs.GetInt ("BackgroundSound") != 0) 
 			audio.volume = 0.0f;
 		audio.Play ();
-		Debug.Log (audio.volume.ToString ());
 	}
 	
 	public void Correct(bool soundPlay = true) {
@@ -386,6 +388,9 @@ abstract public class GameManager : MonoBehaviour {
 		} else if (gameNo == 4) {
 			gameName = "홍길동";
 			gameComment = "홍길동" + gameComment;
+		} else if (gameNo == 5) {
+			gameName = "돼지 삼형제";
+			gameComment = "돼지 삼형제" + gameComment;
 		}
 
 		GameEndLabel [0].text = gameName;

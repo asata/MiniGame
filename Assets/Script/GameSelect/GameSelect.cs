@@ -18,6 +18,7 @@ public class GameSelect : MonoBehaviour {
 	private const int 	DatabaseVersion1 		= 1;
 	private const int 	DatabaseVersion2 		= 2;
 	private const int 	DatabaseVersion3 		= 3;
+	private const int 	DatabaseVersion4 		= 4;
 	private float guiRatio;							// 화면 비율
 
 	private Fade fade;
@@ -109,8 +110,12 @@ public class GameSelect : MonoBehaviour {
 		} else if (db_version < DatabaseVersion2) {
 			sql.ExecuteQuery("update StageInfo set scene='SunMoon', open=1 where id=3");
 			sql.ExecuteQuery("update StageInfo set scene='Gildong', open=1 where id=4");
+			sql.ExecuteQuery("update StageInfo set scene='Pig', open=1 where id=5");
 		} else if (db_version < DatabaseVersion3) {
 			sql.ExecuteQuery("update StageInfo set scene='Gildong', open=1 where id=4");
+			sql.ExecuteQuery("update StageInfo set scene='Pig', open=1 where id=5");
+		} else if (db_version < DatabaseVersion4) {
+			sql.ExecuteQuery("update StageInfo set scene='Pig', open=1 where id=5");
 		}
 
 		// 이전 게임을 했던 기기라면 StageInfo를 삭제하고 해야함
@@ -122,12 +127,12 @@ public class GameSelect : MonoBehaviour {
 			sql.ExecuteQuery("insert into StageInfo values(2, 'Heungbu', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(3, 'SunMoon', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(4, 'Gildong', 1, 0, 'F')");
-			sql.ExecuteQuery("insert into StageInfo values(5, 'Test4', 0, 0, 'F')");
+			sql.ExecuteQuery("insert into StageInfo values(5, 'Pig', 1, 0, 'F')");
 
 			_data = sql.ExecuteQuery("select * from StageInfo");
 		}
 		
-		PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion3);
+		PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion4);
 		sql.Close();
 	}
 

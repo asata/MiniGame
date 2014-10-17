@@ -15,3 +15,5 @@ EditorBuildSettings:
     path: Assets/Scene/SunMoon.unity
   - enabled: 1
     path: Assets/Scene/Gildong.unity
+  - enabled: 1
+    path: Assets/Scene/Pig.unity

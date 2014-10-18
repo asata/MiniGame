@@ -119,7 +119,6 @@ public class GameManagerPig : GameManager {
 	// beat note의 값과 비교하여 정답 체크
 	public override void CorrectCheck() {
 	}
-
 	private void CorrectCheckPig(int pigNo) {
 		for (int i = checkIndex; i < BeatNote.Count; i++) {
 			BeatInfo beat = (BeatInfo) BeatNote[i];
@@ -129,14 +128,15 @@ public class GameManagerPig : GameManager {
 			if (compareTime < CorrectTime1) {
 				gameScore += (CorrectPoint1 + 2 * gameComboCount);
 				PrintResultMessage(resultMessage[(beat.beatAction - 1)], (int) ResultMessage.Excellent);
+
 				Correct();
-				
 				DestoryItem(i);
 				checkIndex = i;
 				break;
 			} else if (compareTime < CorrectTime2) {
 				gameScore += (CorrectPoint1 + gameComboCount);
 				PrintResultMessage(resultMessage[(beat.beatAction - 1)], (int) ResultMessage.Good);
+			
 				Correct();
 				DestoryItem(i);
 				checkIndex = i;
@@ -172,6 +172,7 @@ public class GameManagerPig : GameManager {
 					ghostPosition.y = -3;
 				}
 				GameObject ghost = (GameObject) Instantiate (Ghost, ghostPosition, transform.rotation);
+				ghost.SendMessage("SetGhostLane", beat.beatAction);
 				ghost.SendMessage("SetBeatIndex", beatIndex);
 
 				waitGhost = false;
@@ -188,7 +189,6 @@ public class GameManagerPig : GameManager {
 			}
 		}
 	}
-
 	private void DestoryItem(int index) {
 		GameObject[] ghostList = GameObject.FindGameObjectsWithTag ("PigGhost");
 		if (ghostList.Length > 0) {
@@ -196,5 +196,16 @@ public class GameManagerPig : GameManager {
 				ghostList[i].SendMessage("DestroyGhost", index);
 			}
 		}
+	}
+	private void SetPrintMiss(int index) {
+		GameObject[] ghostList = GameObject.FindGameObjectsWithTag ("PigGhost");
+		if (ghostList.Length > 0) {
+			for(int i = 0; i < ghostList.Length; i++) {
+				ghostList[i].SendMessage("SetPrintMiss", index);
+			}
+		}
+	}
+	private void PrintMissMessage(int index) {
+		PrintResultMessage(resultMessage[(index - 1)], (int) ResultMessage.Miss);
 	}
 }

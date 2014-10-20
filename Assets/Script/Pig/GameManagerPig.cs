@@ -10,7 +10,9 @@ public class GameManagerPig : GameManager {
 	public GameObject Ghost;
 	public GameObject Wolf;
 	public Animator[] pigAnimator;
-	
+
+	public GUIText show;
+
 	void Start () {	
 		ChangeUI ();		
 		
@@ -84,13 +86,13 @@ public class GameManagerPig : GameManager {
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
 			if (touch.phase == TouchPhase.Began) {
-				if (hit.transform.tag == "Pig1") {
+				if (hit.transform.name == "Pig1") {
 					pigAnimator[0].SetTrigger("HitGhost");
 					CorrectCheckPig (1);		
-				} else if (hit.transform.tag == "Pig2") {
+				} else if (hit.transform.name == "Pig2") {
 					pigAnimator[1].SetTrigger("HitGhost");
 					CorrectCheckPig (2);				
-				} else if (hit.transform.tag == "Pig3") {
+				} else if (hit.transform.name == "Pig3") {
 					pigAnimator[2].SetTrigger("HitGhost");
 					CorrectCheckPig (3);				
 				}
@@ -163,7 +165,7 @@ public class GameManagerPig : GameManager {
 				Wolf.SendMessage("SetWolfPosition", beat.beatAction);
 				yield return new WaitForSeconds (beat.beatTime - audio.time - GhostMoveTime);
 
-				Vector3 ghostPosition = new Vector3 (-8, 0, 1);
+				Vector3 ghostPosition = new Vector3 (-7, 0, 1);
 				if (beat.beatAction == 1) {
 					ghostPosition.y = 3;
 				} else if (beat.beatAction == 2) {

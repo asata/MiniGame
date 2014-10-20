@@ -24,6 +24,7 @@ public class GameManagerHeungbu : GameManager {
 	private int correctTrunCount = 0;
 
 	void Start () {	
+		Screen.SetResolution (Screen.width, (Screen.width / 16) * 9, false);
 		ChangeUI ();		
 		LogoShow("Heungbu");
 		if (!showLogo) 

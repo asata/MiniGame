@@ -132,6 +132,8 @@ abstract public class GameManager : MonoBehaviour {
 			gameLogo.renderer.material = mt;
 		} else if (gameName == "SunMoon") {
 			logoAnimator.SetTrigger("StartSunMoonAnimation");
+			//mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
+			//gameLogo.renderer.material = mt;
 		} else if (gameName == "Gildong") {
 			logoAnimator.SetBool ("StartGildongAnimation", true);
 			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
@@ -164,7 +166,7 @@ abstract public class GameManager : MonoBehaviour {
 
 		//yield return new WaitForSeconds (0.005f);
 		//Destroy (logoAnimator);
-
+	
 		gameLogo.SetActive (false);
 		GameStart();
 	}
@@ -279,7 +281,8 @@ abstract public class GameManager : MonoBehaviour {
 	/// </summary>
 	private void ChangeUISize() {			
 		// 화면 해상도 처리 시작
-		Screen.SetResolution (Screen.width, Screen.height, true);
+		//Screen.SetResolution (Screen.width, Screen.height, true);
+		//Screen.SetResolution (Screen.width, Screen.height / 9 * 16, true);
 		guiRatio = Screen.width / 1600.0f;
 		// 화면 해상도 처리 끝
 		

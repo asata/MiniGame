@@ -2,10 +2,11 @@
 using System.Collections;
 
 public class WolfMove : MonoBehaviour {
+	private const float xValue = -7.0f;
 	private const float yValue = 3.0f;
-	private Vector3 WolfPosition1 = new Vector3(-8, yValue);
-	private Vector3 WolfPosition2 = new Vector3(-8, 0);
-	private Vector3 WolfPosition3 = new Vector3(-8, -yValue);
+	private Vector3 WolfPosition1 = new Vector3(xValue, yValue);
+	private Vector3 WolfPosition2 = new Vector3(xValue, 0);
+	private Vector3 WolfPosition3 = new Vector3(xValue, -yValue);
 
 	private int wolfPosition = 1;
 	private float moveTime = 0;

@@ -13,7 +13,7 @@ public class GameManagerSunMoon : GameManager {
 	public GUITexture resultMessage;
 	public Animator TigerAnimator;
 	private bool throwCake = false;
-
+	public GameObject temp;
 	void Start () {	
 		ChangeUI ();
 		LogoShow("SunMoon");

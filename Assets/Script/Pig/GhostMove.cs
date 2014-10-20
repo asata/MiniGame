@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GhostMove : MonoBehaviour {
-	private Vector3 GhostMoveSpeed = new Vector3(8.666f, 0.0f);	// move time : 1.5f, move length : 12
+	private Vector3 GhostMoveSpeed = new Vector3(9.0f, 0.0f);	// move time : 1.5f, move length : 131
 	private int ghostLane;
 	private int beatIndex;
 	private bool printMiss = true;

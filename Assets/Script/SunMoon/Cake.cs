@@ -9,9 +9,9 @@ public enum CakeState {
 }
 
 public class Cake : MonoBehaviour {
-	private const float HideY 				= -5.0f;
-	private Vector3 CakeInitVector 			= new Vector3 (3.000f, -5.000f);
-	private Vector3 TigerMouseVector 		= new Vector3 (0.000f, -2.380f);
+	private const float HideY 				= -5.6f;
+	private Vector3 CakeInitVector 			= new Vector3 (3.000f, -5.600f);
+	private Vector3 TigerMouseVector 		= new Vector3 (0.000f, -2.780f);
 	private Vector3 SecondPerStoneMoveSpeed = new Vector3 (6.666f, -6.666f);	// 0.3f
 	private Vector3 SecondPerCakeDownSpeed 	= new Vector3 (0.000f, -6.666f);
 	// move length / move time

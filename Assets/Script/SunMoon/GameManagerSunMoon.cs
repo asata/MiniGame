@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GameManagerSunMoon : GameManager {
 	private const float AnimationMoveCakeTime = 0.5f;			// throw time 사용시 제거
-	private Vector3 CakeInitVector = new Vector3 (3.0f, -5.0f);
+	private Vector3 CakeInitVector = new Vector3 (3.0f, -5.6f);
 	private const string CakeTagName = "SunMoonCake";
 	private const string StoneTagName = "SunMoonStone";
 	private const int BeatFileNum = 1;

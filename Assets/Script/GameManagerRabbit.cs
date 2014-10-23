@@ -147,6 +147,7 @@ public class GameManagerRabbit : GameManager {
 			gameComboCount = 0;
 		}
 
+		poundingCount = 0;
 		touchCount = 0;
 	}
 	private void MoonRabbitEvent() {

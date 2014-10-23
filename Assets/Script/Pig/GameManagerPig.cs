@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class GameManagerPig : GameManager {
+	private Vector3 GhostCreatePosition = new Vector3 (-7, 0, 1);
+	private const string GhostTagName = "PigGhost";
 	private const float GhostMoveTime = 1.5f;
 	private const int BeatFileNum = 1;
 	
@@ -41,9 +43,11 @@ public class GameManagerPig : GameManager {
 	public override void ResetGame () {
 		audio.Stop ();
 
-		DestoyItem ("PigGhost");
+		DestoyItem ();
 		StopCoroutine ("WaitGhost");
-		//SawAnimator.Play (" ");
+		pigAnimator [0].Play ("StandBy");
+		pigAnimator [1].Play ("StandBy");
+		pigAnimator [2].Play ("StandBy");
 	}
 	
 	void Update () {
@@ -119,8 +123,7 @@ public class GameManagerPig : GameManager {
 	}
 	
 	// beat note의 값과 비교하여 정답 체크
-	public override void CorrectCheck() {
-	}
+	public override void CorrectCheck() {}
 	private void CorrectCheckPig(int pigNo) {
 		for (int i = checkIndex; i < BeatNote.Count; i++) {
 			BeatInfo beat = (BeatInfo) BeatNote[i];
@@ -144,7 +147,6 @@ public class GameManagerPig : GameManager {
 				checkIndex = i;
 				break;
 			} else if (beat.beatTime < audio.time) {
-				// miss beat					
 				PrintResultMessage(resultMessage[(beat.beatAction - 1)], (int) ResultMessage.Miss);
 				Incorrect();
 			} else if (beat.beatTime > audio.time) {
@@ -157,7 +159,6 @@ public class GameManagerPig : GameManager {
 	public IEnumerator WaitGhost () {
 		if (beatIndex < BeatNote.Count) {
 			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
-			//SawAnimator.speed = beat.intervalTime;
 
 			if (beat.beatTime > audio.time) {
 				waitGhost = true;
@@ -165,15 +166,14 @@ public class GameManagerPig : GameManager {
 				Wolf.SendMessage("SetWolfPosition", beat.beatAction);
 				yield return new WaitForSeconds (beat.beatTime - audio.time - GhostMoveTime);
 
-				Vector3 ghostPosition = new Vector3 (-7, 0, 1);
 				if (beat.beatAction == 1) {
-					ghostPosition.y = 3;
+					GhostCreatePosition.y = 3;
 				} else if (beat.beatAction == 2) {
-					ghostPosition.y = 0;
+					GhostCreatePosition.y = 0;
 				} else if (beat.beatAction == 3) {
-					ghostPosition.y = -3;
+					GhostCreatePosition.y = -3;
 				}
-				GameObject ghost = (GameObject) Instantiate (Ghost, ghostPosition, transform.rotation);
+				GameObject ghost = (GameObject) Instantiate (Ghost, GhostCreatePosition, transform.rotation);
 				ghost.SendMessage("SetGhostLane", beat.beatAction);
 				ghost.SendMessage("SetBeatIndex", beatIndex);
 
@@ -183,8 +183,8 @@ public class GameManagerPig : GameManager {
 		}
 	}
 	
-	private void DestoyItem(string tagName) {
-		GameObject[] ghostList = GameObject.FindGameObjectsWithTag (tagName);
+	private void DestoyItem() {
+		GameObject[] ghostList = GameObject.FindGameObjectsWithTag (GhostTagName);
 		if (ghostList.Length > 0) {
 			for(int i = 0; i < ghostList.Length; i++) {
 				Destroy(ghostList[i]);
@@ -192,7 +192,7 @@ public class GameManagerPig : GameManager {
 		}
 	}
 	private void DestoryItem(int index) {
-		GameObject[] ghostList = GameObject.FindGameObjectsWithTag ("PigGhost");
+		GameObject[] ghostList = GameObject.FindGameObjectsWithTag (GhostTagName);
 		if (ghostList.Length > 0) {
 			for(int i = 0; i < ghostList.Length; i++) {
 				ghostList[i].SendMessage("DestroyGhost", index);
@@ -200,7 +200,7 @@ public class GameManagerPig : GameManager {
 		}
 	}
 	private void SetPrintMiss(int index) {
-		GameObject[] ghostList = GameObject.FindGameObjectsWithTag ("PigGhost");
+		GameObject[] ghostList = GameObject.FindGameObjectsWithTag (GhostTagName);
 		if (ghostList.Length > 0) {
 			for(int i = 0; i < ghostList.Length; i++) {
 				ghostList[i].SendMessage("SetPrintMiss", index);
@@ -208,6 +208,7 @@ public class GameManagerPig : GameManager {
 		}
 	}
 	private void PrintMissMessage(int index) {
+		missCount++;
 		PrintResultMessage(resultMessage[(index - 1)], (int) ResultMessage.Miss);
 	}
 }

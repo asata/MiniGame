@@ -1,8 +1,7 @@
 fileFormatVersion: 2
-guid: 38028a4f95afa5142894faff37b000b5
+guid: 43005ba7c7b594d979a087b856fff3f8
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: icon-rabbit
+  fileIDToRecycleName: {}
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0

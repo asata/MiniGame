@@ -13,7 +13,9 @@ EditorBuildSettings:
     path: Assets/Scene/MoonRabbit.unity
   - enabled: 1
     path: Assets/Scene/SunMoon.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/Gildong.unity
   - enabled: 1
     path: Assets/Scene/Pig.unity
+  - enabled: 1
+    path: Assets/Scene/RedShoe.unity

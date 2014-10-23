@@ -15,10 +15,7 @@ public class GameSelect : MonoBehaviour {
 	private const float backgroundMoveSpeed 	= 2.5f;
 	private const float backgroundWidth 		= 20;
 	private const float backgroundHeight 		= 10;
-	private const int 	DatabaseVersion1 		= 1;
-	private const int 	DatabaseVersion2 		= 2;
-	private const int 	DatabaseVersion3 		= 3;
-	private const int 	DatabaseVersion4 		= 4;
+	private const int 	DatabaseVersion5 		= 5;
 	private float guiRatio;							// 화면 비율
 
 	private Fade fade;
@@ -28,10 +25,7 @@ public class GameSelect : MonoBehaviour {
 	public GUITexture buttonGameStart;				// 게임 선택 UI에서 나타남
 	public GUITexture buttonInfoClose;				// 게임 선택 UI에서 나타남
 
-	public GameObject[] buttonList;					// 게임 선택할 버튼 목록
-	public Texture[] buttonImage;					// 게임 버튼에 표시될 이미지
-
-	public Texture2D[] tutorialImage;
+	private GameObject[] buttonList;				// 게임 선택할 버튼 목록
 
 	private int resizeIndex = -1;
 	public GUITexture[] fixedTexture;
@@ -105,17 +99,8 @@ public class GameSelect : MonoBehaviour {
 		// 최종빌드 이후에는 버전에 따라 디비를 추가, 수정
 		// 추가시 그냥 insert구문 실행 혹은 버전과 관계없이 갯수 파악 후 추가
 		// 수정시 해당항목 update or 미존재시 추가하도록 함
-		if (db_version < DatabaseVersion1) {
+		if (db_version < DatabaseVersion5) {
 			sql.ExecuteQuery("drop table if exists StageInfo");
-		} else if (db_version < DatabaseVersion2) {
-			sql.ExecuteQuery("update StageInfo set scene='SunMoon', open=1 where id=3");
-			sql.ExecuteQuery("update StageInfo set scene='Gildong', open=1 where id=4");
-			sql.ExecuteQuery("update StageInfo set scene='Pig', open=1 where id=5");
-		} else if (db_version < DatabaseVersion3) {
-			sql.ExecuteQuery("update StageInfo set scene='Gildong', open=1 where id=4");
-			sql.ExecuteQuery("update StageInfo set scene='Pig', open=1 where id=5");
-		} else if (db_version < DatabaseVersion4) {
-			sql.ExecuteQuery("update StageInfo set scene='Pig', open=1 where id=5");
 		}
 
 		// 이전 게임을 했던 기기라면 StageInfo를 삭제하고 해야함
@@ -126,13 +111,13 @@ public class GameSelect : MonoBehaviour {
 			sql.ExecuteQuery("insert into StageInfo values(1, 'MoonRabbit', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(2, 'Heungbu', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(3, 'SunMoon', 1, 0, 'F')");
-			sql.ExecuteQuery("insert into StageInfo values(4, 'Gildong', 1, 0, 'F')");
+			sql.ExecuteQuery("insert into StageInfo values(4, 'RedShoe', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(5, 'Pig', 1, 0, 'F')");
 
 			_data = sql.ExecuteQuery("select * from StageInfo");
 		}
 		
-		PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion4);
+		PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion5);
 		sql.Close();
 	}
 
@@ -164,9 +149,9 @@ public class GameSelect : MonoBehaviour {
 			button.name = info.scene;
 			button.tag = "UITexture";
 			if (info.open)
-				button.guiTexture.texture = buttonImage [info.no];
+				button.guiTexture.texture = (Texture) Resources.Load("Icon/" + info.scene);// buttonImage [info.no];
 			else 
-				button.guiTexture.texture = buttonImage [0];
+				button.guiTexture.texture = (Texture) Resources.Load("Icon/ButtonGameSelect");
 
 			button.transform.position = new Vector3 (0.5f, 0.5f, 0);
 			button.transform.localScale = new Vector3 (0, 0, 0);
@@ -238,14 +223,15 @@ public class GameSelect : MonoBehaviour {
 				for (int i = 0; i < buttonList.Length; i++) {
 					GUITexture buttonTexture = buttonList[i].guiTexture;
 					if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-						if (buttonTexture.texture == buttonImage[0]) continue;
+						GameInfo info = (GameInfo) GameList[i];
+						if (!info.open) continue;
 						
 						if (fade != null)
 							fade.FadeOut();
 						
 						resizeIndex = i;
 						UIGameInfo.SetActive(true);
-						SetGameInfo(i);
+						SetGameInfo(info.scene);
 					}
 				} 
 				
@@ -276,14 +262,15 @@ public class GameSelect : MonoBehaviour {
 				for (int i = 0; i < buttonList.Length; i++) {
 					GUITexture buttonTexture = buttonList[i].guiTexture;
 					if (buttonTexture.HitTest (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 0))) {
-						if (buttonTexture.texture == buttonImage[0]) continue;
+						GameInfo info = (GameInfo) GameList[i];
+						if (!info.open) continue;
 						
 						if (fade != null)
 							fade.FadeOut();
 						
 						resizeIndex = i;
 						UIGameInfo.SetActive(true);
-						SetGameInfo(i);
+						SetGameInfo(info.scene);
 					}
 				} 
 
@@ -297,8 +284,8 @@ public class GameSelect : MonoBehaviour {
 		}
 	}
 	
-	private void SetGameInfo(int gameNo) {
-		fixedTexture [(int) FixedTextureName.Tutorial].texture = tutorialImage [gameNo];
+	private void SetGameInfo(string gameName) {
+		fixedTexture [(int) FixedTextureName.Tutorial].texture = (Texture) Resources.Load("Tutorial/" + gameName);
 	}
 
 	// 배경화면 이동

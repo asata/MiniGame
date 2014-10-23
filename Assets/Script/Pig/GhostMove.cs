@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class GhostMove : MonoBehaviour {
-	private Vector3 GhostMoveSpeed = new Vector3(9.0f, 0.0f);	// move time : 1.5f, move length : 131
+	private const float PigHouseX = 7.0f;
+	private Vector3 GhostMoveSpeed = new Vector3(9.0f, 0.0f);	// move time : 1.5f, move length : 13
 	private int ghostLane;
 	private int beatIndex;
 	private bool printMiss = true;
@@ -22,7 +23,7 @@ public class GhostMove : MonoBehaviour {
 	}
 
 	void Update () {
-		if (this.gameObject.transform.position.x > 7.0f) {
+		if (this.gameObject.transform.position.x > PigHouseX) {
 			if (printMiss) {
 				GameManagerPig GM = GameObject.Find ("GameManager").GetComponent<GameManagerPig> ();
 				GM.SendMessage("PrintMissMessage", ghostLane);

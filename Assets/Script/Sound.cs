@@ -18,7 +18,7 @@ public class Sound : MonoBehaviour {
 	public AudioClip[] clipList;// = new AudioClip[3];
 
 	void Init (string gameName = "basic") {
-		if (gameName == "basic" || gameName == "MoonRabbit" || gameName == "Gildong" || gameName == "Pig") {
+		if (gameName == "basic" || gameName == "MoonRabbit" || gameName == "Gildong" || gameName == "Pig" || gameName == "RedShoe") {
 			clipList = new AudioClip[1];
 			clipList [0] = Resources.Load ("Sound/correct_sound") as AudioClip;
 		} else if (gameName == "SunMoon") {

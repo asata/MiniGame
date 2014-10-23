@@ -142,6 +142,10 @@ abstract public class GameManager : MonoBehaviour {
 			logoAnimator.SetBool ("StartPigAnimation", true);
 			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
 			gameLogo.renderer.material = mt;
+		} else if (gameName == "RedShoe") {
+			logoAnimator.SetBool ("StartRedShoeAnimation", true);
+			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
+			gameLogo.renderer.material = mt;
 		}
 
 		GS = GameState.Logo;
@@ -389,8 +393,8 @@ abstract public class GameManager : MonoBehaviour {
 			gameName = "떡 먹는 호랑이";
 			gameComment = "호랑이" + gameComment;
 		} else if (gameNo == 4) {
-			gameName = "홍길동";
-			gameComment = "홍길동" + gameComment;
+			gameName = "빨간 구두";
+			gameComment = "빨간 구두" + gameComment;
 		} else if (gameNo == 5) {
 			gameName = "돼지 삼형제";
 			gameComment = "돼지 삼형제" + gameComment;

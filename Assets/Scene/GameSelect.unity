@@ -1503,10 +1503,10 @@ MonoBehaviour:
   buttonImage:
   - {fileID: 2800000, guid: e60ca5bfc1fd0d241a360aff51d1ab06, type: 3}
   - {fileID: 2800000, guid: 38028a4f95afa5142894faff37b000b5, type: 3}
-  - {fileID: 2800000, guid: 4f40726919c63464a9a44eddbab43e5d, type: 3}
-  - {fileID: 2800000, guid: 4f40726919c63464a9a44eddbab43e5d, type: 3}
-  - {fileID: 2800000, guid: 4f40726919c63464a9a44eddbab43e5d, type: 3}
-  - {fileID: 2800000, guid: 4f40726919c63464a9a44eddbab43e5d, type: 3}
+  - {fileID: 2800000, guid: 0c869a30b318043c29a2f8e652cd579d, type: 3}
+  - {fileID: 2800000, guid: bebb8102ee13b489aaca129bbcec99ff, type: 3}
+  - {fileID: 2800000, guid: d9f511fcf9b6440528f76c21c2c4ec72, type: 3}
+  - {fileID: 2800000, guid: a359950d785c1440b91bded7d25f0eea, type: 3}
   tutorialImage:
   - {fileID: 2800000, guid: e47e67a424b4da54395f1cbe3af6adf9, type: 3}
   - {fileID: 2800000, guid: 933a2b08db98a5c48919e8ec65a34002, type: 3}

@@ -1,8 +1,7 @@
 fileFormatVersion: 2
-guid: e60ca5bfc1fd0d241a360aff51d1ab06
+guid: c0009154fbc55459bbaef884d204af75
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: ButtonGameSelect
+  fileIDToRecycleName: {}
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0

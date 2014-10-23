@@ -163,5 +163,9 @@ public class GameManagerGildong : GameManager {
 			}
 		}
 	}
+	private void PrintMissMessage() {
+		missCount++;
+		PrintResultMessage(resultMessage, (int) ResultMessage.Miss);
+	}
 }
 

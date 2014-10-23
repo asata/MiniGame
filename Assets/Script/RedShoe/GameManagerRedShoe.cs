@@ -9,8 +9,8 @@ public enum ThinkState {
 }
 public class GameManagerRedShoe : GameManager {
 	private const int BeatFileNum = 1;
-	private const int LeftLeg = 8;
-	private const int RightLeg = 9;
+	private const int LeftLeg = 7;
+	private const int RightLeg = 8;
 	private float touchHalf = 0;
 	private ThinkState TS = ThinkState.ThinkStart;
 	private int touchCount = 0;
@@ -20,7 +20,7 @@ public class GameManagerRedShoe : GameManager {
 	public GUITexture resultMessage;
 	public Animator playerFootAnimator;
 	public Animator thinkFootAnimator;
-	public GameObject[] cloud;
+	//public GameObject[] cloud;
 
 	void Start () {	
 		touchHalf = Screen.width / 2;
@@ -38,9 +38,6 @@ public class GameManagerRedShoe : GameManager {
 		// 주요 변수 초기화
 		waitThink = false;
 		TS = ThinkState.InputWait;
-		cloud [0].SetActive (false);
-		cloud [1].SetActive (false);
-		cloud [2].SetActive (false);
 
 		// 비트 파일로부터 정보 읽어들이기
 		int randomBeatFileNum = Random.Range (0, BeatFileNum);
@@ -92,12 +89,12 @@ public class GameManagerRedShoe : GameManager {
 		if (touch.phase == TouchPhase.Began) {
 			if(touch.position.x < touchHalf) {
 				// left
+				playerFootAnimator.SetTrigger("SetLeftLegUp");
 				CorrectCheckLeg(LeftLeg);
-				//show.text = "Left";
 			} else {
 				// right
+				playerFootAnimator.SetTrigger("SetRightLegUp");
 				CorrectCheckLeg(RightLeg);
-				//show.text = "Right";
 			}
 
 			touchCount++;
@@ -107,9 +104,11 @@ public class GameManagerRedShoe : GameManager {
 	public override void MouseHandlingGame() {
 		if (Input.mousePosition.x < 0) {
 			// left
+			playerFootAnimator.SetTrigger("SetLeftLegUp");
 			CorrectCheckLeg(LeftLeg);
 		} else {
 			// right
+			playerFootAnimator.SetTrigger("SetRightLegUp");
 			CorrectCheckLeg(RightLeg);
 		}
 
@@ -156,33 +155,15 @@ public class GameManagerRedShoe : GameManager {
 			if (beatIndex < BeatNote.Count) {
 				BeatInfo nextBeat = (BeatInfo)BeatNote [beatIndex];
 
-				if (nextBeat.beatAction == 8 || nextBeat.beatAction == 9) {
+				if (nextBeat.beatAction == 7 || nextBeat.beatAction == 8 || nextBeat.beatAction == 9) {
 					beatIndex++;
 				} else if ((nextBeat.beatTime - audio.time) <= RabbitWaitInputTime) {
 					RhythmTurnEnd();
-					TS = ThinkState.ThinkStart;
+					TS = ThinkState.Thinking;
 				}
 			}
-		} else if (TS == ThinkState.ThinkStart) {
-			if (!cloud[0].activeInHierarchy)
-				cloud[0].SetActive(true);
-			else if (cloud[0].activeInHierarchy && !cloud[1].activeInHierarchy) 
-				cloud[1].SetActive(true);
-			else if (cloud[0].activeInHierarchy && cloud[1].activeInHierarchy && !cloud[2].activeInHierarchy) 
-				cloud[2].SetActive(true);
-			else if (cloud[0].activeInHierarchy && cloud[1].activeInHierarchy && cloud[2].activeInHierarchy) 
-				TS = ThinkState.Thinking;
 		} else if (TS == ThinkState.Thinking) {
 			if(!waitThink) StartCoroutine("Thinking");
-		} else if (TS == ThinkState.ThinkEnd) {
-			if (thinkFootAnimator.GetCurrentAnimatorStateInfo(0).IsName("ThinkWait") && cloud[2].activeInHierarchy) 
-				cloud[2].SetActive(false);
-			else if (cloud[0].activeInHierarchy && cloud[1].activeInHierarchy && !cloud[2].activeInHierarchy) 
-				cloud[1].SetActive(false);
-			else if (cloud[0].activeInHierarchy && !cloud[1].activeInHierarchy && !cloud[2].activeInHierarchy) 
-				cloud[0].SetActive(false);
-			else if (!cloud[0].activeInHierarchy && !cloud[1].activeInHierarchy && !cloud[2].activeInHierarchy) 
-				TS = ThinkState.InputWait;
 		}
 	}
 	
@@ -191,20 +172,20 @@ public class GameManagerRedShoe : GameManager {
 			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
 			float waitTime = beat.beatTime - audio.time;
 			waitThink = true;
-			Debug.Log(waitTime.ToString() + " : " + audio.time.ToString());
 			yield return new WaitForSeconds (waitTime);
 			
 			kickCount++;
-			if (beat.beatAction == 1) {
+			
+			if (beat.beatAction == 3) {
+				thinkFootAnimator.SetTrigger("SetJump");
+				kickCount--;
+			} else if (beat.beatAction == 1) {
 				thinkFootAnimator.SetTrigger("SetLeftLegUp");
 			} else if (beat.beatAction == 2) {
 				thinkFootAnimator.SetTrigger("SetRightLegUp");
-			} else if (beat.beatAction == 3) {
-				thinkFootAnimator.SetTrigger("SetLeftLegUp");
-				TS = ThinkState.ThinkEnd;
-			} else if (beat.beatAction == 4) {
-				thinkFootAnimator.SetTrigger("SetRightLegUp");
-				TS = ThinkState.ThinkEnd;
+			} else if (beat.beatAction == 9) {
+				playerFootAnimator.SetTrigger("SetJump");
+				TS = ThinkState.InputWait;
 			}
 			
 			waitThink = false;

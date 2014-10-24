@@ -321,6 +321,16 @@ abstract public class GameManager : MonoBehaviour {
 			                                                  temp.transform.guiText.pixelOffset.y * guiRatio);
 			temp.transform.guiText.fontSize = (int)(temp.transform.guiText.fontSize * guiRatio);
 		}
+
+		float yValueControll = Mathf.Abs((float) Screen.height - ((float) Screen.width * 0.5625f)) / 2;
+		UIButton[(int) UIButtonList.Pause].transform.guiTexture.pixelInset = new Rect(UIButton[(int) UIButtonList.Pause].transform.guiTexture.pixelInset.x,
+		                                                                              UIButton[(int) UIButtonList.Pause].transform.guiTexture.pixelInset.y - yValueControll,
+		                                                                              UIButton[(int) UIButtonList.Pause].transform.guiTexture.pixelInset.width,
+		                                                                              UIButton[(int) UIButtonList.Pause].transform.guiTexture.pixelInset.height);
+		UIButton[(int) UIButtonList.ShadowPause].transform.guiTexture.pixelInset = new Rect(UIButton[(int) UIButtonList.ShadowPause].transform.guiTexture.pixelInset.x,
+		                                                                                    UIButton[(int) UIButtonList.ShadowPause].transform.guiTexture.pixelInset.y - yValueControll,
+		                                                                                    UIButton[(int) UIButtonList.ShadowPause].transform.guiTexture.pixelInset.width,
+		                                                                                    UIButton[(int) UIButtonList.ShadowPause].transform.guiTexture.pixelInset.height);
 	}
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////

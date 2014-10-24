@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour {
 			this.camera.orthographicSize = 7.2f;
 		else if (screenRatio >= 0.6f && screenRatio <= 0.61f) // 5:3
 			this.camera.orthographicSize = 5.7f;
-		else if (screenRatio >= 0.56f && screenRatio <= 0.57f) // 16.9
+		else if (screenRatio >= 0.56f && screenRatio <= 0.57f) // 16:9
 			this.camera.orthographicSize = 5.4f;
 
 		this.camera.backgroundColor = new Color (0, 0, 0);

@@ -73,7 +73,7 @@ public class GameManagerRedShoe : GameManager {
 		BackKeyTouch ();
 		
 		if (GetGameState () == GameState.Logo) {
-			if(showLogo) StartCoroutine("LogoDelayTime");
+			if(showLogo) StartCoroutine("LogoDelayAnimation");
 		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 		} else if (GetGameState() == GameState.Play) {

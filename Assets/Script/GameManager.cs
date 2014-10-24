@@ -68,7 +68,7 @@ abstract public class GameManager : MonoBehaviour {
 	protected const float 	CorrectTime1 		= 0.05f;
 	protected const float 	CorrectTime2 		= 0.10f;
 
-	private   const float	LogoShowTime 		= 2.5f;
+	private   const float	LogoShowTime 		= 2.0f;
 	protected const float 	RabbitWaitInputTime = 0.3f;		// 달토끼 - 사용자 입력 대기 추가 시간
 	protected const float 	HeungbuWaitInputTime= 0.2f;		// 흥부전 - 사용자 입력 대기 추가 시간
 	protected const float 	GourdOpenTime 		= 2.0f;		// 흥부전 - 박이 열리는 시간
@@ -130,20 +130,15 @@ abstract public class GameManager : MonoBehaviour {
 			logoAnimator.SetBool ("StartHeungbuAnimation", true);
 			mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
 			gameLogo.renderer.material = mt;
+
 		} else if (gameName == "SunMoon") {
 			logoAnimator.SetTrigger("StartSunMoonAnimation");
-			//mt = Resources.Load ("Material/BackGroundLogoHeungbu", typeof(Material)) as Material;
-			//gameLogo.renderer.material = mt;
-		} else if (gameName == "Gildong") {
-			logoAnimator.SetBool ("StartGildongAnimation", true);
-			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
-			gameLogo.renderer.material = mt;
 		} else if (gameName == "Pig") {
-			logoAnimator.SetBool ("StartPigAnimation", true);
-			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
-			gameLogo.renderer.material = mt;
+			logoAnimator.SetTrigger ("StartPigAnimation");
 		} else if (gameName == "RedShoe") {
 			logoAnimator.SetBool ("StartRedShoeAnimation", true);
+		} else if (gameName == "Gildong") {
+			logoAnimator.SetBool ("StartGildongAnimation", true);
 			//mt = Resources.Load ("Material/BackGroundLogoSunMonn", typeof(Material)) as Material;\
 			gameLogo.renderer.material = mt;
 		}
@@ -163,9 +158,7 @@ abstract public class GameManager : MonoBehaviour {
 
 		logoAnimator.SetBool ("StartRabbitAnimation", false);
 		logoAnimator.SetBool ("StartHeungbuAnimation", false);
-		//logoAnimator.SetBool ("StartSunMoonAnimation", false);
 		logoAnimator.SetBool ("StartGildongAnimation", false);
-		logoAnimator.SetBool ("StartPigAnimation", false);
 		logoAnimator.SetTrigger ("SetDefault");
 
 		//yield return new WaitForSeconds (0.005f);
@@ -173,6 +166,18 @@ abstract public class GameManager : MonoBehaviour {
 	
 		gameLogo.SetActive (false);
 		GameStart();
+	}
+
+	public IEnumerator LogoDelayAnimation() {
+		UIButton [(int)UIButtonList.Pause].enabled = false;
+		UIButton [(int)UIButtonList.ShadowPause].enabled = false;
+		
+		yield return new WaitForSeconds (0.5f);
+		if (logoAnimator.GetCurrentAnimatorStateInfo (0).IsName("Default")) {
+			showLogo = false;
+			gameLogo.SetActive (false);
+			GameStart ();
+		}
 	}
 	
 	public void Init() {

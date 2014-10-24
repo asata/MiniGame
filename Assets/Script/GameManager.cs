@@ -233,7 +233,16 @@ abstract public class GameManager : MonoBehaviour {
 	public void Incorrect() {
 		gameComboCount = 0;
 		incorrectCount++;
-	}                   
+	}           
+	
+	public void DestoyItem(string tagName) {
+		GameObject[] destroyList = GameObject.FindGameObjectsWithTag (tagName);
+		if (destroyList.Length > 0) {
+			for(int i = 0; i < destroyList.Length; i++) {
+				Destroy(destroyList[i]);
+			}
+		}
+	}        
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////
@@ -285,8 +294,6 @@ abstract public class GameManager : MonoBehaviour {
 	/// </summary>
 	private void ChangeUISize() {			
 		// 화면 해상도 처리 시작
-		//Screen.SetResolution (Screen.width, Screen.height, true);
-		//Screen.SetResolution (Screen.width, Screen.height / 9 * 16, true);
 		guiRatio = Screen.width / 1600.0f;
 		// 화면 해상도 처리 끝
 		
@@ -387,14 +394,14 @@ abstract public class GameManager : MonoBehaviour {
 			gameName = "달토끼 방아찧기";
 			gameComment = "달토끼" + gameComment;
 		} else if (gameNo == 2) {
-			gameName = "흥부네 박타기";
-			gameComment = "흥부네" + gameComment;
-		} else if (gameNo == 3) {
-			gameName = "떡 먹는 호랑이";
-			gameComment = "호랑이" + gameComment;
-		} else if (gameNo == 4) {
 			gameName = "빨간 구두";
 			gameComment = "빨간 구두" + gameComment;
+		} else if (gameNo == 3) {
+			gameName = "흥부네 박타기";
+			gameComment = "흥부네" + gameComment;
+		} else if (gameNo == 4) {
+			gameName = "떡 먹는 호랑이";
+			gameComment = "호랑이" + gameComment;
 		} else if (gameNo == 5) {
 			gameName = "돼지 삼형제";
 			gameComment = "돼지 삼형제" + gameComment;

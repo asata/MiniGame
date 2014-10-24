@@ -55,6 +55,7 @@ public class GameManagerRedShoe : GameManager {
 		audio.Stop ();
 		
 		StopCoroutine ("Thinking");
+
 		playerFootAnimator.Play ("PlayerWait");
 		thinkFootAnimator.Play ("ThinkWait");
 	}
@@ -76,12 +77,12 @@ public class GameManagerRedShoe : GameManager {
 		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 		} else if (GetGameState() == GameState.Play) {
-			ShoeEvent();
-
 			if (audio.clip.samples <= audio.timeSamples) {
 				RhythmTurnEnd();
 				GameEnd(true);
 			}
+
+			ShoeEvent();
 		}	
 	}
 	
@@ -101,6 +102,7 @@ public class GameManagerRedShoe : GameManager {
 		} else if (touch.phase == TouchPhase.Ended) {
 		}
 	}
+
 	public override void MouseHandlingGame() {
 		if (Input.mousePosition.x < 0) {
 			// left
@@ -149,6 +151,31 @@ public class GameManagerRedShoe : GameManager {
 			}
 		}
 	}
+	
+	private IEnumerator Thinking () {
+		if (beatIndex < BeatNote.Count) {
+			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
+			float waitTime = beat.beatTime - audio.time;
+			waitThink = true;
+			yield return new WaitForSeconds (waitTime);
+			
+			if (beat.beatAction == 3) {
+				thinkFootAnimator.SetTrigger("SetJump");
+			} else if (beat.beatAction == 1) {
+				thinkFootAnimator.SetTrigger("SetLeftLegUp");
+				kickCount++;
+			} else if (beat.beatAction == 2) {
+				thinkFootAnimator.SetTrigger("SetRightLegUp");
+				kickCount++;
+			} else if (beat.beatAction == 9) {
+				playerFootAnimator.SetTrigger("SetJump");
+				TS = ThinkState.InputWait;
+			}
+			
+			waitThink = false;
+			beatIndex++;		// 호출하는 위치에 따라 다른 위치에 있어야 함
+		}
+	}
 
 	private void ShoeEvent() { 
 		if (TS == ThinkState.InputWait) {
@@ -167,32 +194,6 @@ public class GameManagerRedShoe : GameManager {
 		}
 	}
 	
-	public IEnumerator Thinking () {
-		if (beatIndex < BeatNote.Count) {
-			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
-			float waitTime = beat.beatTime - audio.time;
-			waitThink = true;
-			yield return new WaitForSeconds (waitTime);
-			
-			kickCount++;
-			
-			if (beat.beatAction == 3) {
-				thinkFootAnimator.SetTrigger("SetJump");
-				kickCount--;
-			} else if (beat.beatAction == 1) {
-				thinkFootAnimator.SetTrigger("SetLeftLegUp");
-			} else if (beat.beatAction == 2) {
-				thinkFootAnimator.SetTrigger("SetRightLegUp");
-			} else if (beat.beatAction == 9) {
-				playerFootAnimator.SetTrigger("SetJump");
-				TS = ThinkState.InputWait;
-			}
-			
-			waitThink = false;
-			beatIndex++;		// 호출하는 위치에 따라 다른 위치에 있어야 함
-		}
-	}
-
 	private void RhythmTurnEnd() {
 		if (kickCount == touchCount) {
 			if(gameComboCount >= touchCount)
@@ -201,9 +202,8 @@ public class GameManagerRedShoe : GameManager {
 			missCount = kickCount - touchCount;
 			gameComboCount = 0;
 		}
-
+		
 		touchCount = 0;
 		kickCount = 0;
 	}
 }
-

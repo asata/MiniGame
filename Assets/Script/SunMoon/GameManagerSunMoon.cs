@@ -49,15 +49,6 @@ public class GameManagerSunMoon : GameManager {
 		TigerAnimator.Play ("StandBy");
 	}
 
-	private void DestoyItem(string tagName) {
-		GameObject[] cakeList = GameObject.FindGameObjectsWithTag (tagName);
-		if (cakeList.Length > 0) {
-			for(int i = 0; i < cakeList.Length; i++) {
-				Destroy(cakeList[i]);
-			}
-		}
-	}
-	
 	void Update () {
 		// 터치 이벤트 처리
 		int count = Input.touchCount;		
@@ -65,9 +56,6 @@ public class GameManagerSunMoon : GameManager {
 			TouchHandling (Input.touches [0]);
 		} else if (Input.GetMouseButtonDown(0)) {
 			MouseHandling();
-		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
-			// keyboadrd space bar press
-			CorrectCheck ();
 		}
 		
 		// Back Key Touch
@@ -77,11 +65,6 @@ public class GameManagerSunMoon : GameManager {
 			if(showLogo) StartCoroutine("LogoDelayTime");
 		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
-
-			if (stateShow.texture == stateTexture[2] && !throwCake) {
-				StartCoroutine ("WaitThrowCake");
-				throwCake = true;
-			}
 		} else if (GetGameState() == GameState.Play) {	
 			if (audio.clip.samples <= audio.timeSamples)
 				GameEnd(true);
@@ -93,29 +76,6 @@ public class GameManagerSunMoon : GameManager {
 		}	
 	}
 
-	public IEnumerator WaitThrowCake() {
-		if (beatIndex < BeatNote.Count) {
-			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
-			float waitMoveTime = beat.beatTime - audio.time - AnimationMoveCakeTime;
-			yield return new WaitForSeconds (waitMoveTime);
-	
-			// beat.beatAction으로 떡과 돌을 구분
-			GameObject makeCake = null;
-			if (beat.beatAction == 1) {
-				makeCake = (GameObject)Instantiate (Cake, CakeInitVector, transform.rotation);
-			} else if (beat.beatAction == 2) {
-				makeCake = (GameObject)Instantiate (Stone, CakeInitVector, transform.rotation);
-				makeCake.SendMessage ("SetTypeNo", beat.beatAction);
-			}
-
-			// throw time 사용시 use
-			makeCake.SendMessage ("SetMoveTime", beat.animation);
-			makeCake.SendMessage ("SetBeatIndex", beatIndex);
-			beatIndex++;
-			throwCake = false;
-		}
-	}
-
 	public override void TouchHandlingGame(Touch touch) {
 		if (touch.phase == TouchPhase.Began) {
 			CorrectCheck ();
@@ -123,6 +83,7 @@ public class GameManagerSunMoon : GameManager {
 
 		}
 	}
+
 	public override void MouseHandlingGame() {
 		CorrectCheck ();
 	}
@@ -136,17 +97,7 @@ public class GameManagerSunMoon : GameManager {
 
 			if (compareTime < CorrectTime1) {
 				gameScore += (CorrectPoint1 + 2 * gameComboCount);
-				bool soundPlay = true;
-				if (beat.beatAction == 1) {
-					TigerAnimator.SetTrigger("HitCake");
-					FindEatCake(i);
-				} else if (beat.beatAction == 2) {
-					TigerAnimator.SetTrigger("HitStone");
-					HitStone(i); 
-					if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null) 
-						AnotherSpaker.SendMessage("SoundPlayLoadFile", (int) EffectSoundTiger.HitStone);
-					soundPlay = false;
-				}
+				bool soundPlay = CorrectEffect(beat.beatAction, i);
 				PrintResultMessage(resultMessage, (int) ResultMessage.Excellent);
 				Correct(soundPlay);
 
@@ -154,17 +105,7 @@ public class GameManagerSunMoon : GameManager {
 				break;
 			} else if (compareTime < CorrectTime2) {
 				gameScore += (CorrectPoint1 + gameComboCount);
-				bool soundPlay = true;
-				if (beat.beatAction == 1) {
-					TigerAnimator.SetTrigger("HitCake");
-					FindEatCake(i);
-				} else if (beat.beatAction == 2) {
-					TigerAnimator.SetTrigger("HitStone");
-					HitStone(i);
-					if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null) 
-						AnotherSpaker.SendMessage("SoundPlayLoadFile", (int) EffectSoundTiger.HitStone);
-					soundPlay = false;
-				}
+				bool soundPlay = CorrectEffect(beat.beatAction, i);
 				PrintResultMessage(resultMessage, (int) ResultMessage.Good);
 				Correct(soundPlay);
 
@@ -184,6 +125,45 @@ public class GameManagerSunMoon : GameManager {
 				break;
 			}
 		}
+	}
+
+	private IEnumerator WaitThrowCake() {
+		if (beatIndex < BeatNote.Count) {
+			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
+			float waitMoveTime = beat.beatTime - audio.time - AnimationMoveCakeTime;
+			yield return new WaitForSeconds (waitMoveTime);
+			
+			// beat.beatAction으로 떡과 돌을 구분
+			GameObject makeCake = null;
+			if (beat.beatAction == 1) {
+				makeCake = (GameObject)Instantiate (Cake, CakeInitVector, transform.rotation);
+			} else if (beat.beatAction == 2) {
+				makeCake = (GameObject)Instantiate (Stone, CakeInitVector, transform.rotation);
+				makeCake.SendMessage ("SetTypeNo", beat.beatAction);
+			}
+			
+			// throw time 사용시 use
+			makeCake.SendMessage ("SetMoveTime", beat.animation);
+			makeCake.SendMessage ("SetBeatIndex", beatIndex);
+			beatIndex++;
+			throwCake = false;
+		}
+	}
+
+	private bool CorrectEffect(int action, int index) {
+		bool soundPlay = true;
+		if (action == 1) {
+			TigerAnimator.SetTrigger("HitCake");
+			FindEatCake(index);
+		} else if (action == 2) {
+			TigerAnimator.SetTrigger("HitStone");
+			HitStone(index);
+			if (PlayerPrefs.GetInt("EffectSound") == 0 && AnotherSpaker != null) 
+				AnotherSpaker.SendMessage("SoundPlayLoadFile", (int) EffectSoundTiger.HitStone);
+			soundPlay = false;
+		}
+
+		return soundPlay;
 	}
 
 	private void HitStone(int index) {

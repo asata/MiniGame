@@ -1191,8 +1191,8 @@ GUITexture:
   m_Color: {r: .5, g: .5, b: .5, a: .5}
   m_PixelInset:
     serializedVersion: 2
-    x: -131.139999
-    y: -131.139999
+    x: -131.130005
+    y: -131.130005
     width: 83
     height: 83
   m_LeftBorder: 0
@@ -1790,7 +1790,7 @@ GUITexture:
   m_PixelInset:
     serializedVersion: 2
     x: -139.440002
-    y: -150.229996
+    y: -150.220001
     width: 99.1200027
     height: 108.730003
   m_LeftBorder: 0
@@ -1864,7 +1864,6 @@ MonoBehaviour:
   Stone: {fileID: 100000, guid: aed4d8f48b6a577409136d1278023d33, type: 2}
   resultMessage: {fileID: 1022505993}
   TigerAnimator: {fileID: 158021665}
-  temp: {fileID: 0}
 --- !u!82 &2113980089
 AudioSource:
   m_ObjectHideFlags: 0

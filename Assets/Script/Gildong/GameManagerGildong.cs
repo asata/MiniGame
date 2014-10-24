@@ -96,6 +96,7 @@ public class GameManagerGildong : GameManager {
 		} else if (touch.phase == TouchPhase.Ended) {
 		}
 	}
+
 	public override void MouseHandlingGame() {
 		GildongAnimator.SetTrigger ("HitArrow");
 		CorrectCheck ();
@@ -154,15 +155,7 @@ public class GameManagerGildong : GameManager {
 			beatIndex++;		// 호출하는 위치에 따라 다른 위치에 있어야 함
 		}
 	}
-	
-	private void DestoyItem(string tagName) {
-		GameObject[] arrowList = GameObject.FindGameObjectsWithTag (tagName);
-		if (arrowList.Length > 0) {
-			for(int i = 0; i < arrowList.Length; i++) {
-				Destroy(arrowList[i]);
-			}
-		}
-	}
+
 	private void PrintMissMessage() {
 		missCount++;
 		PrintResultMessage(resultMessage, (int) ResultMessage.Miss);

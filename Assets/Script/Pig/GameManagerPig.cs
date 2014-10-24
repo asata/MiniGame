@@ -43,8 +43,10 @@ public class GameManagerPig : GameManager {
 	public override void ResetGame () {
 		audio.Stop ();
 
-		DestoyItem ();
+		DestoyItem (GhostTagName);
+
 		StopCoroutine ("WaitGhost");
+
 		pigAnimator [0].Play ("StandBy");
 		pigAnimator [1].Play ("StandBy");
 		pigAnimator [2].Play ("StandBy");
@@ -57,9 +59,6 @@ public class GameManagerPig : GameManager {
 			TouchHandling(Input.touches[0]);
 		} else if (Input.GetMouseButtonDown(0)) {
 			MouseHandling();
-		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
-			// keyboadrd space bar press
-			CorrectCheck ();
 		}
 		
 		// Back Key TouchS
@@ -90,35 +89,18 @@ public class GameManagerPig : GameManager {
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
 			if (touch.phase == TouchPhase.Began) {
-				if (hit.transform.name == "Pig1") {
-					pigAnimator[0].SetTrigger("HitGhost");
-					CorrectCheckPig (1);		
-				} else if (hit.transform.name == "Pig2") {
-					pigAnimator[1].SetTrigger("HitGhost");
-					CorrectCheckPig (2);				
-				} else if (hit.transform.name == "Pig3") {
-					pigAnimator[2].SetTrigger("HitGhost");
-					CorrectCheckPig (3);				
-				}
+				PigHit (hit.transform.name);				
 			} else if (touch.phase == TouchPhase.Ended) {
 			}
 		}
 	}
+
 	public override void MouseHandlingGame() {
 		RaycastHit hit = new RaycastHit();
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		
 		if (Physics.Raycast(ray.origin,ray.direction, out hit)) {   
-			if (hit.transform.name == "Pig1") {
-				pigAnimator[0].SetTrigger("HitGhost");
-				CorrectCheckPig (1);
-			} else if (hit.transform.name == "Pig2") {
-				pigAnimator[1].SetTrigger("HitGhost");
-				CorrectCheckPig (2);
-			} else if (hit.transform.name == "Pig3") {
-				pigAnimator[2].SetTrigger("HitGhost");
-				CorrectCheckPig (3);
-			}
+			PigHit (hit.transform.name);
 		}
 	}
 	
@@ -135,7 +117,7 @@ public class GameManagerPig : GameManager {
 				PrintResultMessage(resultMessage[(beat.beatAction - 1)], (int) ResultMessage.Excellent);
 
 				Correct();
-				DestoryItem(i);
+				GhostSendMessage(i, "DestroyGhost");
 				checkIndex = i;
 				break;
 			} else if (compareTime < CorrectTime2) {
@@ -143,7 +125,7 @@ public class GameManagerPig : GameManager {
 				PrintResultMessage(resultMessage[(beat.beatAction - 1)], (int) ResultMessage.Good);
 			
 				Correct();
-				DestoryItem(i);
+				GhostSendMessage(i, "DestroyGhost");
 				checkIndex = i;
 				break;
 			} else if (beat.beatTime < audio.time) {
@@ -156,7 +138,7 @@ public class GameManagerPig : GameManager {
 		}
 	}
 	
-	public IEnumerator WaitGhost () {
+	private IEnumerator WaitGhost () {
 		if (beatIndex < BeatNote.Count) {
 			BeatInfo beat = (BeatInfo)BeatNote [beatIndex];
 
@@ -183,30 +165,28 @@ public class GameManagerPig : GameManager {
 		}
 	}
 	
-	private void DestoyItem() {
+	private void PigHit(string pigName) {
+		if (pigName == "Pig1") {
+			pigAnimator[0].SetTrigger("HitGhost");
+			CorrectCheckPig (1);
+		} else if (pigName == "Pig2") {
+			pigAnimator[1].SetTrigger("HitGhost");
+			CorrectCheckPig (2);
+		} else if (pigName == "Pig3") {
+			pigAnimator[2].SetTrigger("HitGhost");
+			CorrectCheckPig (3);
+		}
+	}
+
+	private void GhostSendMessage(int index, string message) {
 		GameObject[] ghostList = GameObject.FindGameObjectsWithTag (GhostTagName);
 		if (ghostList.Length > 0) {
 			for(int i = 0; i < ghostList.Length; i++) {
-				Destroy(ghostList[i]);
+				ghostList[i].SendMessage(message, index);
 			}
 		}
 	}
-	private void DestoryItem(int index) {
-		GameObject[] ghostList = GameObject.FindGameObjectsWithTag (GhostTagName);
-		if (ghostList.Length > 0) {
-			for(int i = 0; i < ghostList.Length; i++) {
-				ghostList[i].SendMessage("DestroyGhost", index);
-			}
-		}
-	}
-	private void SetPrintMiss(int index) {
-		GameObject[] ghostList = GameObject.FindGameObjectsWithTag (GhostTagName);
-		if (ghostList.Length > 0) {
-			for(int i = 0; i < ghostList.Length; i++) {
-				ghostList[i].SendMessage("SetPrintMiss", index);
-			}
-		}
-	}
+
 	private void PrintMissMessage(int index) {
 		missCount++;
 		PrintResultMessage(resultMessage[(index - 1)], (int) ResultMessage.Miss);

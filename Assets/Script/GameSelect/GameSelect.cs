@@ -15,7 +15,7 @@ public class GameSelect : MonoBehaviour {
 	private const float backgroundMoveSpeed 	= 2.5f;
 	private const float backgroundWidth 		= 20;
 	private const float backgroundHeight 		= 10;
-	private const int 	DatabaseVersion5 		= 5;
+	private const int 	DatabaseVersion6 		= 6;
 	private float guiRatio;							// 화면 비율
 
 	private Fade fade;
@@ -99,7 +99,7 @@ public class GameSelect : MonoBehaviour {
 		// 최종빌드 이후에는 버전에 따라 디비를 추가, 수정
 		// 추가시 그냥 insert구문 실행 혹은 버전과 관계없이 갯수 파악 후 추가
 		// 수정시 해당항목 update or 미존재시 추가하도록 함
-		if (db_version < DatabaseVersion5) {
+		if (db_version < DatabaseVersion6) {
 			sql.ExecuteQuery("drop table if exists StageInfo");
 		}
 
@@ -109,15 +109,15 @@ public class GameSelect : MonoBehaviour {
 		_data = sql.ExecuteQuery("select * from StageInfo");
 		if (_data.Rows.Count == 0) {
 			sql.ExecuteQuery("insert into StageInfo values(1, 'MoonRabbit', 1, 0, 'F')");
-			sql.ExecuteQuery("insert into StageInfo values(2, 'Heungbu', 1, 0, 'F')");
-			sql.ExecuteQuery("insert into StageInfo values(3, 'SunMoon', 1, 0, 'F')");
-			sql.ExecuteQuery("insert into StageInfo values(4, 'RedShoe', 1, 0, 'F')");
+			sql.ExecuteQuery("insert into StageInfo values(2, 'RedShoe', 1, 0, 'F')");
+			sql.ExecuteQuery("insert into StageInfo values(3, 'Heungbu', 1, 0, 'F')");
+			sql.ExecuteQuery("insert into StageInfo values(4, 'SunMoon', 1, 0, 'F')");
 			sql.ExecuteQuery("insert into StageInfo values(5, 'Pig', 1, 0, 'F')");
 
 			_data = sql.ExecuteQuery("select * from StageInfo");
 		}
 		
-		PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion5);
+		PlayerPrefs.SetInt("DatabaseVersion", DatabaseVersion6);
 		sql.Close();
 	}
 

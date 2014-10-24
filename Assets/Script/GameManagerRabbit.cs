@@ -56,13 +56,6 @@ public class GameManagerRabbit : GameManager {
 			TouchHandling (Input.touches [0]);
 		} else if (Input.GetMouseButtonDown(0)) {
 			MouseHandling();
-		} else if (Input.GetKeyDown (KeyCode.Space) && GetGameState() == GameState.Play) {
-			// keyboadrd space bar press
-			if (RS == RabbitState.Wait) {
-				PlayerAnimator.SetTrigger("PlayerPounding");
-				CorrectCheck();
-				touchCount++;	
-			}
 		}
 
 		// Back Key Touch
@@ -74,13 +67,13 @@ public class GameManagerRabbit : GameManager {
 		} else if (GetGameState () == GameState.Ready) {
 			GameReady();
 		} else if (GetGameState() == GameState.Play) {
-			MoonRabbitEvent();
-
 			// 게임 종료 처리
 			if (audio.clip.samples <= audio.timeSamples) {
 				RhythmTurnEnd();
 				GameEnd(true);
 			}
+
+			MoonRabbitEvent();
 		}
 	}
 	
@@ -136,20 +129,46 @@ public class GameManagerRabbit : GameManager {
 			}
 		}
 	}
-
-	private void RhythmTurnEnd() {
-		if (poundingCount == touchCount) {
-			// 지정된 절구질을 모두 한 경우 가산점 부여
-			if (gameComboCount >= touchCount) 
-				gameScore += PoundingAllPoint;
-		} else if (poundingCount > touchCount) {
-			missCount = poundingCount - touchCount;
-			gameComboCount = 0;
+	
+	// 달토끼 절구질 
+	private IEnumerator WaitPounding() {
+		BeatInfo beat = (BeatInfo) BeatNote[beatIndex];
+		if ((beat.beatTime - audio.time) - 0.1f > 0) {
+			yield return new WaitForSeconds ((beat.beatTime - audio.time) - 0.1f);
+		} else {
+			audio.time = beat.beatTime;
 		}
-
-		poundingCount = 0;
-		touchCount = 0;
+		
+		// 절구질간 간격
+		if (beatIndex >= (BeatNote.Count) - 1)
+			beatIndex = -1;
+		else 
+			beatIndex++;
+		
+		// beatAction 1, 3 : 절구질 후 대기
+		//			  2, 4 : 절구질 후 사용자 입력 대기
+		if (beat.beatAction == 1) {
+			// 다음 절구질 대기
+			poundingCount++;
+			RabbitAnimator.SetTrigger ("Pounding");
+			StartCoroutine ("WaitPounding");
+		} else if (beat.beatAction == 2) {
+			poundingCount++;
+			RabbitAnimator.SetTrigger ("PoundingDone");
+			
+			RS = RabbitState.Wait;
+		} else if (beat.beatAction == 3) {
+			poundingCount++;
+			RabbitAnimator.SetTrigger("PoundingLow");
+			StartCoroutine ("WaitPounding");
+		} else if (beat.beatAction == 4) {
+			poundingCount++;
+			RabbitAnimator.SetTrigger ("PoundingLowDone");
+			
+			RS = RabbitState.Wait;
+		}
 	}
+
 	private void MoonRabbitEvent() {
 		if (RS == RabbitState.Standby) {
 			RS = RabbitState.Ready;
@@ -177,42 +196,17 @@ public class GameManagerRabbit : GameManager {
 		}
 	}
 	
-	// 달토끼 절구질 
-	public IEnumerator WaitPounding() {
-		BeatInfo beat = (BeatInfo) BeatNote[beatIndex];
-		if ((beat.beatTime - audio.time) - 0.1f > 0) {
-			yield return new WaitForSeconds ((beat.beatTime - audio.time) - 0.1f);
-		} else {
-			audio.time = beat.beatTime;
+	private void RhythmTurnEnd() {
+		if (poundingCount == touchCount) {
+			// 지정된 절구질을 모두 한 경우 가산점 부여
+			if (gameComboCount >= touchCount) 
+				gameScore += PoundingAllPoint;
+		} else if (poundingCount > touchCount) {
+			missCount = poundingCount - touchCount;
+			gameComboCount = 0;
 		}
-				
-		// 절구질간 간격
-		if (beatIndex >= (BeatNote.Count) - 1)
-			beatIndex = -1;
-		else 
-			beatIndex++;
 		
-		// beatAction 1 : 절구질 후 대기
-		//			  2 : 절구질 후 사용자 입력 대기
-		if (beat.beatAction == 1) {
-			// 다음 절구질 대기
-			poundingCount++;
-			RabbitAnimator.SetTrigger ("Pounding");
-			StartCoroutine ("WaitPounding");
-		} else if (beat.beatAction == 2) {
-			poundingCount++;
-			RabbitAnimator.SetTrigger ("PoundingDone");
-			
-			RS = RabbitState.Wait;
-		} else if (beat.beatAction == 3) {
-			poundingCount++;
-			RabbitAnimator.SetTrigger("PoundingLow");
-			StartCoroutine ("WaitPounding");
-		} else if (beat.beatAction == 4) {
-			poundingCount++;
-			RabbitAnimator.SetTrigger ("PoundingLowDone");
-			
-			RS = RabbitState.Wait;
-		}
+		poundingCount = 0;
+		touchCount = 0;
 	}
 }

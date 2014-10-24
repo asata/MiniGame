@@ -149,9 +149,9 @@ public class GameSelect : MonoBehaviour {
 			button.name = info.scene;
 			button.tag = "UITexture";
 			if (info.open)
-				button.guiTexture.texture = (Texture) Resources.Load("Icon/" + info.scene);// buttonImage [info.no];
+				button.guiTexture.texture = (Texture) Resources.Load("GameIcon/" + info.scene);// buttonImage [info.no];
 			else 
-				button.guiTexture.texture = (Texture) Resources.Load("Icon/ButtonGameSelect");
+				button.guiTexture.texture = (Texture) Resources.Load("GameIcon/ButtonGameSelect");
 
 			button.transform.position = new Vector3 (0.5f, 0.5f, 0);
 			button.transform.localScale = new Vector3 (0, 0, 0);

@@ -6,10 +6,12 @@ public class CameraController : MonoBehaviour {
 		float screenRatio = ((float)Screen.height / (float)Screen.width);
 
 		// 화면 해상도에 따라 카메라 크기(Size) 조정
-		if (screenRatio >= 0.66f && screenRatio <= 0.67f) // 3:2
-			this.camera.orthographicSize = 6.4f;
-		else if (screenRatio >= 0.75f && screenRatio <= 0.76f) // 4:3
+		if (screenRatio >= 0.75f && screenRatio <= 0.76f) // 4:3
 			this.camera.orthographicSize = 7.2f;
+		else if (screenRatio >= 0.66f && screenRatio <= 0.67f) // 3:2
+			this.camera.orthographicSize = 6.4f;
+		else if (screenRatio >= 0.62f && screenRatio <= 0.63f) // 16:10
+			this.camera.orthographicSize = 6.0f;
 		else if (screenRatio >= 0.6f && screenRatio <= 0.61f) // 5:3
 			this.camera.orthographicSize = 5.7f;
 		else if (screenRatio >= 0.56f && screenRatio <= 0.57f) // 16:9

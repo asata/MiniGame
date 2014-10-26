@@ -45,6 +45,7 @@ public class GameSelect : MonoBehaviour {
 	private GameObject BackgroundImageD;
 	
 	void Start () { 	
+		DisableSystemUI.DisableNavUI();
 		Time.timeScale = 1.0f;
 
 		if (Application.platform == RuntimePlatform.Android)
